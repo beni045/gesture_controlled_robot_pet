@@ -20,7 +20,7 @@ servo_x = GPIO.PWM(SERVO_X,50) # pin 11 for servo_x, pulse 50Hz
 GPIO.setup(SERVO_Z,GPIO.OUT)
 servo_z = GPIO.PWM(SERVO_Z,50) # pin 12 for servo_z, pulse 50Hz
 
-# Function for servo to go to specific angle
+# Function for servo to go to specific angle (currently only 180 degrees)
 # Z: 90=straight up
 def go_to_angle(servo, angle):
     servo.ChangeDutyCycle(2+(angle/18))
@@ -34,7 +34,11 @@ def move_up():
     
 def move_down():
     global z_position
-    z_position = z_position - 5
+    # Bound z_position
+    if z_position - 5 < 0:
+        z_position = 0
+    else:
+        z_position = z_position - 5
     go_to_angle(servo_z, z_position)
 
 def move_left():
