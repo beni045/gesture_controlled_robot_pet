@@ -44,7 +44,8 @@ def cameraview(image, j):
 	cv2.imwrite('1m.jpg',resized)
 	os.system('sudo fbi -T 2 -d /dev/fb0 -noverbose -a ~/1m.jpg')
 
-Def cameraview_close():
+def cameraview_close():
+	os.system('sudo fbi -T 2 -d /dev/fb0 -noverbose -a ~/white.jpeg')
 	os.system('screen -d -m omxplayer --no-osd --loop ~/neu.mp4')
 
 setup()
