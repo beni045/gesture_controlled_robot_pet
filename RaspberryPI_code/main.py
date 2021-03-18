@@ -4,6 +4,7 @@ import time
 import RPi.GPIO as GPIO     
 import socket
 
+
 in1 = 23
 in2 = 24
 en = 25
@@ -24,9 +25,9 @@ GPIO.output(in2,GPIO.LOW)
 GPIO.output(in3,GPIO.LOW)
 GPIO.output(in4,GPIO.LOW)
 p=GPIO.PWM(en,1000)
-p.start(50)
+p.start(75)
 p2=GPIO.PWM(en2,1000)
-p2.start(50)
+p2.start(75)
 
 
 UDP_IP = "0.0.0.0" # listen to everything
@@ -35,23 +36,37 @@ UDP_PORT = 12345 # port
 sock = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
 sock.bind((UDP_IP, UDP_PORT))
 
+buffer = []
+
 while True:
     data, addr = sock.recvfrom(512) # random buffer size, doesn't matter here..
     print("received message:", data)
-  #simplest way to react.. of course, a better parser should be used, and add GPIO code, etc..
-    if data==b'forward\n':
-        forward()
-        print("Go Forward")
-    elif data==b'backward\n':
-        backward()
-        print("Go Backward")
-    elif data==b'left\n':
-        left()
-        print("Go Left")
-    elif data==b'right\n':
-        right()
-        print("Go Right")
-    elif data==b'exit\n':
-        stop()
-        print("Program Exit")
-        break
+    buffer.append(data)
+    print(len(buffer))
+    
+    if len(buffer) ==8:
+        same = all(elem == buffer[0] for elem in buffer)
+        
+        if same:
+            command = buffer[0]
+            print("same. command:", command)
+            
+            if command==b'forward\n':
+                forward()
+                print("Go Forward")
+            elif command==b'backward\n':
+                backward()
+                print("Go Backward")
+            elif command==b'left\n':
+                left()
+                print("Go Left")
+            elif command==b'right\n':
+                right()
+                print("Go Right") 
+            
+            buffer.clear()
+        else:
+            print("not same")
+            buffer.clear()       
+    
+    
