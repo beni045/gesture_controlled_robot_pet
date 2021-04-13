@@ -6,7 +6,7 @@ Apart from doing normal pet things such as moving around and performing a few tr
 Through its camera “eyes”, this robot pet uses a combination of machine learning and computer vision to see and respond to commands given through its owner’s hand gestures. The robot pet can track, recognize, and perform a task such as following the user while video capturing. The user is thus able to control the pet from a distance, enabling full autonomy.
 
 <p align="center">
-  <img width="300" src="/Images/robot.PNG">
+  <img width="300" src="/Images/robot.png">
 </p>
 
 # Hardware Required
@@ -42,3 +42,6 @@ Command | Gesture | Description
 `Move Backwards` | <img src="/Images/gesture_example_2.png" width="250" height="250"> | Moves the robot backwards
 `Spin Around` | <img src="/Images/gesture_example_3.png" width="250" height="250"> | Spins the robot around
 `Take a Picture` | <img src="/Images/gesture_example_4.png" width="250" height="250"> | Initiates the routine to take a photo
+
+# Notes
+Power supply not solved
