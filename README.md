@@ -5,6 +5,10 @@ Apart from doing normal pet things such as moving around and performing a few tr
 
 Through its camera “eyes”, this robot pet uses a combination of machine learning and computer vision to see and respond to commands given through its owner’s hand gestures. The robot pet can track, recognize, and perform a task such as following the user while video capturing. The user is thus able to control the pet from a distance, enabling full autonomy.
 
+<p align="center">
+  <img width="300" src="/Images/robot.PNG">
+</p>
+
 # Hardware Required
 * Huawei's Atlas 200DK
 * Raspberry Pi
@@ -14,6 +18,10 @@ Through its camera “eyes”, this robot pet uses a combination of machine lear
 * Optional:
   * 3D printer
   * 2 Servo Motors
+
+<p align="center">
+  <img width="300" src="/Images/final.jpg">
+</p>
 
 # Setup
 1. stuff
