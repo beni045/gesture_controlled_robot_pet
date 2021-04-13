@@ -19,9 +19,9 @@ Through its camera “eyes”, this robot pet uses a combination of machine lear
   * 3D printer
   * 2 Servo Motors (SG90)
 * Miscellaneous:
-  * Raspberry Pi Camera Extension Cabel 
-  * Ethernet Cabel
-  * Jumper Cabels
+  * Raspberry Pi Camera Extension Cable 
+  * Ethernet Cable
+  * Jumper Cables
   * Screws
 
 <p align="center">
