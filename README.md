@@ -11,19 +11,25 @@ Through its camera “eyes”, this robot pet uses a combination of machine lear
 
 # Hardware Required
 * Huawei's Atlas 200DK
-* Raspberry Pi
-* Raspberry Pi Camera
-* Raspberry Pi LCD Screen
+* Raspberry Pi (3+)
+* Raspberry Pi Camera (Camera V2)
+* Raspberry Pi LCD Screen (Kuman 3.5" Inch TFT LCD Display 480x320 RGB Pixels)
 * ELEGOO UNO Robot Car Base
 * Optional:
   * 3D printer
-  * 2 Servo Motors
+  * 2 Servo Motors (SG90)
+* Miscellaneous:
+  * Raspberry Pi Camera Extension Cabel 
+  * Ethernet Cabel
+  * Jumper Cabels
+  * Screws
 
 <p align="center">
   <img width="300" src="/Images/final.jpg">
 </p>
 
 # Setup
+### Atlas 200DK Setup
 1. stuff
 2. more stuff
 3. even more stuff
@@ -32,6 +38,25 @@ Through its camera “eyes”, this robot pet uses a combination of machine lear
 6. will
 7. it
 8. end
+### Raspberry Pi Setup
+1. stuff
+2. more stuff
+3. even more stuff
+4. ahhh
+5. when
+6. will
+7. it
+8. end
+### Hardware Setup
+1. stuff
+2. more stuff
+3. even more stuff
+4. ahhh
+5. when
+6. will
+7. it
+8. end
+
 
 # Gestures
 Below are the gestures included in the repository.
