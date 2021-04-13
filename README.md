@@ -15,6 +15,22 @@ Through its camera “eyes”, this robot pet uses a combination of machine lear
   * 3D printer
   * 2 Servo Motors
 
-# Instructions
+# Setup
 1. stuff
-1. more stuff
+2. more stuff
+3. even more stuff
+4. ahhh
+5. when
+6. will
+7. it
+8. end
+
+# Gestures
+Below are the gestures included in the repository.
+
+Command | Gesture | Description
+------- | ------- | -----------
+`Move Forwards` | <img src="/Images/gesture_example_1.png" width="250" height="250"> | Moves the robot forwards
+`Move Backwards` | <img src="/Images/gesture_example_2.png" width="250" height="250"> | Moves the robot backwards
+`Spin Around` | <img src="/Images/gesture_example_3.png" width="250" height="250"> | Spins the robot around
+`Take a Picture` | <img src="/Images/gesture_example_4.png" width="250" height="250"> | Initiates the routine to take a photo
