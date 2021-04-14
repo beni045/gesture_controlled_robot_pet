@@ -1,3 +1,9 @@
+# ----------------------------------------------------------------------------
+#   Raspberry Pi main file for robot control   
+#   Parses commands sent from the Atlas and controls responses
+#   Includes robot movement, camera movement, LCD display
+# ----------------------------------------------------------------------------
+
 import socket
 import sys
 import cv2
@@ -70,9 +76,9 @@ print('Socket now listening')
 conn,addr=s.accept()
 print(addr)
 
-###########################
-### Servo Motor Control ###
-###########################
+# ----------------------------------------------------------------------------
+#                           Servo Motor Control 
+# ----------------------------------------------------------------------------
 
 def go_to_angle(servo, angle):
     servo.ChangeDutyCycle(2+(angle/18))
@@ -103,9 +109,9 @@ def move_right():
     x_position = x_position - 5
     go_to_angle(servo_x, x_position)
 
-#############################
-### RC Car Control Thread ###
-#############################
+# ----------------------------------------------------------------------------
+#                           RC Car Control Thread 
+# ----------------------------------------------------------------------------
 
 def RC_car_control():
   global current_hg_command
@@ -149,7 +155,7 @@ def RC_car_control():
       GPIO.output(in4,GPIO.LOW)
       current_hg_command = "send_done_command"
         
-###########################
+# ----------------------------------------------------------------------------
 
 #Initialize serial communication w/ Atlas 200DK
 data = b""
@@ -182,9 +188,9 @@ happy_cap = cv2.VideoCapture("./happy.mp4")
 cv2.namedWindow('ImageWindow', cv2.WINDOW_NORMAL)
 cv2.setWindowProperty('ImageWindow', cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
 
-#####################################
-### Initialization of RC car base ###
-#####################################
+# ----------------------------------------------------------------------------
+#                       Initialization of RC car base 
+# ----------------------------------------------------------------------------
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(in1,GPIO.OUT)
@@ -210,7 +216,7 @@ print("\n")
 t1 = threading.Thread(target = RC_car_control,args=())
 t1.start()
 
-###########################
+# ----------------------------------------------------------------------------
 
 while True:
     time.sleep(0.000000000001)
@@ -235,9 +241,9 @@ while True:
     data = data[msg_size:]
     data=pickle.loads(frame_data, fix_imports=True, encoding="bytes")
 
-    ###############################################
-    ### Do something with data from Atlas 200DK ###
-    ###############################################
+# ----------------------------------------------------------------------------
+#               Do something with data from Atlas 200DK 
+# ----------------------------------------------------------------------------
 
     # Tell Atlas that any movement command is complete
     if current_hg_command == "send_done_command":
@@ -282,9 +288,9 @@ while True:
             size = len(data)
             conn.sendall(struct.pack(">L", size) + data) # Send data back to Atlas 200 DK
 
-    #######################################################################################
-    ### Sending information back to Atlas about which hand gesture command is executing ###
-    #######################################################################################
+# ----------------------------------------------------------------------------
+#     Send information back to Atlas about which command is executing
+# ----------------------------------------------------------------------------
 
     # Take a picture
     elif data=="take a picture\n":
@@ -407,7 +413,9 @@ while True:
         size = len(data)
         conn.sendall(struct.pack(">L", size) + data)
 
-####################### vv State Machine for Current Hand Gesture Command vv ######################
+# ----------------------------------------------------------------------------
+#           State Machine for Current Hand Gesture Command 
+# ----------------------------------------------------------------------------
 
     # Display Neutral expression by default
     if current_hg_command != "take_a_picture" and current_hg_command != "happy_mood" and current_hg_command != "tap_image_fade" and current_hg_command != "tap_final_image_show":
@@ -426,7 +434,7 @@ while True:
         if current_hg_command == "spin": #for debugging
             cv2.putText(frame_show,"S",(200,210),font, scale,color,thickness,cv2.LINE_AA)
 
-   ### Display happy mood after completion of any command. Return to neutral expression when complete
+   # Display happy mood after completion of any command. Return to neutral expression when complete
     elif current_hg_command == "happy_mood":
 
         ret_val, frame_show = happy_cap.read()
@@ -465,6 +473,10 @@ while True:
     if cv2.waitKey(1) == ord('q'):
         break
 
+
+# ----------------------------------------------------------------------------
+#                               Exit and Cleanup
+# ----------------------------------------------------------------------------
 neu_cap.release()
 happy_cap.release()
 cv2.destroyAllWindows()
