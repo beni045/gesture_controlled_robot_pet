@@ -1,7 +1,10 @@
 # ----------------------------------------------------------------------------
+#
 #   Raspberry Pi main file for robot control   
 #   Parses commands sent from the Atlas and controls responses
 #   Includes robot movement, camera movement, LCD display
+#   
+#   Version: 5
 # ----------------------------------------------------------------------------
 
 import socket
