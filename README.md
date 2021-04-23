@@ -30,40 +30,42 @@ Through its camera “eyes”, this robot pet uses a combination of machine lear
 
 # Setup
 ### Computer
-1. Download the VMWare image to your host PC (size ~11GB): Google drive link: https://drive.google.com/drive/folders/1rPXsv9p3cD_MpEpi2lggdW43nLFCy4v_?usp=sharing              
+1. Download the VMWare image to your host PC (size ~11GB): Google drive link:  
+   https://drive.google.com/drive/folders/1rPXsv9p3cD_MpEpi2lggdW43nLFCy4v_?usp=sharing                
    Download the following three files: ‘VM_C73.part1.rar’, ‘VM_C73.part2.rar’ ‘VM_C73.part3.rar’ 
 3. Unzip ‘VM_C73.part1.rar’ (Part 2 and Part 3 will automatically be unzipped).
-4. Download and install the latest version of the VMware Workstation Player through the following link: https://www.vmware.com/ca/products/workstation-player/workstation-player-evaluation.html 
+4. Download and install the latest version of the VMware Workstation Player through the following link:  
+   https://www.vmware.com/ca/products/workstation-player/workstation-player-evaluation.html 
 
 ### Atlas 200DK Setup
 1. Set up the Atlas 200 DK by following the steps in the link: https://support.huaweicloud.com/intl/en-us/usermanual-A200dk_3000/atlas200dk_02_0001.html
-2. Start VMware Player and load the unzipped file:
-   VMware Player -> 'Open a Virtual Machine'
-   directory: VM_C73/ascend.vmx
+2. Start VMware Player and load the unzipped file:  
+   VMware Player -> 'Open a Virtual Machine'  
+   directory: VM_C73/ascend.vmx  
    (Choose 'I copied it', then select 'No' if VMware is looking for some storage; then, you will see the virtual machine ‘ascend’ added in VMware player)
-4. Power on ’ascend’, and use following at the login page:
-   User: ascend
-   Password: ascend
+4. Power on ’ascend’, and use following at the login page:  
+   User: ascend  
+   Password: ascend  
 6. Connect the Atlas 200 DK to your computer via USB.
 7. Retrieve the files to be downloaded onto the Atlas 200 DK, which are located in the folder “Atlas_robot_pet”, either from the source code folder provided or from the GitHub repository. Move these to the desktop of your VM.
 8. Retrieve the three machine learning models from the folder “models”. Place them in the folder “/Atlas_robot_pet/model/” on the Desktop of your VM.
-9. Open a terminal in the VM on your computer, and move the “Atlas_robot_pet” folder from your VM desktop to the Atlas 200 DK using secure copy protocol:
-   scp -r /home/ascend/Desktop/Atlas_robot_pet/ 
-   HwHiAiUser@192.168.1.2:/home/HwHiAiUser/HIAI_PROJECTS/                           
+9. Open a terminal in the VM on your computer, and move the “Atlas_robot_pet” folder from your VM desktop to the Atlas 200 DK using secure copy protocol:  
+   scp -r /home/ascend/Desktop/Atlas_robot_pet/  
+   HwHiAiUser@192.168.1.2:/home/HwHiAiUser/HIAI_PROJECTS/  
    The password to SCP is Mind@123
 
 ### Raspberry Pi Setup
-1. Install the latest version of Raspbian onto an SD card 
-   Follow the steps in the link: 
+1. Install the latest version of Raspbian onto an SD card  
+   Follow the steps in the link:  
    https://www.raspberrypi.org/documentation/installation/installing-images/ 
 2. Insert SD card into Pi and power on the Pi by plugging it into a 5V power source.
-3. Update the system by opening a terminal and entering:
-   sudo apt-get update                                                          
+3. Update the system by opening a terminal and entering:  
+   sudo apt-get update                                                        
    sudo apt-get upgrade
-5. Install OpenCV for Python 3:
+5. Install OpenCV for Python 3:  
    sudo apt-get install python3-opencv
-7. Install the LCD driver
-   Follow instruction under the link:
+7. Install the LCD driver  
+   Follow instruction under the link:  
    https://github.com/goodtft/LCD-show 
 6. Retrieve the files to be downloaded onto the Raspberry Pi, which are located in the folder “Raspberry-Pi_robot_pet”, either from the source code folder provided or from the GitHub repository. Move the following files onto the Raspberry Pi Desktop in the folder “Raspberry-Pi_robot_pet”:
     * Raspberry-Pi_robot_pet/happy.mp4
