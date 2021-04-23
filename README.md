@@ -30,9 +30,10 @@ Through its camera “eyes”, this robot pet uses a combination of machine lear
 
 # Setup
 ### Computer
-1. Download the VMWare image to your host PC (size ~11GB): Google drive link: https://drive.google.com/drive/folders/1rPXsv9p3cD_MpEpi2lggdW43nLFCy4v_?usp=sharing                                                                                                     Download the following three files: ‘VM_C73.part1.rar’, ‘VM_C73.part2.rar’ ‘VM_C73.part3.rar’ 
-2. Unzip ‘VM_C73.part1.rar’ (Part 2 and Part 3 will automatically be unzipped).
-3. Download and install the latest version of the VMware Workstation Player through the following link: https://www.vmware.com/ca/products/workstation-player/workstation-player-evaluation.html 
+1. Download the VMWare image to your host PC (size ~11GB): Google drive link: https://drive.google.com/drive/folders/1rPXsv9p3cD_MpEpi2lggdW43nLFCy4v_?usp=sharing              
+   Download the following three files: ‘VM_C73.part1.rar’, ‘VM_C73.part2.rar’ ‘VM_C73.part3.rar’ 
+3. Unzip ‘VM_C73.part1.rar’ (Part 2 and Part 3 will automatically be unzipped).
+4. Download and install the latest version of the VMware Workstation Player through the following link: https://www.vmware.com/ca/products/workstation-player/workstation-player-evaluation.html 
 
 ### Atlas 200DK Setup
 1. Set up the Atlas 200 DK by following the steps in the link: https://support.huaweicloud.com/intl/en-us/usermanual-A200dk_3000/atlas200dk_02_0001.html
