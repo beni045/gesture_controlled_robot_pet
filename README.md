@@ -43,6 +43,7 @@ Through its camera “eyes”, this robot pet uses a combination of machine lear
 5. Retrieve the files to be downloaded onto the Atlas 200 DK, which are located in the folder “Atlas_robot_pet”, either from the source code folder provided or from the GitHub repository. Move these to the desktop of your VM.
 6. Retrieve the three machine learning models from the folder “models”. Place them in the folder “/Atlas_robot_pet/model/” on the Desktop of your VM.
 7. Open a terminal in the VM on your computer, and move the “Atlas_robot_pet” folder from your VM desktop to the Atlas 200 DK using secure copy protocol:                                    scp -r /home/ascend/Desktop/Atlas_robot_pet/ HwHiAiUser@192.168.1.2:/home/HwHiAiUser/HIAI_PROJECTS/                           The password to SCP is Mind@123
+
 ### Raspberry Pi Setup
 1. Install the latest version of Raspbian onto an SD card 
 Follow the steps in the link:
@@ -58,6 +59,21 @@ https://github.com/goodtft/LCD-show
     * Raspberry-Pi_robot_pet/neu.mp4
     * Raspberry-Pi_robot_pet/white.jpeg
     * Raspberry-Pi_robot_pet/robot_server.py
+
+### Running the Application
+
+Atlas 200DK 
+1. Open a terminal on your setup VM (ascend), and navigate to the following directory: cd /home/ascend/Desktop/Atlas_robot_pet/script/  
+2. In the same terminal, run the presenter server: bash ./run_presenter_server.sh
+3. Open a second terminal on your setup VM (ascend), and SSH into the Atlas 200 DK: ssh HwHiAiUser@192.168.1.2                                                                 
+  (The IP address for USB connection of the Atlas 200 DK will normally be 192.168.1.2) The default password to SSH is Mind@123.
+4. Navigate to the folder which holds the main program of the application: cd /home/HwHiAiUser/HIAI_PROJECTS/Atlas_robot_pet/code_live/
+5. Run the main program on the Atlas 200 DK: python3 main.py
+
+Raspberry Pi
+1. Start Raspberry Pi into Raspbian OS
+2. Navigate to the directory where the main Raspberry Pi program is located:         cd /home/pi/Desktop/Raspberry-Pi_robot_pet/
+3. Run the main program for the robot control: python3 robot_server.py
 
 ### Hardware Setup
 1. stuff
