@@ -54,10 +54,10 @@ https://www.raspberrypi.org/documentation/installation/installing-images/
 Follow instruction under the link:
 https://github.com/goodtft/LCD-show 
 6. Retrieve the files to be downloaded onto the Raspberry Pi, which are located in the folder “Raspberry-Pi_robot_pet”, either from the source code folder provided or from the GitHub repository. Move the following files onto the Raspberry Pi Desktop in the folder “Raspberry-Pi_robot_pet”:
-  a. Raspberry-Pi_robot_pet/happy.mp4
-  b. Raspberry-Pi_robot_pet/neu.mp4
-  c. Raspberry-Pi_robot_pet/white.jpeg 
-  d. Raspberry-Pi_robot_pet/robot_server.py
+  * Raspberry-Pi_robot_pet/happy.mp4
+  * Raspberry-Pi_robot_pet/neu.mp4
+  * Raspberry-Pi_robot_pet/white.jpeg 
+  * Raspberry-Pi_robot_pet/robot_server.py
 
 ### Hardware Setup
 1. stuff
