@@ -96,23 +96,25 @@ Command | Gesture | Description
 # Run the Robot
 
 ### Atlas 200DK 
-1. Open a terminal on your setup VM (ascend), and navigate to the following directory: 
+1. Open a terminal on your setup VM (ascend), and navigate to the following directory:  
    cd /home/ascend/Desktop/Atlas_robot_pet/script/  
-3. In the same terminal, run the presenter server: 
+3. In the same terminal, run the presenter server:  
    bash ./run_presenter_server.sh
-5. Open a second terminal on your setup VM (ascend), and SSH into the Atlas 200 DK: 
-   ssh HwHiAiUser@192.168.1.2                                                                 
-  (The IP address for USB connection of the Atlas 200 DK will normally be 192.168.1.2) 
+5. Open a second terminal on your setup VM (ascend), and SSH into the Atlas 200 DK:  
+   ssh HwHiAiUser@192.168.1.2  
+  (The IP address for USB connection of the Atlas 200 DK will normally be 192.168.1.2)  
   The default password to SSH is Mind@123.
-4. Navigate to the folder which holds the main program of the application: 
+4. Navigate to the folder which holds the main program of the application:  
    cd /home/HwHiAiUser/HIAI_PROJECTS/Atlas_robot_pet/code_live/
-6. Run the main program on the Atlas 200 DK: 
+6. Run the main program on the Atlas 200 DK:  
    python3 main.py
 
 ### Raspberry Pi
 1. Start Raspberry Pi into Raspbian OS
-2. Navigate to the directory where the main Raspberry Pi program is located:         cd /home/pi/Desktop/Raspberry-Pi_robot_pet/
-3. Run the main program for the robot control: python3 robot_server.py
+2. Navigate to the directory where the main Raspberry Pi program is located:  
+   cd /home/pi/Desktop/Raspberry-Pi_robot_pet/
+4. Run the main program for the robot control:  
+   python3 robot_server.py
 
 # Notes
 Power supply not solved
