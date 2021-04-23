@@ -35,7 +35,7 @@ Through its camera “eyes”, this robot pet uses a combination of machine lear
 3. Download and install the latest version of the VMware Workstation Player through the following link: https://www.vmware.com/ca/products/workstation-player/workstation-player-evaluation.html 
 
 ### Atlas 200DK Setup
-1.Set up the Atlas 200 DK by following the steps in the link: https://support.huaweicloud.com/intl/en-us/usermanual-A200dk_3000/atlas200dk_02_0001.html
+1. Set up the Atlas 200 DK by following the steps in the link: https://support.huaweicloud.com/intl/en-us/usermanual-A200dk_3000/atlas200dk_02_0001.html
 2. Start VMware Player and load the unzipped file:                                                                VMware Player -> 'Open a Virtual Machine'                                                             directory: VM_C73/ascend.vmx                                                                                   (Choose 'I copied it', then select 'No' if VMware is looking for some storage; then, you will see the virtual machine ‘ascend’ added in VMware player)
 3. Power on ’ascend’, and use following at the login page:                                    User: ascend                                                                                                          Password: ascend
 4. Connect the Atlas 200 DK to your computer via USB.
