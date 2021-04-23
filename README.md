@@ -60,7 +60,27 @@ https://github.com/goodtft/LCD-show
     * Raspberry-Pi_robot_pet/white.jpeg
     * Raspberry-Pi_robot_pet/robot_server.py
 
-### Running the Application
+### Hardware Setup
+1. stuff
+2. more stuff
+3. even more stuff
+4. ahhh
+5. when
+6. will
+7. it
+8. end
+
+# Gestures
+Below are the gestures included in the repository.
+
+Command | Gesture | Description
+------- | ------- | -----------
+`Move Forwards` | <img src="/Images/gesture_example_1.png" width="250" height="250"> | Moves the robot forwards
+`Move Backwards` | <img src="/Images/gesture_example_2.png" width="250" height="250"> | Moves the robot backwards
+`Spin Around` | <img src="/Images/gesture_example_3.png" width="250" height="250"> | Spins the robot around
+`Take a Picture` | <img src="/Images/gesture_example_4.png" width="250" height="250"> | Initiates the routine to take a photo
+
+# Run the Robot
 
 Atlas 200DK 
 1. Open a terminal on your setup VM (ascend), and navigate to the following directory: cd /home/ascend/Desktop/Atlas_robot_pet/script/  
@@ -74,27 +94,6 @@ Raspberry Pi
 1. Start Raspberry Pi into Raspbian OS
 2. Navigate to the directory where the main Raspberry Pi program is located:         cd /home/pi/Desktop/Raspberry-Pi_robot_pet/
 3. Run the main program for the robot control: python3 robot_server.py
-
-### Hardware Setup
-1. stuff
-2. more stuff
-3. even more stuff
-4. ahhh
-5. when
-6. will
-7. it
-8. end
-
-
-# Gestures
-Below are the gestures included in the repository.
-
-Command | Gesture | Description
-------- | ------- | -----------
-`Move Forwards` | <img src="/Images/gesture_example_1.png" width="250" height="250"> | Moves the robot forwards
-`Move Backwards` | <img src="/Images/gesture_example_2.png" width="250" height="250"> | Moves the robot backwards
-`Spin Around` | <img src="/Images/gesture_example_3.png" width="250" height="250"> | Spins the robot around
-`Take a Picture` | <img src="/Images/gesture_example_4.png" width="250" height="250"> | Initiates the routine to take a photo
 
 # Notes
 Power supply not solved
