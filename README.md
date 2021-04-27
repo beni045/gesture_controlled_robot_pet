@@ -73,16 +73,6 @@ Through its camera “eyes”, this robot pet uses a combination of machine lear
     * Raspberry-Pi_robot_pet/white.jpeg
     * Raspberry-Pi_robot_pet/robot_server.py
 
-### Hardware Setup
-1. stuff
-2. more stuff
-3. even more stuff
-4. ahhh
-5. when
-6. will
-7. it
-8. end
-
 # Gestures
 Below are the gestures included in the repository.
 
