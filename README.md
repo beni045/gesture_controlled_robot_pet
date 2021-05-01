@@ -108,18 +108,13 @@ Command | Gesture | Description
 
 # Dependencies and Third Party Links
 * Hand Gesture Recognition Model: https://github.com/Atlas200dk/sample-handposeRCcar
-
 * Hand Detection Model: https://github.com/victordibia/handtracking 
-
 * Face Detection Model: https://github.com/Ascend-Huawei/OfflineModelSamples/tree/main/face_detection
-
 * Raspbian image: https://www.raspberrypi.org/documentation/installation/installing-images/
-
 * LCD driver: https://github.com/goodtft/LCD-show 
-
 * OpenCV
 
-Python libraries with pip install:
+Python libraries used:
 * Socket
 * Sys
 * Pickle
