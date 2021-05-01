@@ -106,5 +106,33 @@ Command | Gesture | Description
 4. Run the main program for the robot control:  
    python3 robot_server.py
 
+# Dependencies and Third Party Links
+* Hand Gesture Recognition Model: https://github.com/Atlas200dk/sample-handposeRCcar
+
+* Hand Detection Model: https://github.com/victordibia/handtracking 
+
+* Face Detection Model: https://github.com/Ascend-Huawei/OfflineModelSamples/tree/main/face_detection
+
+* Raspbian image: https://www.raspberrypi.org/documentation/installation/installing-images/
+
+* LCD driver: https://github.com/goodtft/LCD-show 
+
+* OpenCV
+
+Python libraries with pip install:
+* Socket
+* Sys
+* Pickle
+* Numpy
+* Struct
+* Zlib
+* RPi.GPIO
+* Time
+* Os
+* Math
+* Threading
+* datetime
+
+
 # Notes
 Power supply not solved
