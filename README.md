@@ -28,12 +28,15 @@ Through its camera “eyes”, this robot pet uses a combination of machine lear
   <img width="300" src="/Images/final.jpg">
 </p>
 
-### Setup and Connections
-* Raspberry Pi connected to Atlas 200DK via ethernet
-* 
-*
+### Setup and Connection Notes
+* Build robot base without using the Ardunio or the ultrasonic sensors
+* Connect robot base parts to Raspberry Pi
+* Raspberry Pi connected to Atlas 200DK via ethernet*
 
 # Setup
+### Computer
+https://support.huaweicloud.com/intl/en-us/Atlas200DK202/
+
 ### Atlas 200DK Setup
 1. Set up the Atlas 200 DK by following the steps in the link: https://support.huaweicloud.com/intl/en-us/usermanual-A200dk_3000/atlas200dk_02_0001.html
 2. Start VMware Player and load the unzipped file:  
