@@ -9,7 +9,7 @@ Through its camera “eyes”, this robot pet uses a combination of machine lear
   <img width="300" src="/Images/robot.png">
 </p>
 
-# Hardware Required
+# Hardware
 * Huawei's Atlas 200DK
 * Raspberry Pi (3+)
 * Raspberry Pi Camera (Camera V2)
@@ -27,6 +27,8 @@ Through its camera “eyes”, this robot pet uses a combination of machine lear
 <p align="center">
   <img width="300" src="/Images/final.jpg">
 </p>
+
+### Setup and Connections
 
 # Setup
 ### Computer
