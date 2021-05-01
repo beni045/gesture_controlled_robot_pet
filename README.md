@@ -111,7 +111,22 @@ Command | Gesture | Description
 * LCD driver: https://github.com/goodtft/LCD-show 
 * OpenCV
 
-Python libraries used:
+Python libraries used for Atlas 200 DK:
+* Random
+* Os
+* Cv2
+* Numpy
+* Argparse
+* Sys
+* Socket
+* Threading
+* Time
+* Io
+* Struct
+* Pickle
+* Zlib
+
+Python libraries used for Raspberry Pi:
 * Socket
 * Sys
 * Pickle
@@ -121,9 +136,10 @@ Python libraries used:
 * RPi.GPIO
 * Time
 * Os
+* Cv2
 * Math
 * Threading
-* datetime
+* Datetime
 
 
 # Notes
