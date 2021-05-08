@@ -9,6 +9,11 @@ Through its camera “eyes”, this robot pet uses a combination of machine lear
   <img width="300" src="/Images/robot.png">
 </p>
 
+# Repo
+<p align="center">
+  <src="/Images/repo.png">
+</p>
+
 # Hardware
 * [Huawei's Atlas 200DK](https://e.huawei.com/en/products/cloud-computing-dc/atlas/atlas-200)
 * [Raspberry Pi (3+)](https://www.raspberrypi.org/products/raspberry-pi-4-model-b/)
@@ -67,7 +72,7 @@ https://support.huaweicloud.com/intl/en-us/Atlas200DK202/
 7. Install the LCD driver  
    Follow instruction under the link:  
    https://github.com/goodtft/LCD-show 
-6. Retrieve the files to be downloaded onto the Raspberry Pi, which are located in the folder “Raspberry-Pi_robot_pet”, either from the source code folder provided or from the GitHub repository. Move the following files onto the Raspberry Pi Desktop in the folder “Raspberry-Pi_robot_pet”:
+6. Retrieve the files to be downloaded onto the Raspberry Pi, which are located in the folder “RaspberryPi_robot_pet”, either from the source code folder provided or from the GitHub repository. Move the following files onto the Raspberry Pi Desktop in the folder “RaspberryPi_robot_pet”:
     * Raspberry-Pi_robot_pet/happy.mp4
     * Raspberry-Pi_robot_pet/neu.mp4
     * Raspberry-Pi_robot_pet/white.jpeg
