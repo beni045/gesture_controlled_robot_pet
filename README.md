@@ -11,7 +11,7 @@ Through its camera “eyes”, this robot pet uses a combination of machine lear
 
 # Repo
 <p align="center">
-  <src="/Images/repo.png">
+  <img src="/Images/repo.png">
 </p>
 
 # Hardware
