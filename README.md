@@ -39,25 +39,11 @@ Through its camera “eyes”, this robot pet uses a combination of machine lear
 * Raspberry Pi connected to Atlas 200DK via ethernet
 
 # Setup
-### Computer
-https://support.huaweicloud.com/intl/en-us/Atlas200DK202/
+### Development Environment (PC)
+Development PC requires Ubuntu 18.04 system (can be virtual machine), and have CANN installed. Please setup follow the this official [guide](https://support.huaweicloud.com/intl/en-us/environment-deployment-Atlas200DK202/atlased_04_0017.html) or this [wiki](https://gitee.com/ascend/samples/wikis/Setting%20Up%20the%20Development%20and%20Operating%20Environments?sort_id=3736936)
 
 ### Atlas 200DK Setup
-1. Set up the Atlas 200 DK by following the steps in the link: https://support.huaweicloud.com/intl/en-us/usermanual-A200dk_3000/atlas200dk_02_0001.html
-2. Start VMware Player and load the unzipped file:  
-   VMware Player -> 'Open a Virtual Machine'  
-   directory: VM_C73/ascend.vmx  
-   (Choose 'I copied it', then select 'No' if VMware is looking for some storage; then, you will see the virtual machine ‘ascend’ added in VMware player)
-4. Power on ’ascend’, and use following at the login page:  
-   User: ascend  
-   Password: ascend  
-6. Connect the Atlas 200 DK to your computer via USB.
-7. Retrieve the files to be downloaded onto the Atlas 200 DK, which are located in the folder “Atlas_robot_pet”, either from the source code folder provided or from the GitHub repository. Move these to the desktop of your VM.
-8. Retrieve the three machine learning models from the folder “models”. Place them in the folder “/Atlas_robot_pet/model/” on the Desktop of your VM.
-9. Open a terminal in the VM on your computer, and move the “Atlas_robot_pet” folder from your VM desktop to the Atlas 200 DK using secure copy protocol:  
-   scp -r /home/ascend/Desktop/Atlas_robot_pet/  
-   HwHiAiUser@192.168.1.2:/home/HwHiAiUser/HIAI_PROJECTS/  
-   The password to SCP is Mind@123
+Setup the Atlas 200 DK board, following this [wiki](https://gitee.com/ascend/samples/wikis/Setting%20Up%20the%20Development%20and%20Operating%20Environments?sort_id=3736936) or the official [guide](https://support.huaweicloud.com/intl/en-us/environment-deployment-Atlas200DK202/atlased_04_0001.html)
 
 ### Raspberry Pi Setup
 1. Install the latest version of Raspbian onto an SD card  
@@ -91,18 +77,21 @@ Command | Gesture | Description
 # Run the Robot
 
 ### Atlas 200DK 
-1. Open a terminal on your setup VM (ascend), and navigate to the following directory:  
-   cd /home/ascend/Desktop/Atlas_robot_pet/script/  
+1. Download/Clone this repo to your development PC as well as Atlas 200 DK.
+1. Open a terminal on your development PC, and navigate to the project directory, for example: 
+   cd hand_gesture_controlled_robot_pet/script/  
 3. In the same terminal, run the presenter server:  
    bash ./run_presenter_server.sh
-5. Open a second terminal on your setup VM (ascend), and SSH into the Atlas 200 DK:  
+5. Open a second terminal, and SSH into the Atlas 200 DK:  
    ssh HwHiAiUser@192.168.1.2  
   (The IP address for USB connection of the Atlas 200 DK will normally be 192.168.1.2)  
   The default password to SSH is Mind@123.
-4. Navigate to the folder which holds the main program of the application:  
+4. Navigate to the folder which holds the main program of the application, for example: 
    cd /home/HwHiAiUser/HIAI_PROJECTS/Atlas_robot_pet/code_live/
 6. Run the main program on the Atlas 200 DK:  
    python3 main.py
+
+Note, in the project, [Presenter Server](https://gitee.com/Atlas200DK/sdk-presenter) is used to demo the video captured from the camera.
 
 ### Raspberry Pi
 1. Start Raspberry Pi into Raspbian OS
@@ -133,6 +122,9 @@ Python libraries used for Atlas 200 DK:
 * Struct
 * Pickle
 * Zlib
+
+For setup Python environment, you can refer to this [guide](https://gitee.com/ascend/samples/tree/master/python/environment).
+
 
 Python libraries used for Raspberry Pi:
 * Socket
