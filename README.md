@@ -87,7 +87,7 @@ Command | Gesture | Description
 1. Download/Clone this repo to your development PC as well as Atlas 200 DK.
 1. Open a terminal on your development PC, and navigate to the project directory, for example: 
    cd hand_gesture_controlled_robot_pet/script/  
-3. In the same terminal, run the presenter server:  
+3. In the same terminal, run the presenter server (more information in the next section below):  
    bash ./run_presenter_server.sh
 5. Open a second terminal, and SSH into the Atlas 200 DK:  
    ssh HwHiAiUser@192.168.1.2  
@@ -97,8 +97,50 @@ Command | Gesture | Description
    cd /home/HwHiAiUser/HIAI_PROJECTS/Atlas_robot_pet/code_live/
 6. Run the main program on the Atlas 200 DK:  
    python3 main.py
+   
+#### Presenter Server
 
 Note, in the project, [Presenter Server](https://gitee.com/Atlas200DK/sdk-presenter) is used to demo the video captured from the camera.
+
+Modify the configuration file, if you need to view the detection results using presenter server for the live input.
+
+Modify presenter_server_ip and presenter_view_ip in body_pose.conf to the current ubuntu server and atlas200dk development board network port ip, presenter _agent_ip is the ip of the network port connected to the ubuntu server on the development board.
+
+If you use USB connection, the USB network port ip of the development board is 192.168.1.2, and the network port ip of the virtual network card connected to the ubuntu server and the development board is 192.168.1.223, then the configuration file content is as follows:
+
+presenter_server_ip=192.168.1.223
+
+presenter_view_ip=192.168.1.223
+
+presenter_agent_ip=192.168.1.2
+
+Generally, when connecting via USB, atlas200dk_board_ip is the USB network port ip of the development board, and the default is 192.168.1.2.
+
+If you need to view the detection results using presenter server for the live input or video source, log in to the Presenter Server website using the URL that was prompted when the Presenter Server service was started. Otherwise, skip this step.
+
+Wait for the Presenter Agent to transmit data to the server, and click "Refresh" to refresh. When there is data, the status of the corresponding Channel turns green.
+
+Click the corresponding View Name link on the right to view the results.
+
+If the presenter server is being used for display, stop
+
+#### Stopping Presenter Server
+
+The Presenter Server service will always be running after it is started. If you want to stop the Presenter Server service corresponding to the pose detection application, you can perform the following operations.
+
+Execute the following command on the command line on the server where the process of the Presenter Server service is running:
+
+ps -ef | grep presenter
+
+ascend@ubuntu:~/AscendProjects/Atlas_robot_pet/script$ ps -ef | grep presenter
+ascend 9560 1342 0 02:19 pts/4  00:00:04   python3/home/ascend/AscendProjects/Atlas_robot_pet.bak/script/..//presenterserver/presenter_server.py --app Atlas_robot_pet
+
+As shown above, 9650 is the process ID of the Presenter Server service corresponding to the Atlas_robot_pet application.
+
+If you want to stop this service, execute the following command:
+
+kill -9 9650
+
 
 ### Raspberry Pi
 1. Start Raspberry Pi into Raspbian OS
