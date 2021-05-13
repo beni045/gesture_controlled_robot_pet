@@ -34,9 +34,9 @@ Through its camera “eyes”, this robot pet uses a combination of machine lear
 </p>
 
 ### Setup and Connection Notes
-* Build robot base without using the Arduino or the ultrasonic sensors
-* Connect robot base parts to Raspberry Pi
-* Raspberry Pi connected to Atlas 200DK via ethernet
+* Build robot base without using the Arduino or the ultrasonic sensors, you can find the instructions [here](https://drive.google.com/file/d/1nSlkYJ7oCfMkG1p-KDfVHdLQt3B4Nmo5/view)
+* Connect robot base parts to Raspberry Pi (see pinout in RaspberryPi_robot_pet/robot_server.py)
+* Raspberry Pi connected to Atlas 200DK via Ethernet cord
 * Connect Raspberry Pi Camera to to CAMERA0 on the Atlas 200 DK, you can follow this [guide](https://support.huaweicloud.com/intl/en-us/qs-atlas200dkappc32/atlased_04_0006.html)
 
 # Setup
@@ -52,9 +52,6 @@ Setup the Atlas 200 DK board, following this [wiki](https://gitee.com/ascend/sam
 3. Set up RC Car (https://www.amazon.com/ELEGOO-Tracking-Ultrasonic-Intelligent-Educational/dp/B07KPZ8RSZ) following instructions.  
 
 4. Connect Atlas board to Raspberry Pi with an Ethernet cable.  
-
-For further information about Atlas DK board, please visit  
-https://support.huaweicloud.com/intl/en-us/Atlas200DK202/
 ### Raspberry Pi Setup
 1. Install the latest version of Raspbian onto an SD card  
    Follow the steps in the link:  
@@ -107,15 +104,15 @@ Note, in the project, [Presenter Server](https://gitee.com/Atlas200DK/sdk-presen
 
 Modify the configuration file, if you need to view the detection results using presenter server for the live input.
 
-Modify presenter_server_ip and presenter_view_ip in body_pose.conf to the current ubuntu server and atlas200dk development board network port ip, presenter _agent_ip is the ip of the network port connected to the ubuntu server on the development board.
+Modify <i>presenter_server_ip</i> and <i>presenter_view_ip</i> in <i>body_pose.conf</i> to the current ubuntu server and atlas200dk development board network port ip, presenter _agent_ip is the ip of the network port connected to the ubuntu server on the development board.
 
 If you use USB connection, the USB network port ip of the development board is 192.168.1.2, and the network port ip of the virtual network card connected to the ubuntu server and the development board is 192.168.1.223, then the configuration file content is as follows:
 
-presenter_server_ip=192.168.1.223
+<i>presenter_server_ip=192.168.1.223
 
 presenter_view_ip=192.168.1.223
 
-presenter_agent_ip=192.168.1.2
+presenter_agent_ip=192.168.1.2</i>
 
 Generally, when connecting via USB, atlas200dk_board_ip is the USB network port ip of the development board, and the default is 192.168.1.2.
 
@@ -125,25 +122,25 @@ Wait for the Presenter Agent to transmit data to the server, and click "Refresh"
 
 Click the corresponding View Name link on the right to view the results.
 
-If the presenter server is being used for display, stop
-
 #### Stopping Presenter Server
 
 The Presenter Server service will always be running after it is started. If you want to stop the Presenter Server service corresponding to the pose detection application, you can perform the following operations.
 
 Execute the following command on the command line on the server where the process of the Presenter Server service is running:
 
-ps -ef | grep presenter
+<b>ps -ef | grep presenter</b>
 
-ascend@ubuntu:~/AscendProjects/Atlas_robot_pet/script$ ps -ef | grep presenter
-ascend 9560 1342 0 02:19 pts/4  00:00:04   python3/home/ascend/AscendProjects/Atlas_robot_pet.bak/script/..//presenterserver/presenter_server.py --app Atlas_robot_pet
+<i>ascend@ubuntu:~/AscendProjects/hand_gesture_controlled_robot_pet
+/Atlas_robot_pet/script$ ps -ef | grep presenter
+<br/>ascend 9560 1342 0 02:19 pts/4  00:00:04   python3/home/ascend/AscendProjects/hand_gesture_controlled_robot_pet
+/Atlas_robot_pet.bak/script/..//presenterserver/presenter_server.py --app Atlas_robot_pet
+</i>
 
 As shown above, 9650 is the process ID of the Presenter Server service corresponding to the Atlas_robot_pet application.
 
 If you want to stop this service, execute the following command:
 
-kill -9 9650
-
+<b>kill -9 9650</b>
 
 ### Raspberry Pi
 1. Start Raspberry Pi into Raspbian OS
