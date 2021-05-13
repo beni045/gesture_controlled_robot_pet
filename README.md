@@ -49,9 +49,9 @@ Setup the Atlas 200 DK board, following this [wiki](https://gitee.com/ascend/sam
 
 2. Attach raspberry Pi camera to the board (https://support.huaweicloud.com/intl/en-us/qs-atlas200dkappc32/atlased_04_0006.html).  
 
-c) Set up RC Car (https://www.amazon.com/ELEGOO-Tracking-Ultrasonic-Intelligent-Educational/dp/B07KPZ8RSZ) following instructions.  
+3. Set up RC Car (https://www.amazon.com/ELEGOO-Tracking-Ultrasonic-Intelligent-Educational/dp/B07KPZ8RSZ) following instructions.  
 
-d) Connect Atlas board to Raspberry Pi with an Ethernet cable.  
+4. Connect Atlas board to Raspberry Pi with an Ethernet cable.  
 ### Raspberry Pi Setup
 1. Install the latest version of Raspbian onto an SD card  
    Follow the steps in the link:  
