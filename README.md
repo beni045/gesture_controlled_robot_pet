@@ -45,7 +45,13 @@ Development PC requires Ubuntu 18.04 system (can be virtual machine), and have C
 
 ### Atlas 200DK Setup
 Setup the Atlas 200 DK board, following this [wiki](https://gitee.com/ascend/samples/wikis/Setting%20Up%20the%20Development%20and%20Operating%20Environments?sort_id=3736936) or the official [guide](https://support.huaweicloud.com/intl/en-us/environment-deployment-Atlas200DK202/atlased_04_0001.html)
+1. Power the Atlas DK board and connect wifi module for internet connectivity  
 
+2. Attach raspberry Pi camera to the board (https://support.huaweicloud.com/intl/en-us/qs-atlas200dkappc32/atlased_04_0006.html).  
+
+c) Set up RC Car (https://www.amazon.com/ELEGOO-Tracking-Ultrasonic-Intelligent-Educational/dp/B07KPZ8RSZ) following instructions.  
+
+d) Connect Atlas board to Raspberry Pi with an Ethernet cable.  
 ### Raspberry Pi Setup
 1. Install the latest version of Raspbian onto an SD card  
    Follow the steps in the link:  
