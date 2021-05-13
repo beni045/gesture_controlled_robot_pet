@@ -37,6 +37,7 @@ Through its camera “eyes”, this robot pet uses a combination of machine lear
 * Build robot base without using the Arduino or the ultrasonic sensors
 * Connect robot base parts to Raspberry Pi
 * Raspberry Pi connected to Atlas 200DK via ethernet
+* Connect Raspberry Pi Camera to to CAMERA0 on the Atlas 200 DK, you can follow this [guide](https://support.huaweicloud.com/intl/en-us/qs-atlas200dkappc32/atlased_04_0006.html)
 
 # Setup
 ### Development Environment (PC)
