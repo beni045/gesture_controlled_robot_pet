@@ -9,7 +9,9 @@ sys.path.append('../')
 from src.pose_decode import decode_pose
 from src.body_pose_decode import decode_body_pose
 from acl_model import Model
-
+from src.dataloader import letterbox
+from src.multitracker import JDETracker
+from src import visualization as vis
 heatmap_width = 64
 heatmap_height = 64
 body_heatmap_width = 92
@@ -305,5 +307,104 @@ class body_pose_ModelProcessor:
         return preprocessed_img
 
 
+##############################################
+############### OBJECT TRACKING ##############
+##############################################
+
+class object_tracking_ModelProcessor:
+    
+    def __init__(self, acl_resource, params):
+        self._acl_resource = acl_resource
+        self.params = params
+
+        assert 'model_dir' in params and params['model_dir'] is not None, 'Review your param: model_dir'
+        assert os.path.exists(params['model_dir']), "Model directory doesn't exist {}".format(params['model_dir'])
+
+        # load model from path, and get model ready for inference
+        self.model = Model(acl_resource, params['model_dir'])
+
+        self.height = 608
+        self.width = 1088
+
+        args = argparse.ArgumentParser()
+        args.conf_thres = 0.35
+        args.track_buffer = 30
+        args.min_box_area = 100
+        args.K = 100
+        args.mean = [0.408, 0.447, 0.470]
+        args.std = [0.289, 0.274, 0.278]
+        args.down_ratio = 4
+        args.num_classes = 1
+        self.args = args
+
+    def predict(self, img_original):
+        #preprocess image to get 'model_input'
+        img, img0 = self.PreProcessing(img_original)
+
+        # initialize tracker
+        tracker = JDETracker(self.args, self.model, frame_rate=30)
+
+        # list of Tracklet; see multitracker.STrack
+        online_targets = tracker.update(np.array([img]), img0)
+
+        # prepare for drawing, get all bbox and id
+        online_tlwhs = []
+        online_ids = []
+        for t in online_targets:
+            tlwh = t.tlwh
+            tid = t.track_id
+            vertical = tlwh[2] / tlwh[3] > 1.6
+            if tlwh[2] * tlwh[3] > self.args.min_box_area and not vertical:
+                online_tlwhs.append(tlwh)
+                online_ids.append(tid)
+
+        # draw bbox and id
+        canvas = vis.plot_tracking(img0, online_tlwhs, online_ids, frame_id=1,
+                                        fps=1.0)
+
+        canvas, command = self.PostProcessing(canvas, online_tlwhs)
+
+        return canvas, command
+
+    def PreProcessing(self, img0):
+        # img:  h w c; 608 1088 3
+        # img0: c h w; 3 608 1088
+
+        # Padded resize
+        img, _, _, _ = letterbox(img0, height=self.height, width=self.width)
+
+        # Normalize RGB
+        img = img[:, :, ::-1].transpose(2, 0, 1)
+        img = np.ascontiguousarray(img, dtype=np.float32)
+        img /= 255.0
+
+        # cv2.imwrite(img_path + '.letterbox.jpg', 255 * img.transpose((1, 2, 0))[:, :, ::-1])  # save letterbox image
+        return img, img0
+
+    # Determine the command for camera to center the bounding box of the detected person
+    def PostProcessing(self, image, bboxes):
+        command = "nothing"
+
+        if len(bboxes) > 0:
+            bbox = bboxes[0]
+
+            xmin, ymin, w, h = bbox
+
+            x_center = xmin + w / 2
+            y_center = ymin + h / 2
+
+            if x_center < ((1280 / 2) - 150):
+                command = "r" # Move servo right
+
+            elif x_center > ((1280 / 2) + 150):
+                command = "l" # Move servo left
+
+            elif y_center < ((720 / 2) - 75):
+                command = "u" # Move servo up
+
+            elif y_center > ((720 / 2) + 75):
+                command = "d" # Move servo down
+
+        return image, command
 
 
