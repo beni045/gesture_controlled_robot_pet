@@ -8,6 +8,8 @@ sys.path.append('..')
 from model_processor import handpose_ModelProcessor
 from model_processor import face_detection_ModelProcessor
 from model_processor import hand_detection_ModelProcessor
+from model_processor import body_pose_ModelProcessor
+from model_processor import object_tracking_ModelProcessor
 from atlas_utils.camera import Camera
 from atlas_utils import presenteragent
 from atlas_utils.acl_image import AclImage
@@ -22,16 +24,20 @@ import struct
 import pickle
 import zlib
 
-MODEL_PATH_HAND_POSE = "../model/handpose_argmax_bgr.om"
-MODEL_PATH_FACE_DETECTION = "../model/face_detection.om"
-MODEL_PATH_HAND_DETECTION = "../model/Hand_detection.om"
+MODEL_PATH_HAND_POSE = "../../models/handpose_argmax_bgr.om"
+MODEL_PATH_FACE_DETECTION = "../../models/face_detection.om"
+MODEL_PATH_HAND_DETECTION = "../../models/Hand_detection.om"
+MODEL_PATH_BODY_POSE = "../../models/body_pose.om"
+MODEL_PATH_OBJECT_TRACKING = "../../models/mot_v2.om"
 BODYPOSE_CONF="../param.conf"
 CAMERA_FRAME_WIDTH = 1280
 CAMERA_FRAME_HEIGHT = 720
 
 ## Socket Initialization
 
-UDP_IP = '10.0.0.165' # Set to destination IP, RPi in this case
+#UDP_IP = '10.0.0.165' # Set to destination IP, RPi in this case
+UDP_IP = '192.168.8.117'
+#UDP_IP = '192.168.0.4'
 UDP_PORT = 12345      # Port #, make sure same as on RPi
 
 print("UDP target IP:", UDP_IP)
@@ -222,22 +228,34 @@ def execute(model_path):
         'model_dir': MODEL_PATH_FACE_DETECTION,
     }
 
+    body_pose_model_parameters = {
+        'model_dir': MODEL_PATH_BODY_POSE,
+        'width': 368,
+        'height': 368
+    }
+
+    object_tracking_model_parameters = {
+        'model_dir': MODEL_PATH_OBJECT_TRACKING,
+    }
+
     # Prepare model instance: init (loading model from file to memory)
     # Model_processor: preprocessing + model inference + postprocessing
     handpose_model_processor = handpose_ModelProcessor(acl_resource, handpose_model_parameters)
     hand_detection_model_processor = hand_detection_ModelProcessor(acl_resource, hand_detection_model_parameters)
     face_detection_model_processor = face_detection_ModelProcessor(acl_resource, face_detection_model_parameters)
+    # body_pose_model_processor = body_pose_ModelProcessor(acl_resource, body_pose_model_parameters)
+    object_tracking_model_processor = object_tracking_ModelProcessor(acl_resource, object_tracking_model_parameters)
     
     ## Get Input ##
     # Initialize Camera
-    cap = Camera(id = 0, fps = 10)
+    cap = Camera(id = 1, fps = 10)
 
     ## Set Output ##
     # open the presenter channel
     chan = presenteragent.presenter_channel.open_channel(BODYPOSE_CONF)
     if chan == None:
-        print("Open presenter channel failed")
-        return
+         print("Open presenter channel failed")
+         return
 
 
     while True:
@@ -260,6 +278,8 @@ def execute(model_path):
         canvas, xmin, xmax, ymin, ymax = hand_detection_model_processor.predict(img_original)
         canvas1, command = face_detection_model_processor.predict(img_original)  
         canvas, hg_command = handpose_model_processor.predict(canvas, xmin, xmax, ymin, ymax, canvas1)
+        canvas, command = object_tracking_model_processor.predict(canvas)
+        # canvas = body_pose_model_processor.predict(canvas)  
         canvas = cv2.cvtColor(canvas, cv2.COLOR_BGR2RGB, 3)  
 
         # Update hand gesture command (if necessary) to send to Raspberry Pi through serial
@@ -268,6 +288,7 @@ def execute(model_path):
                 current_command_state = "send_take_a_picture"
             if hg_command == "FORWARDS":
                 current_command_state = "send_forward"
+                #canvas, hg_command = handpose_model_processor.predict(canvas, xmin, xmax, ymin, ymax, canvas_body)
             if hg_command == "BACKWARDS":
                 current_command_state = "send_backward"
             if hg_command == "SPIN":
