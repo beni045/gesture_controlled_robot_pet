@@ -43,13 +43,13 @@ WEB_SERVER = None
 APP_SERVER = None
 RUN_SERVER = None
 SERVER_TYPE = ""
-USAGE_INFO = "python3 prensenter_server.py [-h] --app \n\t\t\t\t{body_pose}"
+USAGE_INFO = "python3 prensenter_server.py [-h] --app \n\t\t\t\t{display}"
 
-BODY_MAP = {"web_server": "body_pose.src.web",
-                    "app_server": "body_pose.src.body_pose_server"
-                  }
+DISPLAY_MAP = {"web_server": "display.src.web",
+               "app_server": "display.src.display_server"
+              }
 
-APP_CONF_MAP = {"body_pose": BODY_MAP}
+APP_CONF_MAP = {"display": DISPLAY_MAP}
 
 
 def arg_parse():
@@ -60,7 +60,7 @@ def arg_parse():
 
     parser = argparse.ArgumentParser(usage=USAGE_INFO)
     parser.add_argument('--app', type=str, required=True,
-                        choices=['body_pose'],
+                        choices=['display'],
                         help="Application type corresponding to Presenter Server.")
     args = parser.parse_args()
     SERVER_TYPE = args.app

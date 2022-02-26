@@ -39,14 +39,15 @@ from google.protobuf.message import DecodeError
 import common.presenter_message_pb2 as pb2
 from common.channel_manager import ChannelManager
 from common.presenter_socket_server import PresenterSocketServer
-from body_pose.src.config_parser import ConfigParser
+from display.src.config_parser import ConfigParser
 
-class BodyPoseServer(PresenterSocketServer):
-    '''A server forbody pose'''
+class DisplayServer(PresenterSocketServer):
+    '''A server for face detection'''
     def __init__(self, server_address):
         '''init func'''
         self.channel_manager = ChannelManager(["image", "video"])
-        super(BodyPoseServer, self).__init__(server_address)
+        self._image_cnt = 0
+        super(DisplayServer, self).__init__(server_address)
 
     def _clean_connect(self, sock_fileno, epoll, conns, msgs):
         """
@@ -163,7 +164,7 @@ class BodyPoseServer(PresenterSocketServer):
         """
         request = pb2.PresentImageRequest()
         response = pb2.PresentImageResponse()
-
+        self._image_cnt += 1
         # Parse msg_data from protobuf
         try:
             request.ParseFromString(msg_data)
@@ -185,6 +186,10 @@ class BodyPoseServer(PresenterSocketServer):
             err_code = pb2.kPresentDataErrorUnsupportedFormat
             return self._response_image_request(conn, response, err_code)
 
+        logging.info("response image %d request"%(self._image_cnt))
+        self._response_image_request(conn, response,
+                                            pb2.kPresentDataErrorNone)
+
         rectangle_list = []
         if request.rectangle_list:
             for one_rectangle in request.rectangle_list:
@@ -197,9 +202,9 @@ class BodyPoseServer(PresenterSocketServer):
                 # add the detection result to list
                 rectangle_list.append(rectangle)
 
-        handler.save_image(request.data, request.width, request.height, rectangle_list)
-        return self._response_image_request(conn, response,
-                                            pb2.kPresentDataErrorNone)
+        handler.save_image(request.data, request.width, request.height, rectangle_list)       
+ 
+        return True
 
     def stop_thread(self):
         channel_manager = ChannelManager([])
@@ -207,14 +212,14 @@ class BodyPoseServer(PresenterSocketServer):
         self.set_exit_switch()
 
 def run():
-    '''Entrance function of Body Pose Server '''
+    '''Entrance function of Face Detection Server '''
     # read config file
     config = ConfigParser()
 
     # config log
     log_file_path = os.path.join(ConfigParser.root_path, "config/logging.conf")
     fileConfig(log_file_path)
-    logging.getLogger('body_pose')
+    logging.getLogger('face_detection')
 
     if not config.config_verify():
         return None
@@ -222,4 +227,4 @@ def run():
     logging.info("presenter server is starting...")
     server_address = (config.presenter_server_ip,
                       int(config.presenter_server_port))
-    return BodyPoseServer(server_address)
+    return DisplayServer(server_address)
