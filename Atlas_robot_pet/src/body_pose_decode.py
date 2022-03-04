@@ -49,6 +49,32 @@ def decode_body_pose(heatmaps, scale, image_original):
     for idx, limb in enumerate(JOINT_LIMB):
         joint_from, joint_to = joint_list[limb[0]], joint_list[limb[1]]
         canvas = cv2.line(canvas, tuple(joint_from.astype(int)), tuple(joint_to.astype(int)), color=COLOR[idx], thickness=4)
+
+
+    # Write gesture command onto image in top left corner
+    commandSize=cv2.getTextSize(command,cv2.FONT_HERSHEY_COMPLEX,1,2)
+    state = "INACTIVE"
+    # Write robot state onto image in bottom left corner
+    stateSize=cv2.getTextSize(state,cv2.FONT_HERSHEY_COMPLEX,1,2)
+
+    _x1 = 30
+    _y1 = 30
+    _x2 = _x1+commandSize[0][0]
+    _y2 = _y1-int(commandSize[0][1])
+    _x3 = 30
+    _y3 = 720 - 30
+    _x4 = _x3+stateSize[0][0]
+    _y4 = _y3-int(stateSize[0][1])
+
+    if command == "ACTIVATE":
+        cv2.rectangle(canvas,(_x3 ,_y3 ),(_x4 ,_y4),(255,255,255),cv2.FILLED)
+        cv2.putText(canvas,command,(_x3,_y3),cv2.FONT_HERSHEY_COMPLEX,1,(0,0,0),2)
+    else:
+        cv2.rectangle(canvas,(_x3 ,_y3 ),(_x4 ,_y4),(255,255,255),cv2.FILLED)
+        cv2.putText(canvas,state,(_x3,_y3),cv2.FONT_HERSHEY_COMPLEX,1,(0,0,0),2)
+        cv2.rectangle(canvas,(_x1 ,_y1 ),(_x2 ,_y2),(255,255,255),cv2.FILLED)
+        cv2.putText(canvas,command,(_x1,_y1),cv2.FONT_HERSHEY_COMPLEX,1,(0,0,0),2)
+
     return canvas, command 
 
 
@@ -69,39 +95,10 @@ def get_rc_command(joint_list, width):
     for joint in joint_list:
         x_arr.append(joint[0])
         y_arr.append(joint[1])
-    
-
-    # left_arm_up = left_arm_status(x_arr, y_arr)
-    # right_arm_up = right_arm_status(x_arr, y_arr)
-
-
-    # if validate(x_arr, y_arr, width) == False:
-    #     return "STOP"
-
-    # elif (left_arm_up and right_arm_up) :
-    #     return "ACTIVATE"
-
-    # elif (left_arm_up and (not right_arm_up)) :
-    #     return "FOLLOW"
-
-    # elif ((not left_arm_up) and right_arm_up) :
-    #     return "TAKE A PICTURE"
-
-    # elif ((not left_arm_up) and (not right_arm_up)) :
-    #     return "DEACTIVATE"
-
-    # else:
-    #     return "HAND!"
-
-
-    bent_thres_min = 80
-    bent_thres_max = 100
-    straight_thres_min = 170
-    straight_thre_max = 190
 
     straight = 180
     bent = 90
-    threshold = 10
+    threshold = 25
 
     left_elbow_up = left_elbow_status(y_arr)
     left_arm_angle = left_arm_bent(x_arr, y_arr)
@@ -111,24 +108,24 @@ def get_rc_command(joint_list, width):
     right_arm_angle = right_arm_bent(x_arr, y_arr)
     right_wrist_up = right_wrist_status(y_arr)
 
-    print (left_arm_angle)
-
+    # print (left_arm_angle)
 
     if validate(x_arr, y_arr, width) == False or (not left_elbow_up) or (not right_elbow_up):
         return "STOP"
+   
+    # |_o_|
+    elif abs(left_arm_angle - bent) <= threshold and left_wrist_up and abs(right_arm_angle - bent) <= threshold and right_wrist_up:
+        return "ACTIVATE"
+  
+    #  _o_
+    # |   |
+    elif abs(left_arm_angle - bent) <= threshold and (not left_wrist_up) and abs(right_arm_angle - bent) <= threshold and (not right_wrist_up):
+        return "DEACTIVATE"
 
     # T pose
     elif abs(left_arm_angle - straight) <= threshold and abs(right_arm_angle - straight) <= threshold:
         return "TAKE A PICTURE"
-    
-    # fork 
-    elif abs(left_arm_angle - bent) <= threshold and left_wrist_up and abs(right_arm_angle - bent) <= threshold and right_wrist_up:
-        return "ACTIVATE"
-
-    # angry
-    elif abs(left_arm_angle - bent) <= threshold and (not left_wrist_up) and abs(right_arm_angle - bent) <= threshold and (not right_wrist_up):
-        return "DEACTIVATE"
-
+   
     # |_o_
     #     |
     elif abs(left_arm_angle - bent) <= threshold and (not left_wrist_up) and abs(right_arm_angle - bent) <= threshold and right_wrist_up:
@@ -181,7 +178,7 @@ def left_elbow_status(y_arr):
     left_elbow_y = y_arr[4]
     body_y = y_arr[13]
 
-    print(abs(left_elbow_y - body_y))
+    # print(abs(left_elbow_y - body_y))
 
     # if left elbow horiZontal, then return 1
     if abs(left_elbow_y - body_y) <= horiZon_threshold:
@@ -270,7 +267,7 @@ def left_wrist_status(y_arr):
     left_elbow_y = y_arr[4]
 
     # if left wrist is up, then return 1
-    if left_wrist_y > left_elbow_y:
+    if left_wrist_y < left_elbow_y:
         return 1
     else:
         return 0
@@ -282,7 +279,7 @@ def right_wrist_status(y_arr):
     right_elbow_y = y_arr[1]
 
     # if right wrist is up, then return 1
-    if right_wrist_y > right_elbow_y:
+    if right_wrist_y < right_elbow_y:
         return 1
     else:
         return 0

@@ -7,10 +7,6 @@ sys.path.append('../..')
 heatmap_width = 64
 heatmap_height = 64
 
-###########################
-### DETERMINE BODY POSE ###
-###########################
-
 def decode_pose(heatmaps, scale, xmin, xmax, ymin, ymax, img_original, cropped_img, active):
   
     # Argmax of heatmap of output from handpose model are 21 coordinates representing points on the hand
@@ -41,11 +37,11 @@ def decode_pose(heatmaps, scale, xmin, xmax, ymin, ymax, img_original, cropped_i
     _x4 = _x3+stateSize[0][0]
     _y4 = _y3-int(stateSize[0][1])
 
-    cv2.rectangle(canvas,(_x3 ,_y3 ),(_x4 ,_y4),(255,255,255),cv2.FILLED)
-    cv2.putText(canvas,state,(_x3,_y3),cv2.FONT_HERSHEY_COMPLEX,1,(0,0,0),2)
-    if active:
-        cv2.rectangle(canvas,(_x1 ,_y1 ),(_x2 ,_y2),(255,255,255),cv2.FILLED)
-        cv2.putText(canvas,command,(_x1,_y1),cv2.FONT_HERSHEY_COMPLEX,1,(0,0,0),2)
+    # cv2.rectangle(canvas,(_x3 ,_y3 ),(_x4 ,_y4),(255,255,255),cv2.FILLED)
+    # cv2.putText(canvas,state,(_x3,_y3),cv2.FONT_HERSHEY_COMPLEX,1,(0,0,0),2)
+    # if active:
+    #     cv2.rectangle(canvas,(_x1 ,_y1 ),(_x2 ,_y2),(255,255,255),cv2.FILLED)
+    #     cv2.putText(canvas,command,(_x1,_y1),cv2.FONT_HERSHEY_COMPLEX,1,(0,0,0),2)
 
 
     # # Don't draw if no hand gesture is detected/hand gesture doesn't pass validation
