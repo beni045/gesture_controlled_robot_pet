@@ -7,6 +7,10 @@ sys.path.append('../..')
 heatmap_width = 64
 heatmap_height = 64
 
+###########################
+### DETERMINE BODY POSE ###
+###########################
+
 def decode_pose(heatmaps, scale, xmin, xmax, ymin, ymax, img_original, cropped_img, active):
   
     # Argmax of heatmap of output from handpose model are 21 coordinates representing points on the hand

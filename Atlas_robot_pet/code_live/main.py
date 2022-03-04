@@ -249,6 +249,7 @@ def execute(model_path):
     ## Get Input ##
     # Initialize Camera
     cap = Camera(id = 1, fps = 10)
+    active = False
 
     ## Set Output ##
     # open the presenter channel
@@ -256,7 +257,6 @@ def execute(model_path):
     if chan == None:
          print("Open presenter channel failed")
          return
-
 
     while True:
         time.sleep(0.00000000001)
