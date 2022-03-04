@@ -23,7 +23,7 @@ import os.path as osp
 import sys
 import cv2
 
-sys.path.append("../src/")
+sys.path.append("/home/HwHiAiUser/hand_gesture_controlled_robot_pet/Atlas_robot_pet/src")
 from decode import mot_decode
 from kalman_filter import KalmanFilter
 import matching as matching

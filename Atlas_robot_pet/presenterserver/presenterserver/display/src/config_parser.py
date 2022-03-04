@@ -30,7 +30,7 @@
 #   =======================================================================
 #
 
-"""pose detection config parser module"""
+"""face detection config parser module"""
 
 import os
 import configparser
