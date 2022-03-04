@@ -1,3 +1,4 @@
+
 import random
 import os
 import cv2
@@ -5,9 +6,7 @@ import numpy as np
 import argparse
 import sys
 sys.path.append('..')
-from model_processor import handpose_ModelProcessor
 from model_processor import face_detection_ModelProcessor
-from model_processor import hand_detection_ModelProcessor
 from model_processor import body_pose_ModelProcessor
 from model_processor import object_tracking_ModelProcessor
 from atlas_utils.camera import Camera
@@ -24,9 +23,7 @@ import struct
 import pickle
 import zlib
 
-MODEL_PATH_HAND_POSE = "../../models/handpose_argmax_bgr.om"
 MODEL_PATH_FACE_DETECTION = "../../models/face_detection.om"
-MODEL_PATH_HAND_DETECTION = "../../models/Hand_detection.om"
 MODEL_PATH_BODY_POSE = "../../models/body_pose.om"
 MODEL_PATH_OBJECT_TRACKING = "../../models/mot_v2.om"
 BODYPOSE_CONF="../param.conf"
@@ -97,6 +94,18 @@ def send_serial_command():
   ### Sending hand gesture commands to Raspberry Pi ###
   #####################################################
 
+#   elif current_command_state == "send_follow":
+#       print("Sending: Follow")
+#       data = pickle.dumps("follow\n", 0)
+
+  elif current_command_state == "send_activate":
+      print("Sending: Activate")
+      data = pickle.dumps("activate\n", 0)
+
+  elif current_command_state == "send_deactivate":
+      print("Sending: Deactivate")
+      data = pickle.dumps("deactivate\n", 0)
+
   elif current_command_state == "send_take_a_picture":
       print("Sending: Take a Picture")
       data = pickle.dumps("take a picture\n", 0)
@@ -112,6 +121,14 @@ def send_serial_command():
   elif current_command_state == "send_spin":
       print("Sending: Spin")
       data = pickle.dumps("spin\n", 0)
+
+  elif current_command_state == "send_left":
+      print("Sending: Left")
+      data = pickle.dumps("left\n", 0)
+
+  elif current_command_state == "send_right":
+      print("Sending: Right")
+      data = pickle.dumps("right\n", 0)
 
   # Send image for Camera View if "Take a Picture" command is executing
   elif current_command_state == "take_a_picture":
@@ -159,6 +176,14 @@ def send_serial_command():
   ### Check if Raspberry Pi received serial commands ###
   ######################################################
 
+  if data == "received activate\n":
+       current_command_state = "activate"
+       print(current_command_state)
+
+  if data == "received deactivate\n":
+       current_command_state = "deactivate"
+       print(current_command_state)
+
   if data == "received take a picture\n":
        current_command_state = "take_a_picture"
        print(current_command_state)
@@ -173,6 +198,14 @@ def send_serial_command():
 
   if data == "received spin\n":
        current_command_state = "spin"
+       print(current_command_state)
+
+  if data == "received left\n":
+       current_command_state = "left"
+       print(current_command_state)
+
+  if data == "received right\n":
+       current_command_state = "right"
        print(current_command_state)
 
   if data == "done command\n":
@@ -201,7 +234,7 @@ current_command_state = "none"
 ### Main ###
 ############
 
-def execute(model_path):
+def execute():
 
     ## Initialization ##
     #initialize acl runtime 
@@ -214,15 +247,6 @@ def execute(model_path):
 
     ## Prepare Model ##
     # parameters for model path and model inputs
-    handpose_model_parameters = {
-        'model_dir': model_path,
-        'width': 256, # model input width      
-        'height': 256, # model input height
-    }
-
-    hand_detection_model_parameters = {
-        'model_dir': MODEL_PATH_HAND_DETECTION,
-    }
 
     face_detection_model_parameters = {
         'model_dir': MODEL_PATH_FACE_DETECTION,
@@ -240,8 +264,6 @@ def execute(model_path):
 
     # Prepare model instance: init (loading model from file to memory)
     # Model_processor: preprocessing + model inference + postprocessing
-    handpose_model_processor = handpose_ModelProcessor(acl_resource, handpose_model_parameters)
-    hand_detection_model_processor = hand_detection_ModelProcessor(acl_resource, hand_detection_model_parameters)
     face_detection_model_processor = face_detection_ModelProcessor(acl_resource, face_detection_model_parameters)
     body_pose_model_processor = body_pose_ModelProcessor(acl_resource, body_pose_model_parameters)
     object_tracking_model_processor = object_tracking_ModelProcessor(acl_resource, object_tracking_model_parameters)
@@ -249,15 +271,16 @@ def execute(model_path):
     ## Get Input ##
     # Initialize Camera
     cap = Camera(id = 1, fps = 10)
-    active = False
 
     ## Set Output ##
     # open the presenter channel
     chan = presenteragent.presenter_channel.open_channel(BODYPOSE_CONF)
     if chan == None:
-         print("Open presenter channel failed")
-         return
+        print("Open presenter channel failed")
+        return
 
+    active = False
+    tracking = False
     while True:
         time.sleep(0.00000000001)
         ## Read one frame from Camera ## 
@@ -275,40 +298,45 @@ def execute(model_path):
         ## Model Prediction ##
         # model_processor.predict: processing + model inference + postprocessing
         # canvas: the picture overlayed with human body joints and limbs
-        canvas, xmin, xmax, ymin, ymax = hand_detection_model_processor.predict(img_original)
+        canvas, hg_command = body_pose_model_processor.predict(img_original, img_original)
+        if hg_command == "ACTIVATE":
+            active = True
+        elif hg_command == "DEACTIVATE":
+            active = False
+        if active:
+            canvas, command = face_detection_model_processor.predict(canvas)
 
-        canvas1, command = face_detection_model_processor.predict(img_original)  
-        canvas, hg_command = handpose_model_processor.predict(canvas, xmin, xmax, ymin, ymax, img_original, active)
-        canvas, command = object_tracking_model_processor.predict(canvas)
-        # canvas = body_pose_model_processor.predict(canvas)  
-
-        canvas, hg_command = body_pose_model_processor.predict(canvas, img_original)
-        # # canvas = body_pose_model_processor.predict(canvas, img_original)
-        # if hg_command == "ACTIVATE":
-        #     active = True
-        # elif hg_command == "DEACTIVATE":
-        #     active = False
-        # if active:
-        #     canvas, command = face_detection_model_processor.predict(canvas)
-
-        #     if hg_command == "FORWARDS":
-        #         tracking = True
-        #         # hg_command = "FOLLOW"
+            if hg_command == "FORWARDS":
+                tracking = True
+                # hg_command = "FOLLOW"
             
-        #     if tracking == True and hg_command != "STOP" and hg_command != "FORWARDS" and hg_command != "HAND!":
-        #         tracking = False
+            if tracking == True and hg_command != "STOP" and hg_command != "FORWARDS" and hg_command != "HAND!":
+                tracking = False
 
-        #     if tracking == True:
-        #         canvas, command, hg_command = object_tracking_model_processor.predict(canvas)
-        # else:
-        #     hg_command = "DEACTIVATE"  
+            # if tracking == True:
+                # canvas, command, hg_command = object_tracking_model_processor.predict(canvas)
+        else:
+            hg_command = "DEACTIVATE"  
         
         # canvas = body_pose_model_processor.predict(canvas) 
-
         canvas = cv2.cvtColor(canvas, cv2.COLOR_BGR2RGB, 3)  
 
+        # prob = np.random.rand(1)[0]
+        # if prob < 0.2:
+        #     command = "l"
+        #     hg_command = "LEFT"
+        # elif prob < 0.4:
+        #     command = "r"
+        #     hg_command = "RIGHT"
+
         # Update hand gesture command (if necessary) to send to Raspberry Pi through serial
-        if current_command_state == "none" or current_command_state == "send_take_a_picture" or current_command_state == "send_forward" or current_command_state == "send_backward" or current_command_state == "send_spin":
+        if current_command_state == "none" or current_command_state == "send_activate" or current_command_state == "send_deactivate" or current_command_state == "send_take_a_picture" or current_command_state == "send_forward" or current_command_state == "send_backward" or current_command_state == "send_spin" or current_command_state == "send_left" or current_command_state == "send_right":
+            # if hg_command == "FOLLOW":
+            #     current_command_state = "send_follow"
+            if hg_command == "ACTIVATE":
+                current_command_state = "send_activate"
+            if hg_command == "DEACTIVATE":
+                current_command_state = "send_deactivate"
             if hg_command == "TAKE A PICTURE":
                 current_command_state = "send_take_a_picture"
             if hg_command == "FORWARDS":
@@ -318,6 +346,10 @@ def execute(model_path):
                 current_command_state = "send_backward"
             if hg_command == "SPIN":
                 current_command_state = "send_spin"
+            if hg_command == "LEFT":
+                current_command_state = "send_left"
+            if hg_command == "RIGHT":
+                current_command_state = "send_right"
             if hg_command == "STOP":
                 current_command_state = "none"
 
@@ -366,10 +398,4 @@ def YUVtoRGB(byteArray):
 ##############   
 
 if __name__ == '__main__':   
-
-    description = 'Load a model for handpose'
-    parser = argparse.ArgumentParser(description=description)
-    parser.add_argument('--model', type=str, default=MODEL_PATH_HAND_POSE)
-    args = parser.parse_args()
-
-    execute(args.model)
+    execute()
