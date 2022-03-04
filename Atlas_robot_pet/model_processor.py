@@ -277,7 +277,7 @@ class body_pose_ModelProcessor:
         # load model from path, and get model ready for inference
         self.model = Model(acl_resource, params['model_dir'])
 
-    def predict(self, img_original):
+    def predict(self, img_original, canvas):
         
         #preprocess image to get 'model_input'
         model_input = self.preprocess(img_original)
@@ -293,9 +293,9 @@ class body_pose_ModelProcessor:
         # calculate the scale of original image over heatmap, Note: image_original.shape[0] is height
         scale = np.array([img_original.shape[1] / body_heatmap_width, img_original.shape[0]/ body_heatmap_height])
 
-        canvas = decode_body_pose(heatmaps[0], scale, img_original)
+        canvas, hg_command = decode_body_pose(heatmaps[0], scale, canvas)
 
-        return canvas
+        return canvas, hg_command
 
     def preprocess(self,img_original):
         '''

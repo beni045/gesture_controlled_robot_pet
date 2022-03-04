@@ -7,41 +7,64 @@ sys.path.append('../..')
 heatmap_width = 64
 heatmap_height = 64
 
-def decode_pose(heatmaps, scale, xmin, xmax, ymin, ymax, img_original, cropped_img):
+def decode_pose(heatmaps, scale, xmin, xmax, ymin, ymax, img_original, cropped_img, active):
   
     # Argmax of heatmap of output from handpose model are 21 coordinates representing points on the hand
     hand_point_list = [peak_index_to_coords(heatmap)*scale for heatmap in heatmaps]
 
     command = get_rc_command(hand_point_list, int(cropped_img.shape[1]))
+    state = "None"
+    if active:
+        state = "ACTIVE"
+    else:
+        state = "INACTIVE"
 
     # plot the handpose on original image
     canvas = img_original
 
     # Write hand gesture command onto image in top left corner
-    labelSize=cv2.getTextSize(command,cv2.FONT_HERSHEY_COMPLEX,1,2)
+    commandSize=cv2.getTextSize(command,cv2.FONT_HERSHEY_COMPLEX,1,2)
+
+    # Write robot state onto image in bottom left corner
+    stateSize=cv2.getTextSize(state,cv2.FONT_HERSHEY_COMPLEX,1,2)
 
     _x1 = 30
     _y1 = 30
-    _x2 = _x1+labelSize[0][0]
-    _y2 = _y1-int(labelSize[0][1])
-    cv2.rectangle(canvas,(_x1 ,_y1 ),(_x2 ,_y2),(255,255,255),cv2.FILLED)
-    cv2.putText(canvas,command,(_x1,_y1),cv2.FONT_HERSHEY_COMPLEX,1,(0,0,0),2)
+    _x2 = _x1+commandSize[0][0]
+    _y2 = _y1-int(commandSize[0][1])
+    _x3 = 30
+    _y3 = 720 - 30
+    _x4 = _x3+stateSize[0][0]
+    _y4 = _y3-int(stateSize[0][1])
 
-    # Don't bother drawing if no hand gesture is detected/hand gesture doesn't pass validation
+    cv2.rectangle(canvas,(_x3 ,_y3 ),(_x4 ,_y4),(255,255,255),cv2.FILLED)
+    cv2.putText(canvas,state,(_x3,_y3),cv2.FONT_HERSHEY_COMPLEX,1,(0,0,0),2)
+    if active:
+        cv2.rectangle(canvas,(_x1 ,_y1 ),(_x2 ,_y2),(255,255,255),cv2.FILLED)
+        cv2.putText(canvas,command,(_x1,_y1),cv2.FONT_HERSHEY_COMPLEX,1,(0,0,0),2)
+
+
+    # # Don't draw if no hand gesture is detected/hand gesture doesn't pass validation
     if command == "STOP":
         return canvas, command
+
+    count = 0
 
     # Draw hand gesture model output on image
     for hand_point in hand_point_list:
       hand_point = np.array([hand_point[0] + xmin, hand_point[1] + ymin])
       canvas = cv2.circle(canvas, tuple(hand_point.astype(int)), radius=2, color=(0, 255, 0), thickness=4)
+      if count == 8:
+          canvas = cv2.circle(canvas, tuple(hand_point.astype(int)), radius=2, color=(255, 0, 0), thickness=4)
+      elif count == 7:
+          canvas = cv2.circle(canvas, tuple(hand_point.astype(int)), radius=2, color=(0, 0, 255), thickness=4)
+      count += 1
 
     # Draw hand detection output on image, as well, if one was found
     if not (xmin * xmax * ymin * ymax) == 0:
       cv2.rectangle(canvas,(xmin,ymin),(xmax,ymax),(0,255,0),2)
       
     return canvas, command
-
 ##############
 
 #def peak_index_to_coords(peak_index, scale):
