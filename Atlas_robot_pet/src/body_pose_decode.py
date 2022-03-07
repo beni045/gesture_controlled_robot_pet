@@ -31,7 +31,7 @@ Joints Explained
 JOINT_LIMB = [[0, 1], [1, 2], [3, 4], [4, 5], [6, 7], [7, 8], [9, 10], [10, 11], [12, 13], [13, 0], [13, 3], [13, 6], [13, 9]]
 COLOR = [[0, 255, 255], [0, 255, 255],[0, 255, 255],[0, 255, 255],[0, 255, 0],[0, 255, 0],[0, 255, 0],[0, 255, 0], [0, 0, 255], [255, 0, 0],[255, 0, 0],[255, 0, 0], [255, 0, 0]]
 
-def decode_body_pose(heatmaps, scale, image_original):
+def decode_body_pose(heatmaps, scale, image_original, active):
 
     # obtain joint list from heatmap
     # joint_list: a python list of joints, joint_list[i] is an numpy array with the (x,y) coordinates of the i'th joint (refer to the 'Joints Explained' in this file, e.g., 0th joint is right shoulder)  
@@ -42,29 +42,17 @@ def decode_body_pose(heatmaps, scale, image_original):
 
     # plot the pose on original image
     canvas = image_original
-
-    # # Don't bother drawing if no hand gesture is detected/hand gesture doesn't pass validation
-    if command == "STOP":
-        return canvas, command, tuple([[-1,-1],[-1,-1]])
-
-    # draw bounding box
-    cv2.rectangle(canvas, tuple(box[0]), tuple(box[1]), color=[255,0,0], thickness=4)
-
-    for idx, limb in enumerate(JOINT_LIMB):
-        joint_from, joint_to = joint_list[limb[0]], joint_list[limb[1]]
-        canvas = cv2.line(canvas, tuple(joint_from.astype(int)), tuple(joint_to.astype(int)), color=COLOR[idx], thickness=4)
-
-
-    # Write gesture command onto image in top left corner
-    commandSize=cv2.getTextSize(command,cv2.FONT_HERSHEY_COMPLEX,1,2)
-    if command == "ACTIVATE":
+    
+    if active:
         state = "ACTIVE" 
-    elif command == "DEACTIVATE":
+    else:
         state = "INACTIVE"
-    state = "INACTIVE"
     # Write robot state onto image in bottom left corner
     stateSize=cv2.getTextSize(state,cv2.FONT_HERSHEY_COMPLEX,1,2)
 
+    # Write gesture command onto image in top left corner
+    commandSize=cv2.getTextSize(command,cv2.FONT_HERSHEY_COMPLEX,1,2)
+    
     _x1 = 30
     _y1 = 30
     _x2 = _x1+commandSize[0][0]
@@ -77,6 +65,17 @@ def decode_body_pose(heatmaps, scale, image_original):
 
     cv2.rectangle(canvas,(_x3 ,_y3 ),(_x4 ,_y4),(255,255,255),cv2.FILLED)
     cv2.putText(canvas,state,(_x3,_y3),cv2.FONT_HERSHEY_COMPLEX,1,(0,0,0),2)
+    # # Don't bother drawing if no hand gesture is detected/hand gesture doesn't pass validation
+    if command == "STOP":
+        return canvas, command, tuple([[-1,-1],[-1,-1]])
+
+    # draw bounding box
+    cv2.rectangle(canvas, tuple(box[0]), tuple(box[1]), color=[255,0,0], thickness=4)
+
+    for idx, limb in enumerate(JOINT_LIMB):
+        joint_from, joint_to = joint_list[limb[0]], joint_list[limb[1]]
+        canvas = cv2.line(canvas, tuple(joint_from.astype(int)), tuple(joint_to.astype(int)), color=COLOR[idx], thickness=4)
+
     if state == "ACTIVE":
         cv2.rectangle(canvas,(_x3 ,_y3 ),(_x4 ,_y4),(255,255,255),cv2.FILLED)
         cv2.putText(canvas,state,(_x3,_y3),cv2.FONT_HERSHEY_COMPLEX,1,(0,0,0),2)
@@ -293,17 +292,18 @@ def right_wrist_status(y_arr):
         return 0
 
 def get_bounding_box(joint_list):
+    joint_indices = [12,0,3,8,11] # head, shoulders, feet
     top_left = [1280, 720]
     bottom_right = [0,0]
-    for joint in joint_list:
-        if joint[0] < top_left[0]:
-            top_left[0] = joint[0]
-        if joint[0] > bottom_right[0]:
-            bottom_right[0] = joint[0]
-        if joint[1] < top_left[1]:
-            top_left[1] = joint[1]
-        if joint[1] > bottom_right[1]:
-            bottom_right[1] = joint[1]
+    for i in joint_indices:
+        if joint_list[i][0] < top_left[0]:
+            top_left[0] = joint_list[i][0]
+        if joint_list[i][0] > bottom_right[0]:
+            bottom_right[0] = joint_list[i][0]
+        if joint_list[i][1] < top_left[1]:
+            top_left[1] = joint_list[i][1]
+        if joint_list[i][1] > bottom_right[1]:
+            bottom_right[1] = joint_list[i][1]
 
     top_left = [int(x) for x in top_left]
     bottom_right = [int(x) for x in bottom_right]
