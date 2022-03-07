@@ -298,7 +298,9 @@ def execute():
         ## Model Prediction ##
         # model_processor.predict: processing + model inference + postprocessing
         # canvas: the picture overlayed with human body joints and limbs
-        canvas, hg_command = body_pose_model_processor.predict(img_original, img_original)
+
+        # box = tuple([top_left, bottom_right])
+        canvas, hg_command, box = body_pose_model_processor.predict(img_original, img_original)
         if hg_command == "ACTIVATE":
             active = True
         elif hg_command == "DEACTIVATE":

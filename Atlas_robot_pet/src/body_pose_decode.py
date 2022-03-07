@@ -37,6 +37,7 @@ def decode_body_pose(heatmaps, scale, image_original):
     # joint_list: a python list of joints, joint_list[i] is an numpy array with the (x,y) coordinates of the i'th joint (refer to the 'Joints Explained' in this file, e.g., 0th joint is right shoulder)  
     joint_list = [peak_index_to_coords(heatmap)*scale for heatmap in heatmaps]
     command = get_rc_command(joint_list, int(image_original.shape[1]))
+    box = get_bounding_box(joint_list)
     print(command)
 
     # plot the pose on original image
@@ -44,7 +45,10 @@ def decode_body_pose(heatmaps, scale, image_original):
 
     # # Don't bother drawing if no hand gesture is detected/hand gesture doesn't pass validation
     if command == "STOP":
-        return canvas, command
+        return canvas, command, tuple([[-1,-1],[-1,-1]])
+
+    # draw bounding box
+    cv2.rectangle(canvas, tuple(box[0]), tuple(box[1]), color=[255,0,0], thickness=4)
 
     for idx, limb in enumerate(JOINT_LIMB):
         joint_from, joint_to = joint_list[limb[0]], joint_list[limb[1]]
@@ -53,6 +57,10 @@ def decode_body_pose(heatmaps, scale, image_original):
 
     # Write gesture command onto image in top left corner
     commandSize=cv2.getTextSize(command,cv2.FONT_HERSHEY_COMPLEX,1,2)
+    if command == "ACTIVATE":
+        state = "ACTIVE" 
+    elif command == "DEACTIVATE":
+        state = "INACTIVE"
     state = "INACTIVE"
     # Write robot state onto image in bottom left corner
     stateSize=cv2.getTextSize(state,cv2.FONT_HERSHEY_COMPLEX,1,2)
@@ -66,16 +74,16 @@ def decode_body_pose(heatmaps, scale, image_original):
     _x4 = _x3+stateSize[0][0]
     _y4 = _y3-int(stateSize[0][1])
 
-    if command == "ACTIVATE":
-        cv2.rectangle(canvas,(_x3 ,_y3 ),(_x4 ,_y4),(255,255,255),cv2.FILLED)
-        cv2.putText(canvas,command,(_x3,_y3),cv2.FONT_HERSHEY_COMPLEX,1,(0,0,0),2)
-    else:
+
+    cv2.rectangle(canvas,(_x3 ,_y3 ),(_x4 ,_y4),(255,255,255),cv2.FILLED)
+    cv2.putText(canvas,state,(_x3,_y3),cv2.FONT_HERSHEY_COMPLEX,1,(0,0,0),2)
+    if state == "ACTIVE":
         cv2.rectangle(canvas,(_x3 ,_y3 ),(_x4 ,_y4),(255,255,255),cv2.FILLED)
         cv2.putText(canvas,state,(_x3,_y3),cv2.FONT_HERSHEY_COMPLEX,1,(0,0,0),2)
         cv2.rectangle(canvas,(_x1 ,_y1 ),(_x2 ,_y2),(255,255,255),cv2.FILLED)
         cv2.putText(canvas,command,(_x1,_y1),cv2.FONT_HERSHEY_COMPLEX,1,(0,0,0),2)
 
-    return canvas, command 
+    return canvas, command, box
 
 
 def peak_index_to_coords(peak_index):
@@ -283,3 +291,22 @@ def right_wrist_status(y_arr):
         return 1
     else:
         return 0
+
+def get_bounding_box(joint_list):
+    top_left = [1280, 720]
+    bottom_right = [0,0]
+    for joint in joint_list:
+        if joint[0] < top_left[0]:
+            top_left[0] = joint[0]
+        if joint[0] > bottom_right[0]:
+            bottom_right[0] = joint[0]
+        if joint[1] < top_left[1]:
+            top_left[1] = joint[1]
+        if joint[1] > bottom_right[1]:
+            bottom_right[1] = joint[1]
+
+    top_left = [int(x) for x in top_left]
+    bottom_right = [int(x) for x in bottom_right]
+    box = tuple([top_left, bottom_right])
+
+    return box
