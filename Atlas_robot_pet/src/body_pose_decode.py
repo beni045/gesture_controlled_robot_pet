@@ -30,6 +30,7 @@ Joints Explained
 
 JOINT_LIMB = [[0, 1], [1, 2], [3, 4], [4, 5], [6, 7], [7, 8], [9, 10], [10, 11], [12, 13], [13, 0], [13, 3], [13, 6], [13, 9]]
 COLOR = [[0, 255, 255], [0, 255, 255],[0, 255, 255],[0, 255, 255],[0, 255, 0],[0, 255, 0],[0, 255, 0],[0, 255, 0], [0, 0, 255], [255, 0, 0],[255, 0, 0],[255, 0, 0], [255, 0, 0]]
+LEGS = [7,8,10,11]
 
 def decode_body_pose(heatmaps, scale, image_original, active):
 
@@ -73,8 +74,9 @@ def decode_body_pose(heatmaps, scale, image_original, active):
     cv2.rectangle(canvas, tuple(box[0]), tuple(box[1]), color=[255,0,0], thickness=4)
 
     for idx, limb in enumerate(JOINT_LIMB):
-        joint_from, joint_to = joint_list[limb[0]], joint_list[limb[1]]
-        canvas = cv2.line(canvas, tuple(joint_from.astype(int)), tuple(joint_to.astype(int)), color=COLOR[idx], thickness=4)
+        if limb[0] not in LEGS and limb[1] not in LEGS: # draw if not part of leg
+            joint_from, joint_to = joint_list[limb[0]], joint_list[limb[1]]
+            canvas = cv2.line(canvas, tuple(joint_from.astype(int)), tuple(joint_to.astype(int)), color=COLOR[idx], thickness=4)
 
     if state == "ACTIVE":
         cv2.rectangle(canvas,(_x3 ,_y3 ),(_x4 ,_y4),(255,255,255),cv2.FILLED)
@@ -105,64 +107,87 @@ def get_rc_command(joint_list, width):
 
     straight = 180
     bent = 90
-    threshold = 25
+    slant = 135
+    cross = 45
+    threshold = 30
 
-    left_elbow_up = left_elbow_status(y_arr)
-    left_arm_angle = left_arm_bent(x_arr, y_arr)
+    left_shoulder_angle = left_shoulder_status(x_arr, y_arr)
+    left_elbow_angle = left_arm_bent(x_arr, y_arr)
     left_wrist_up = left_wrist_status(y_arr)
 
-    right_elbow_up = right_elbow_status(y_arr)
-    right_arm_angle = right_arm_bent(x_arr, y_arr)
+    right_shoulder_angle = right_shoulder_status(x_arr, y_arr)
+    right_elbow_angle = right_arm_bent(x_arr, y_arr)
     right_wrist_up = right_wrist_status(y_arr)
 
-    # print (left_arm_angle)
-
-    if validate(x_arr, y_arr, width) == False or (not left_elbow_up) or (not right_elbow_up):
-        return "STOP"
+    # if validate(x_arr, y_arr, width) == False or (not left_elbow_up) or (not right_elbow_up):
+    #     return "STOP"
    
     # |_o_|
-    elif abs(left_arm_angle - bent) <= threshold and left_wrist_up and abs(right_arm_angle - bent) <= threshold and right_wrist_up:
+    if abs(left_elbow_angle - bent) <= threshold and left_wrist_up and abs(right_elbow_angle - bent) <= threshold and right_wrist_up and abs(left_shoulder_angle - straight) <= threshold and abs(right_shoulder_angle - straight) <= threshold:
         return "ACTIVATE"
   
     #  _o_
     # |   |
-    elif abs(left_arm_angle - bent) <= threshold and (not left_wrist_up) and abs(right_arm_angle - bent) <= threshold and (not right_wrist_up):
+    # elif abs(left_elbow_angle - bent) <= threshold and (not left_wrist_up) and abs(right_elbow_angle - bent) <= threshold and (not right_wrist_up) and abs(left_shoulder_angle - straight) <= threshold and abs(right_shoulder_angle - straight) <= threshold:
+    #     return "DEACTIVATE"
+
+    #  _o_
+    # |/ \|
+    elif abs(left_elbow_angle - cross) <= threshold and left_wrist_up and abs(right_elbow_angle - cross) <= threshold and right_wrist_up and abs(left_shoulder_angle - bent) <= threshold and abs(right_shoulder_angle - bent) <= threshold:
         return "DEACTIVATE"
 
     # T pose
-    elif abs(left_arm_angle - straight) <= threshold and abs(right_arm_angle - straight) <= threshold:
+    elif abs(left_elbow_angle - straight) <= threshold and abs(right_elbow_angle - straight) <= threshold and abs(left_shoulder_angle - straight) <= threshold and abs(right_shoulder_angle - straight) <= threshold:
         return "TAKE A PICTURE"
    
     # |_o_
     #     |
-    elif abs(left_arm_angle - bent) <= threshold and (not left_wrist_up) and abs(right_arm_angle - bent) <= threshold and right_wrist_up:
+    # elif abs(left_elbow_angle - bent) <= threshold and (not left_wrist_up) and abs(right_elbow_angle - bent) <= threshold and right_wrist_up and abs(left_shoulder_angle - straight) <= threshold and abs(right_shoulder_angle - straight) <= threshold:
+    #     return "FOLLOW"
+
+    # \o_|
+    elif abs(left_elbow_angle - straight) <= threshold and left_wrist_up and abs(right_elbow_angle - bent) <= threshold and right_wrist_up and abs(left_shoulder_angle - slant) <= threshold and abs(right_shoulder_angle - straight) <= threshold:
         return "FOLLOW"
 
     #  _o_|
     # |
-    elif abs(left_arm_angle - bent) <= threshold and left_wrist_up and abs(right_arm_angle - bent) <= threshold and (not right_wrist_up):
+    # elif abs(left_elbow_angle - bent) <= threshold and left_wrist_up and abs(right_elbow_angle - bent) <= threshold and (not right_wrist_up) and abs(left_shoulder_angle - straight) <= threshold and abs(right_shoulder_angle - straight) <= threshold:
+    #     return "STOP FOLLOW"
+
+    #  o_|
+    # /
+    elif abs(left_elbow_angle - straight) <= threshold and (not left_wrist_up) and abs(right_elbow_angle - bent) <= threshold and right_wrist_up and abs(left_shoulder_angle - slant) <= threshold and abs(right_shoulder_angle - straight) <= threshold:
         return "STOP FOLLOW"
     
-    # |_o__
-    elif abs(left_arm_angle - straight) <= threshold and abs(right_arm_angle - bent) <= threshold and right_wrist_up:
+    # # |_o__
+    # elif abs(left_elbow_angle - straight) <= threshold and abs(right_elbow_angle - bent) <= threshold and right_wrist_up and abs(left_shoulder_angle - straight) <= threshold and abs(right_shoulder_angle - straight) <= threshold:
+    #     return "FORWARDS"
+
+    # # __o_|
+    # elif abs(left_elbow_angle - bent) <= threshold and left_wrist_up and abs(right_elbow_angle - straight) <= threshold and abs(left_shoulder_angle - straight) <= threshold and abs(right_shoulder_angle - straight) <= threshold:
+    #     return "BACKWARDS"
+
+    # |_o/
+    elif abs(left_elbow_angle - bent) <= threshold and abs(left_shoulder_angle - straight) <= threshold and left_wrist_up and abs(right_elbow_angle - straight) <= threshold and abs(right_shoulder_angle - slant) <= threshold and right_wrist_up:
         return "FORWARDS"
 
-    # __o_|
-    elif abs(left_arm_angle - bent) <= threshold and left_wrist_up and abs(right_arm_angle - straight) <= threshold:
+    # |_o
+    #    \
+    elif abs(left_elbow_angle - bent) <= threshold and abs(left_shoulder_angle - straight) <= threshold and left_wrist_up and abs(right_elbow_angle - straight) <= threshold and abs(right_shoulder_angle - slant) <= threshold and (not right_wrist_up):
         return "BACKWARDS"
 
     #  _o__
     # |
-    elif abs(left_arm_angle - straight) <= threshold and abs(right_arm_angle - bent) <= threshold and (not right_wrist_up):
+    elif abs(left_elbow_angle - straight) <= threshold and abs(right_elbow_angle - bent) <= threshold and (not right_wrist_up) and abs(left_shoulder_angle - straight) <= threshold and abs(right_shoulder_angle - straight) <= threshold:
         return "SPIN LEFT"
     
     # __o_
     #     |
-    elif abs(left_arm_angle - bent) <= threshold and (not left_wrist_up) and abs(right_arm_angle - straight) <= threshold:
+    elif abs(left_elbow_angle - bent) <= threshold and (not left_wrist_up) and abs(right_elbow_angle - straight) <= threshold and abs(left_shoulder_angle - straight) <= threshold and abs(right_shoulder_angle - straight) <= threshold:
         return "SPIN RIGHT"
 
     else:
-        return "ARMS!"
+        return "STOP"
 
 
 def validate(x_arr, y_arr, width):
@@ -178,73 +203,53 @@ def validate(x_arr, y_arr, width):
           return True
 
 
-def left_elbow_status(y_arr):
+def right_shoulder_status(x_arr, y_arr):
 
-    horiZon_threshold = 50
-
-    left_elbow_y = y_arr[4]
-    body_y = y_arr[13]
-
-    # print(abs(left_elbow_y - body_y))
-
-    # if left elbow horiZontal, then return 1
-    if abs(left_elbow_y - body_y) <= horiZon_threshold:
-        return 1
-    else:
-        return 0
-
-
-def right_elbow_status(y_arr):
-
-    horiZon_threshold = 50
-
-    right_elbow_y = y_arr[4]
-    body_y = y_arr[13]
-
-    # if right elbow horiZontal, then return 1
-    if abs(right_elbow_y - body_y) <= horiZon_threshold:
-        return 1
-    else:
-        return 0
-
-
-def left_arm_bent(x_arr, y_arr):
-
-    # get vectors of left arms
-    left_elbow_x = x_arr[3] - x_arr[4]
-    left_elbow_y = y_arr[3] - y_arr[4]
-    left_wrist_x = x_arr[5] - x_arr[4]
-    left_wrist_y = y_arr[5] - y_arr[4]
+    right_elbow_x = x_arr[4] -x_arr[3]
+    right_elbow_y = y_arr[4] - y_arr[3]
+    body_x = x_arr[13] - x_arr[3]
+    body_y = y_arr[13] - y_arr[3]
 
     # calculate unit vectors
-    unit_vec_left_elbow = [left_elbow_x, left_elbow_y] / np.linalg.norm([left_elbow_x, left_elbow_y])
-    unit_vec_left_wrist = [left_wrist_x, left_wrist_y] / np.linalg.norm([left_wrist_x, left_wrist_y])
+    unit_vec_right_elbow = [right_elbow_x, right_elbow_y] / np.linalg.norm([right_elbow_x, right_elbow_y])
+    unit_vec_body = [body_x, body_y] / np.linalg.norm([body_x, body_y])
 
     # calculate dot product
-    dot = np.dot(unit_vec_left_elbow, unit_vec_left_wrist)
+    dot = np.dot(unit_vec_right_elbow, unit_vec_body)
 
-    # calculate angle between left eblow and wrist
+    # calculate angle between right eblow and body
     angle = math.acos(round(dot, 3)) * 180.0 / 3.1415926
 
     return angle
 
-    # angle_threshold_min = 80
-    # angle_threshold_max = 100
 
-    # # if it is about 90 degrees, then return 1
-    # if angle > angle_threshold_min and angle < angle_threshold_max:
-    #     return 1
-    # else:
-    #     return 0
+def left_shoulder_status(x_arr, y_arr):
+
+    left_elbow_x = x_arr[1] -x_arr[0]
+    left_elbow_y = y_arr[1] - y_arr[0]
+    body_x = x_arr[13] - x_arr[0]
+    body_y = y_arr[13] - y_arr[0]
+
+    # calculate unit vectors
+    unit_vec_left_elbow = [left_elbow_x, left_elbow_y] / np.linalg.norm([left_elbow_x, left_elbow_y])
+    unit_vec_body = [body_x, body_y] / np.linalg.norm([body_x, body_y])
+
+    # calculate dot product
+    dot = np.dot(unit_vec_left_elbow, unit_vec_body)
+
+    # calculate angle between left eblow and body
+    angle = math.acos(round(dot, 3)) * 180.0 / 3.1415926
+
+    return angle
 
 
 def right_arm_bent(x_arr, y_arr):
 
     # get vectors of right arms
-    right_elbow_x = x_arr[0] - x_arr[1]
-    right_elbow_y = y_arr[0] - y_arr[1]
-    right_wrist_x = x_arr[2] - x_arr[1]
-    right_wrist_y = y_arr[2] - y_arr[1]
+    right_elbow_x = x_arr[3] - x_arr[4]
+    right_elbow_y = y_arr[3] - y_arr[4]
+    right_wrist_x = x_arr[5] - x_arr[4]
+    right_wrist_y = y_arr[5] - y_arr[4]
 
     # calculate unit vectors
     unit_vec_right_elbow = [right_elbow_x, right_elbow_y] / np.linalg.norm([right_elbow_x, right_elbow_y])
@@ -258,35 +263,47 @@ def right_arm_bent(x_arr, y_arr):
 
     return angle
 
-    # angle_threshold_min = 80
-    # angle_threshold_max = 100
 
-    # # if it is about 90 degrees, then return 1
-    # if angle > angle_threshold_min and angle < angle_threshold_max:
-    #     return 1
-    # else:
-    #     return 0
+def left_arm_bent(x_arr, y_arr):
+
+    # get vectors of left arms
+    left_elbow_x = x_arr[0] - x_arr[1]
+    left_elbow_y = y_arr[0] - y_arr[1]
+    left_wrist_x = x_arr[2] - x_arr[1]
+    left_wrist_y = y_arr[2] - y_arr[1]
+
+    # calculate unit vectors
+    unit_vec_left_elbow = [left_elbow_x, left_elbow_y] / np.linalg.norm([left_elbow_x, left_elbow_y])
+    unit_vec_left_wrist = [left_wrist_x, left_wrist_y] / np.linalg.norm([left_wrist_x, left_wrist_y])
+
+    # calculate dot product
+    dot = np.dot(unit_vec_left_elbow, unit_vec_left_wrist)
+
+    # calculate angle between left eblow and wrist
+    angle = math.acos(round(dot, 3)) * 180.0 / 3.1415926
+
+    return angle
 
 
-def left_wrist_status(y_arr):
+def right_wrist_status(y_arr):
 
-    left_wrist_y = y_arr[5]
-    left_elbow_y = y_arr[4]
+    right_wrist_y = y_arr[5]
+    right_elbow_y = y_arr[4]
 
-    # if left wrist is up, then return 1
-    if left_wrist_y < left_elbow_y:
+    # if right wrist is up, then return 1
+    if right_wrist_y < right_elbow_y:
         return 1
     else:
         return 0
 
 
-def right_wrist_status(y_arr):
+def left_wrist_status(y_arr):
 
-    right_wrist_y = y_arr[2]
-    right_elbow_y = y_arr[1]
+    left_wrist_y = y_arr[2]
+    left_elbow_y = y_arr[1]
 
-    # if right wrist is up, then return 1
-    if right_wrist_y < right_elbow_y:
+    # if left wrist is up, then return 1
+    if left_wrist_y < left_elbow_y:
         return 1
     else:
         return 0
@@ -310,3 +327,17 @@ def get_bounding_box(joint_list):
     box = tuple([top_left, bottom_right])
 
     return box
+
+def get_head_command(joint):
+    center = [640,100]
+    threshold = 200
+	if joint[0] < center[0] - threshold: # too far left
+		return "RIGHT"
+	elif joint[0] > center[0] + threshold: # too far right
+		return "LEFT"
+	elif joint[1] < center[1] - threshold: # too far up
+		return "DOWN"
+	elif joint[1] > center[1] + threshold: # too far down
+		return "UP"
+	else:
+		return "CENTERED"
