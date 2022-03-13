@@ -37,8 +37,18 @@ def decode_body_pose(heatmaps, scale, image_original, active):
     # obtain joint list from heatmap
     # joint_list: a python list of joints, joint_list[i] is an numpy array with the (x,y) coordinates of the i'th joint (refer to the 'Joints Explained' in this file, e.g., 0th joint is right shoulder)  
     joint_list = [peak_index_to_coords(heatmap)*scale for heatmap in heatmaps]
-    command = get_rc_command(joint_list, int(image_original.shape[1]))
+
     box = get_bounding_box(joint_list)
+
+    command = ''
+    rotate = ''
+    if not validate(joint_list):
+        command = "STOP"
+        rotate = "NOTHING"
+    else:
+        command = get_rc_command(joint_list, int(image_original.shape[1]))
+        rotate = get_head_command(joint_list[12])
+
     print(command)
 
     # plot the pose on original image
@@ -53,6 +63,9 @@ def decode_body_pose(heatmaps, scale, image_original, active):
 
     # Write gesture command onto image in top left corner
     commandSize=cv2.getTextSize(command,cv2.FONT_HERSHEY_COMPLEX,1,2)
+
+    # Write rotate command onto image in top right corner
+    rotateSize=cv2.getTextSize(rotate,cv2.FONT_HERSHEY_COMPLEX,1,2)
     
     _x1 = 30
     _y1 = 30
@@ -62,10 +75,24 @@ def decode_body_pose(heatmaps, scale, image_original, active):
     _y3 = 720 - 30
     _x4 = _x3+stateSize[0][0]
     _y4 = _y3-int(stateSize[0][1])
+    _x5 = 1280 - 200
+    _y5 = 30
+    _x6 = _x5+rotateSize[0][0]
+    _y6 = _y5-int(rotateSize[0][1])
 
-
+    # display state
     cv2.rectangle(canvas,(_x3 ,_y3 ),(_x4 ,_y4),(255,255,255),cv2.FILLED)
     cv2.putText(canvas,state,(_x3,_y3),cv2.FONT_HERSHEY_COMPLEX,1,(0,0,0),2)
+
+    # display rotate command
+    cv2.rectangle(canvas,(_x5 ,_y5 ),(_x6 ,_y6),(255,255,255),cv2.FILLED)
+    cv2.putText(canvas,rotate,(_x5,_y5),cv2.FONT_HERSHEY_COMPLEX,1,(0,0,0),2)
+
+    for idx, limb in enumerate(JOINT_LIMB):
+        if limb[0] not in LEGS and limb[1] not in LEGS: # draw if not part of leg
+            joint_from, joint_to = joint_list[limb[0]], joint_list[limb[1]]
+            canvas = cv2.line(canvas, tuple(joint_from.astype(int)), tuple(joint_to.astype(int)), color=COLOR[idx], thickness=4)
+
     # # Don't bother drawing if no hand gesture is detected/hand gesture doesn't pass validation
     if command == "STOP":
         return canvas, command, tuple([[-1,-1],[-1,-1]])
@@ -73,10 +100,10 @@ def decode_body_pose(heatmaps, scale, image_original, active):
     # draw bounding box
     cv2.rectangle(canvas, tuple(box[0]), tuple(box[1]), color=[255,0,0], thickness=4)
 
-    for idx, limb in enumerate(JOINT_LIMB):
-        if limb[0] not in LEGS and limb[1] not in LEGS: # draw if not part of leg
-            joint_from, joint_to = joint_list[limb[0]], joint_list[limb[1]]
-            canvas = cv2.line(canvas, tuple(joint_from.astype(int)), tuple(joint_to.astype(int)), color=COLOR[idx], thickness=4)
+    # for idx, limb in enumerate(JOINT_LIMB):
+    #     if limb[0] not in LEGS and limb[1] not in LEGS: # draw if not part of leg
+    #         joint_from, joint_to = joint_list[limb[0]], joint_list[limb[1]]
+    #         canvas = cv2.line(canvas, tuple(joint_from.astype(int)), tuple(joint_to.astype(int)), color=COLOR[idx], thickness=4)
 
     if state == "ACTIVE":
         cv2.rectangle(canvas,(_x3 ,_y3 ),(_x4 ,_y4),(255,255,255),cv2.FILLED)
@@ -187,20 +214,7 @@ def get_rc_command(joint_list, width):
         return "SPIN RIGHT"
 
     else:
-        return "STOP"
-
-
-def validate(x_arr, y_arr, width):
-
-    x_max_threshold = int((1200 / 1280) * width)
-    x_min_threshold = int((50 / 1280) * width)
-    
-    if ((max(x_arr) > x_max_threshold) or (min(x_arr) < x_min_threshold)):
-          return False
-    elif (y_arr.index(min(y_arr)) != 8) and (y_arr.index(min(y_arr)) != 12) and (y_arr.index(min(y_arr)) != 16) and (y_arr.index(min(y_arr)) != 20):
-          return False
-    else: 
-          return True
+        return "BODY"
 
 
 def right_shoulder_status(x_arr, y_arr):
@@ -331,13 +345,48 @@ def get_bounding_box(joint_list):
 def get_head_command(joint):
     center = [640,100]
     threshold = 200
-	if joint[0] < center[0] - threshold: # too far left
-		return "RIGHT"
-	elif joint[0] > center[0] + threshold: # too far right
-		return "LEFT"
-	elif joint[1] < center[1] - threshold: # too far up
-		return "DOWN"
-	elif joint[1] > center[1] + threshold: # too far down
-		return "UP"
-	else:
-		return "CENTERED"
+    if joint[0] < center[0] - threshold: # too far left
+        return "RIGHT"
+    elif joint[0] > center[0] + threshold: # too far right
+        return "LEFT"
+    elif joint[1] < center[1] - threshold: # too far down
+        return "UP"
+    elif joint[1] > center[1] + threshold: # too far up
+        return "DOWN"
+    else:
+        return "CENTERED"
+
+def validate(joint_list):
+    x_arr = []
+    y_arr = []
+    WIDTH = 0
+    HEIGHT = 1
+
+    for i in range(len(joint_list)):
+        if i != 7 and i != 8 and i != 10 and i != 11:
+            x_arr.append(joint_list[i][0])
+            y_arr.append(joint_list[i][1])
+
+
+    head_neck = abs(joint_list[13][HEIGHT] - joint_list[12][HEIGHT])
+    left_shoulder = abs(joint_list[13][WIDTH] - joint_list[3][WIDTH])
+    right_shoulder = abs(joint_list[0][WIDTH] - joint_list[13][WIDTH])
+
+    for idx, limb in enumerate(JOINT_LIMB):
+        if limb[0] not in LEGS and limb[1] not in LEGS: # draw if not part of leg
+            joint_from, joint_to = joint_list[limb[0]], joint_list[limb[1]]
+            x = joint_from[0] - joint_to[0]
+            y = joint_from[1] - joint_to[1]
+            dist = np.linalg.norm([x,y])
+            if dist > 360:
+                return False
+
+
+    if (y_arr.index(min(y_arr)) != 8) and (y_arr.index(min(y_arr)) != 1) and (y_arr.index(min(y_arr)) != 2) and (y_arr.index(min(y_arr)) != 4) and (y_arr.index(min(y_arr)) != 5):
+        return False
+    elif (y_arr.index(max(y_arr)) != 2) and (y_arr.index(max(y_arr)) != 5) and (y_arr.index(max(y_arr)) != 6) and (y_arr.index(max(y_arr)) != 7):
+        return False
+    elif head_neck/left_shoulder < 0.5 or head_neck/left_shoulder > 1.5 or head_neck/right_shoulder < 0.5 or head_neck/right_shoulder > 1.5:
+        return False
+    else:
+        return True
