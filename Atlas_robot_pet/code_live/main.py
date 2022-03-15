@@ -194,8 +194,8 @@ global current_command_state #none, forwards, backwards, takeapicture
 current_command_state = "none"
 
 # Start serial communication with Raspberry Pi (a separate thread)
-t1 = threading.Thread(target = send_serial_command,args=())
-t1.start()
+# t1 = threading.Thread(target = send_serial_command,args=())
+# t1.start()
 
 ############
 ### Main ###
@@ -244,7 +244,7 @@ def execute(model_path):
     hand_detection_model_processor = hand_detection_ModelProcessor(acl_resource, hand_detection_model_parameters)
     face_detection_model_processor = face_detection_ModelProcessor(acl_resource, face_detection_model_parameters)
     # body_pose_model_processor = body_pose_ModelProcessor(acl_resource, body_pose_model_parameters)
-    object_tracking_model_processor = object_tracking_ModelProcessor(acl_resource, object_tracking_model_parameters)
+    # object_tracking_model_processor = object_tracking_ModelProcessor(acl_resource, object_tracking_model_parameters)
     
     ## Get Input ##
     # Initialize Camera
@@ -278,7 +278,7 @@ def execute(model_path):
         canvas, xmin, xmax, ymin, ymax = hand_detection_model_processor.predict(img_original)
         canvas1, command = face_detection_model_processor.predict(img_original)  
         canvas, hg_command = handpose_model_processor.predict(canvas, xmin, xmax, ymin, ymax, canvas1)
-        canvas, command = object_tracking_model_processor.predict(canvas)
+        # canvas, command = object_tracking_model_processor.predict(canvas)
         # canvas = body_pose_model_processor.predict(canvas)  
         canvas = cv2.cvtColor(canvas, cv2.COLOR_BGR2RGB, 3)  
 
