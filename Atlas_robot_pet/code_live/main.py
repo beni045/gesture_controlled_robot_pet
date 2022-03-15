@@ -300,7 +300,7 @@ def execute():
         # canvas: the picture overlayed with human body joints and limbs
 
         # box = tuple([top_left, bottom_right])
-        canvas, hg_command, box = body_pose_model_processor.predict(img_original, img_original, active)
+        canvas, hg_command, box, rotate = body_pose_model_processor.predict(img_original, img_original, active)
         if hg_command == "ACTIVATE":
             active = True
         elif hg_command == "DEACTIVATE":

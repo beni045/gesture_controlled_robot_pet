@@ -45,9 +45,11 @@ def decode_body_pose(heatmaps, scale, image_original, active):
     if not validate(joint_list):
         command = "STOP"
         rotate = "NOTHING"
+        box = tuple([[-1,-1],[-1,-1]])
     else:
         command = get_rc_command(joint_list, int(image_original.shape[1]))
         rotate = get_head_command(joint_list[12])
+
 
     print(command)
 
@@ -95,7 +97,7 @@ def decode_body_pose(heatmaps, scale, image_original, active):
 
     # # Don't bother drawing if no hand gesture is detected/hand gesture doesn't pass validation
     if command == "STOP":
-        return canvas, command, tuple([[-1,-1],[-1,-1]])
+        return canvas, command, box, rotate
 
     # draw bounding box
     cv2.rectangle(canvas, tuple(box[0]), tuple(box[1]), color=[255,0,0], thickness=4)
@@ -111,7 +113,7 @@ def decode_body_pose(heatmaps, scale, image_original, active):
         cv2.rectangle(canvas,(_x1 ,_y1 ),(_x2 ,_y2),(255,255,255),cv2.FILLED)
         cv2.putText(canvas,command,(_x1,_y1),cv2.FONT_HERSHEY_COMPLEX,1,(0,0,0),2)
 
-    return canvas, command, box
+    return canvas, command, box, rotate
 
 
 def peak_index_to_coords(peak_index):
@@ -323,7 +325,7 @@ def left_wrist_status(y_arr):
         return 0
 
 def get_bounding_box(joint_list):
-    joint_indices = [12,0,3,8,11] # head, shoulders, feet
+    joint_indices = [12,0,3,6,9] # head, shoulders, feet
     top_left = [1280, 720]
     bottom_right = [0,0]
     for i in joint_indices:
