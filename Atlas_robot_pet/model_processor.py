@@ -196,7 +196,7 @@ class face_detection_ModelProcessor:
         resultList  = self.model.execute([model_input])
 
 	# postprocessing and save inference results
-        canvas = self.PostProcessing(img_original, resultList)
+        canvas = self.PostProcessing(img_original, resultList, threshold=0.7)
 
         return canvas
 
