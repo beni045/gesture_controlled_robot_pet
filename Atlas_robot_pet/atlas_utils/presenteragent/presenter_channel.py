@@ -114,8 +114,9 @@ class PresenterChannel():
     def send_detection_data(self, image_width, image_height,
                             image_data, detection_result):
         if self._send_buffer.full() is True:
+            self._send_buffer.get()
             print("ERROR:Send detection data failed for buffer is full")
-            return False
+            # return False
 
         image_buf = DataBuf(image_data.data(), image_data.size).copy_to_local()
         request_msg = pm.image_frame_request(image_width, image_height,

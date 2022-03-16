@@ -35,7 +35,7 @@ class handpose_ModelProcessor:
         # load model from path, and get model ready for inference
         self.model = Model(acl_resource, params['model_dir'])
 
-    def predict(self, cropped_img, xmin, xmax, ymin, ymax, img_original):
+    def predict(self, cropped_img, xmin, xmax, ymin, ymax, img_original, active):
         
         #preprocess image to get 'model_input'
         model_input = self.preprocess(cropped_img)
@@ -52,7 +52,7 @@ class handpose_ModelProcessor:
         scale = np.array([int(cropped_img.shape[1] / heatmap_width), int(cropped_img.shape[0]/ heatmap_height)])
 
         # Canvas is for presenter server, hg_command is for communicating hand gesture command to Raspberry Pi
-        canvas, hg_command = decode_pose(result[0][0], scale, xmin, xmax, ymin, ymax, img_original, cropped_img)
+        canvas, hg_command = decode_pose(result[0][0], scale, xmin, xmax, ymin, ymax, img_original, cropped_img, active)
 
         return canvas, hg_command
 
@@ -283,7 +283,7 @@ class body_pose_ModelProcessor:
         # load model from path, and get model ready for inference
         self.model = Model(acl_resource, params['model_dir'])
 
-    def predict(self, img_original):
+    def predict(self, img_original, canvas, active):
         
         #preprocess image to get 'model_input'
         model_input = self.preprocess(img_original)
@@ -299,9 +299,9 @@ class body_pose_ModelProcessor:
         # calculate the scale of original image over heatmap, Note: image_original.shape[0] is height
         scale = np.array([img_original.shape[1] / body_heatmap_width, img_original.shape[0]/ body_heatmap_height])
 
-        canvas = decode_body_pose(heatmaps[0], scale, img_original)
+        canvas, hg_command, box, rotate = decode_body_pose(heatmaps[0], scale, canvas, active)
 
-        return canvas
+        return canvas, hg_command, box, rotate
 
     def preprocess(self,img_original):
         '''

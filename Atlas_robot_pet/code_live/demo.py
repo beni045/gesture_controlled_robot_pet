@@ -1,4 +1,3 @@
-
 import random
 import os
 import cv2
@@ -6,7 +5,9 @@ import numpy as np
 import argparse
 import sys
 sys.path.append('..')
+from model_processor import handpose_ModelProcessor
 from model_processor import face_detection_ModelProcessor
+from model_processor import hand_detection_ModelProcessor
 from model_processor import body_pose_ModelProcessor
 from model_processor import object_tracking_ModelProcessor
 from atlas_utils.camera import Camera
@@ -23,7 +24,9 @@ import struct
 import pickle
 import zlib
 
+MODEL_PATH_HAND_POSE = "../../models/handpose_argmax_bgr.om"
 MODEL_PATH_FACE_DETECTION = "../../models/face_detection.om"
+MODEL_PATH_HAND_DETECTION = "../../models/Hand_detection.om"
 MODEL_PATH_BODY_POSE = "../../models/body_pose.om"
 MODEL_PATH_OBJECT_TRACKING = "../../models/mot_v2.om"
 BODYPOSE_CONF="../param.conf"
@@ -43,13 +46,13 @@ print("UDP target port:", UDP_PORT)
 connection_established = 0
 
 # If not connected to Raspberry Pi first time, keep trying to connect
-# while connection_established == 0:
-#     try:
-#         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-#         sock.connect((UDP_IP, UDP_PORT))
-#         connection_established = 1
-#     except:
-#         connection_established = 0
+while connection_established == 0:
+    try:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.connect((UDP_IP, UDP_PORT))
+        connection_established = 1
+    except:
+        connection_established = 0
 
 
 def send_serial_command():
@@ -227,14 +230,14 @@ global current_command_state #none, forwards, backwards, takeapicture
 current_command_state = "none"
 
 # Start serial communication with Raspberry Pi (a separate thread)
-# t1 = threading.Thread(target = send_serial_command,args=())
-# t1.start()
+t1 = threading.Thread(target = send_serial_command,args=())
+t1.start()
 
 ############
 ### Main ###
 ############
 
-def execute():
+def execute(model_path):
 
     ## Initialization ##
     #initialize acl runtime 
@@ -247,6 +250,15 @@ def execute():
 
     ## Prepare Model ##
     # parameters for model path and model inputs
+    handpose_model_parameters = {
+        'model_dir': model_path,
+        'width': 256, # model input width      
+        'height': 256, # model input height
+    }
+
+    hand_detection_model_parameters = {
+        'model_dir': MODEL_PATH_HAND_DETECTION,
+    }
 
     face_detection_model_parameters = {
         'model_dir': MODEL_PATH_FACE_DETECTION,
@@ -264,14 +276,11 @@ def execute():
 
     # Prepare model instance: init (loading model from file to memory)
     # Model_processor: preprocessing + model inference + postprocessing
+    handpose_model_processor = handpose_ModelProcessor(acl_resource, handpose_model_parameters)
+    hand_detection_model_processor = hand_detection_ModelProcessor(acl_resource, hand_detection_model_parameters)
     face_detection_model_processor = face_detection_ModelProcessor(acl_resource, face_detection_model_parameters)
-<<<<<<< HEAD
     # body_pose_model_processor = body_pose_ModelProcessor(acl_resource, body_pose_model_parameters)
-    # object_tracking_model_processor = object_tracking_ModelProcessor(acl_resource, object_tracking_model_parameters)
-=======
-    body_pose_model_processor = body_pose_ModelProcessor(acl_resource, body_pose_model_parameters)
     object_tracking_model_processor = object_tracking_ModelProcessor(acl_resource, object_tracking_model_parameters)
->>>>>>> 0525a895925b62baa6855929e2e5022fe991d25b
     
     ## Get Input ##
     # Initialize Camera
@@ -279,10 +288,10 @@ def execute():
 
     ## Set Output ##
     # open the presenter channel
-    chan = presenteragent.presenter_channel.open_channel(BODYPOSE_CONF)
-    if chan == None:
-        print("Open presenter channel failed")
-        return
+    # chan = presenteragent.presenter_channel.open_channel(BODYPOSE_CONF)
+    # if chan == None:
+    #     print("Open presenter channel failed")
+    #     return
 
     active = False
     tracking = False
@@ -303,16 +312,8 @@ def execute():
         ## Model Prediction ##
         # model_processor.predict: processing + model inference + postprocessing
         # canvas: the picture overlayed with human body joints and limbs
-<<<<<<< HEAD
         canvas, xmin, xmax, ymin, ymax = hand_detection_model_processor.predict(img_original)
-        canvas1, command = face_detection_model_processor.predict(img_original)  
-        canvas, hg_command = handpose_model_processor.predict(canvas, xmin, xmax, ymin, ymax, canvas1)
-        # canvas, command = object_tracking_model_processor.predict(canvas)
-        # canvas = body_pose_model_processor.predict(canvas)  
-=======
-
-        # box = tuple([top_left, bottom_right])
-        canvas, hg_command, box, rotate = body_pose_model_processor.predict(img_original, img_original, active)
+        canvas, hg_command = handpose_model_processor.predict(canvas, xmin, xmax, ymin, ymax, img_original, active)
         if hg_command == "ACTIVATE":
             active = True
         elif hg_command == "DEACTIVATE":
@@ -327,13 +328,12 @@ def execute():
             if tracking == True and hg_command != "STOP" and hg_command != "FORWARDS" and hg_command != "HAND!":
                 tracking = False
 
-            # if tracking == True:
-                # canvas, command, hg_command = object_tracking_model_processor.predict(canvas)
+            if tracking == True:
+                canvas, command, hg_command = object_tracking_model_processor.predict(canvas)
         else:
             hg_command = "DEACTIVATE"  
         
         # canvas = body_pose_model_processor.predict(canvas) 
->>>>>>> 0525a895925b62baa6855929e2e5022fe991d25b
         canvas = cv2.cvtColor(canvas, cv2.COLOR_BGR2RGB, 3)  
 
         # prob = np.random.rand(1)[0]
@@ -376,7 +376,7 @@ def execute():
         # construct AclImage object for presenter server
         jpeg_image = AclImage(jpeg_image, img_original.shape[0], img_original.shape[1], jpeg_image.size)
         # send to presenter server
-        chan.send_detection_data(img_original.shape[0], img_original.shape[1], jpeg_image, [])
+        # chan.send_detection_data(img_original.shape[0], img_original.shape[1], jpeg_image, [])
 
     # release the resources
     cap.release() 
@@ -413,4 +413,11 @@ def YUVtoRGB(byteArray):
 ##############   
 
 if __name__ == '__main__':   
-    execute()
+
+    description = 'Load a model for handpose'
+    parser = argparse.ArgumentParser(description=description)
+    parser.add_argument('--model', type=str, default=MODEL_PATH_HAND_POSE)
+    args = parser.parse_args()
+
+    execute(args.model)
+
