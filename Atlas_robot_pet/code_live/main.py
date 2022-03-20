@@ -265,8 +265,13 @@ def execute():
     # Prepare model instance: init (loading model from file to memory)
     # Model_processor: preprocessing + model inference + postprocessing
     face_detection_model_processor = face_detection_ModelProcessor(acl_resource, face_detection_model_parameters)
+<<<<<<< HEAD
+    # body_pose_model_processor = body_pose_ModelProcessor(acl_resource, body_pose_model_parameters)
+    # object_tracking_model_processor = object_tracking_ModelProcessor(acl_resource, object_tracking_model_parameters)
+=======
     body_pose_model_processor = body_pose_ModelProcessor(acl_resource, body_pose_model_parameters)
     object_tracking_model_processor = object_tracking_ModelProcessor(acl_resource, object_tracking_model_parameters)
+>>>>>>> 0525a895925b62baa6855929e2e5022fe991d25b
     
     ## Get Input ##
     # Initialize Camera
@@ -298,6 +303,13 @@ def execute():
         ## Model Prediction ##
         # model_processor.predict: processing + model inference + postprocessing
         # canvas: the picture overlayed with human body joints and limbs
+<<<<<<< HEAD
+        canvas, xmin, xmax, ymin, ymax = hand_detection_model_processor.predict(img_original)
+        canvas1, command = face_detection_model_processor.predict(img_original)  
+        canvas, hg_command = handpose_model_processor.predict(canvas, xmin, xmax, ymin, ymax, canvas1)
+        # canvas, command = object_tracking_model_processor.predict(canvas)
+        # canvas = body_pose_model_processor.predict(canvas)  
+=======
 
         # box = tuple([top_left, bottom_right])
         canvas, hg_command, box, rotate = body_pose_model_processor.predict(img_original, img_original, active)
@@ -321,6 +333,7 @@ def execute():
             hg_command = "DEACTIVATE"  
         
         # canvas = body_pose_model_processor.predict(canvas) 
+>>>>>>> 0525a895925b62baa6855929e2e5022fe991d25b
         canvas = cv2.cvtColor(canvas, cv2.COLOR_BGR2RGB, 3)  
 
         # prob = np.random.rand(1)[0]

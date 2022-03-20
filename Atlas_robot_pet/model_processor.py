@@ -196,7 +196,7 @@ class face_detection_ModelProcessor:
         resultList  = self.model.execute([model_input])
 
 	# postprocessing and save inference results
-        canvas = self.PostProcessing(img_original, resultList)
+        canvas = self.PostProcessing(img_original, resultList, threshold=0.7)
 
         return canvas
 
@@ -260,6 +260,12 @@ class face_detection_ModelProcessor:
 
             elif (biggest_face[2] + ((biggest_face[3] - biggest_face[2]) / 2)) > ((720 / 2) + 75):
                 command = "d" # Move servo down
+            elif (
+                (biggest_face[0] + ((biggest_face[1] - biggest_face[0]) / 2)) >= ((1280 / 2) - 150) and 
+                (biggest_face[0] + ((biggest_face[1] - biggest_face[0]) / 2)) <= ((1280 / 2) + 150) and 
+                (biggest_face[2] + ((biggest_face[3] - biggest_face[2]) / 2)) >= ((720 / 2) - 75) and 
+                (biggest_face[2] + ((biggest_face[3] - biggest_face[2]) / 2)) <= ((720 / 2) + 75)):
+                command = "centered" # face is centered
 
         return image, command
 
@@ -326,6 +332,10 @@ class object_tracking_ModelProcessor:
         self.height = 608
         self.width = 1088
 
+        self.left_count = 0
+        self.right_count = 0
+        self.motor_count = 2
+
         args = argparse.ArgumentParser()
         args.conf_thres = 0.35
         args.track_buffer = 30
@@ -362,9 +372,9 @@ class object_tracking_ModelProcessor:
         canvas = vis.plot_tracking(img0, online_tlwhs, online_ids, frame_id=1,
                                         fps=1.0)
 
-        canvas, command = self.PostProcessing(canvas, online_tlwhs)
+        canvas, command, hg_command = self.PostProcessing(canvas, online_tlwhs)
 
-        return canvas, command
+        return canvas, command, hg_command
 
     def PreProcessing(self, img0):
         # img:  h w c; 608 1088 3
@@ -384,6 +394,7 @@ class object_tracking_ModelProcessor:
     # Determine the command for camera to center the bounding box of the detected person
     def PostProcessing(self, image, bboxes):
         command = "nothing"
+        hg_command = "STOP"
 
         if len(bboxes) > 0:
             bbox = bboxes[0]
@@ -394,10 +405,22 @@ class object_tracking_ModelProcessor:
             y_center = ymin + h / 2
 
             if x_center < ((1280 / 2) - 150):
-                command = "r" # Move servo right
+                self.right_count += 1
+                self.left_count = 0
+                if self.right_count == self.motor_count:
+                    hg_command = "RIGHT" # Move car right
+                    self.right_count = 0
+                else:
+                    command = "r" # Move servo right
 
             elif x_center > ((1280 / 2) + 150):
-                command = "l" # Move servo left
+                self.left_count += 1
+                self.right_count = 0
+                if self.left_count == self.motor_count:
+                    hg_command = "LEFT" # Move servo left
+                    self.left_count = 0
+                else:
+                    command = "l" # Move servo left
 
             elif y_center < ((720 / 2) - 75):
                 command = "u" # Move servo up
@@ -405,6 +428,25 @@ class object_tracking_ModelProcessor:
             elif y_center > ((720 / 2) + 75):
                 command = "d" # Move servo down
 
-        return image, command
+            if w < 200 or h < 500:
+                hg_command = "FORWARDS"
+
+        # prob = np.random.rand(1)[0]
+        # if prob < 0.2:
+        #     self.right_count += 1
+        #     if self.right_count == self.motor_count:
+        #         hg_command = "RIGHT" # Move car right
+        #         self.right_count = 0
+        #     else:
+        #         command = "r" # Move servo right
+        # elif prob < 0.4:
+        #     self.left_count += 1
+        #     if self.left_count == self.motor_count:
+        #         hg_command = "LEFT" # Move servo left
+        #         self.left_count = 0
+        #     else:
+        #         command = "l" # Move servo left
+
+        return image, command, hg_command
 
 
