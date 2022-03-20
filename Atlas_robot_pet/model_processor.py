@@ -347,34 +347,59 @@ class object_tracking_ModelProcessor:
         args.num_classes = 1
         self.args = args
 
-    def predict(self, img_original):
+        # initialize tracker
+        self.tracker = JDETracker(args, self.model, frame_rate=30)
+        self.frame_id = 0
+
+    def predict(self, img_original, coords, curr_tid):
         #preprocess image to get 'model_input'
         img, img0 = self.PreProcessing(img_original)
 
-        # initialize tracker
-        tracker = JDETracker(self.args, self.model, frame_rate=30)
-
         # list of Tracklet; see multitracker.STrack
-        online_targets = tracker.update(np.array([img]), img0)
+        online_targets = self.tracker.update(np.array([img]), img0)
 
         # prepare for drawing, get all bbox and id
         online_tlwhs = []
         online_ids = []
-        for t in online_targets:
-            tlwh = t.tlwh
-            tid = t.track_id
-            vertical = tlwh[2] / tlwh[3] > 1.6
-            if tlwh[2] * tlwh[3] > self.args.min_box_area and not vertical:
-                online_tlwhs.append(tlwh)
-                online_ids.append(tid)
+        min_diff = float('inf')
+        if curr_tid == -1:
+            for t in online_targets:
+                tlwh = t.tlwh
+                tid = t.track_id
+                vertical = tlwh[2] / tlwh[3] > 1.6
+                if tlwh[2] * tlwh[3] > self.args.min_box_area and not vertical:
+
+                    tlwh[2] = tlwh[0] + tlwh[2]
+                    tlwh[3] = tlwh[1] + tlwh[3]
+                    print(tlwh)
+                    coords = np.array(coords).reshape((4,))
+
+                    diff = np.sum(np.square(np.subtract(tlwh, coords)))
+                    tlwh[2] = tlwh[2] - tlwh[0]
+                    tlwh[3] = tlwh[3] - tlwh[1]
+                    if diff < min_diff:
+                        min_diff = diff
+                        curr_tid = tid
+                        online_tlwhs = [tlwh]
+                        online_ids = [tid] 
+
+        else:
+            online_tlwhs = [t.tlwh for t in online_targets if t.track_id == curr_tid]
+            if len(online_tlwhs) > 0:
+                online_ids = [curr_tid]
 
         # draw bbox and id
-        canvas = vis.plot_tracking(img0, online_tlwhs, online_ids, frame_id=1,
+        canvas = vis.plot_tracking(img0, online_tlwhs, online_ids, frame_id=self.frame_id,
                                         fps=1.0)
+        self.frame_id += 1
 
         canvas, command, hg_command = self.PostProcessing(canvas, online_tlwhs)
 
-        return canvas, command, hg_command
+        if len(online_tlwhs) > 0:
+            next_tid = curr_tid
+        else:
+            next_tid = -1
+        return canvas, command, hg_command, next_tid
 
     def PreProcessing(self, img0):
         # img:  h w c; 608 1088 3
@@ -393,7 +418,7 @@ class object_tracking_ModelProcessor:
 
     # Determine the command for camera to center the bounding box of the detected person
     def PostProcessing(self, image, bboxes):
-        command = "nothing"
+        command = "NOTHING"
         hg_command = "STOP"
 
         if len(bboxes) > 0:
@@ -411,7 +436,7 @@ class object_tracking_ModelProcessor:
                     hg_command = "RIGHT" # Move car right
                     self.right_count = 0
                 else:
-                    command = "r" # Move servo right
+                    command = "RIGHT" # Move servo right
 
             elif x_center > ((1280 / 2) + 150):
                 self.left_count += 1
@@ -420,13 +445,13 @@ class object_tracking_ModelProcessor:
                     hg_command = "LEFT" # Move servo left
                     self.left_count = 0
                 else:
-                    command = "l" # Move servo left
+                    command = "LEFT" # Move servo left
 
             elif y_center < ((720 / 2) - 75):
-                command = "u" # Move servo up
+                command = "UP" # Move servo up
 
             elif y_center > ((720 / 2) + 75):
-                command = "d" # Move servo down
+                command = "DOWN" # Move servo down
 
             if w < 200 or h < 500:
                 hg_command = "FORWARDS"
@@ -448,5 +473,3 @@ class object_tracking_ModelProcessor:
         #         command = "l" # Move servo left
 
         return image, command, hg_command
-
-
