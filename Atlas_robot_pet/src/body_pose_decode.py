@@ -48,7 +48,7 @@ def decode_body_pose(heatmaps, scale, image_original, active):
         box = tuple([[-1,-1],[-1,-1]])
     else:
         command = get_rc_command(joint_list, int(image_original.shape[1]))
-        rotate = get_head_command(joint_list[12])
+        rotate = get_head_command(joint_list[13])
 
 
     print(command)
@@ -90,14 +90,14 @@ def decode_body_pose(heatmaps, scale, image_original, active):
     cv2.rectangle(canvas,(_x5 ,_y5 ),(_x6 ,_y6),(255,255,255),cv2.FILLED)
     cv2.putText(canvas,rotate,(_x5,_y5),cv2.FONT_HERSHEY_COMPLEX,1,(0,0,0),2)
 
+    # # Don't bother drawing if no hand gesture is detected/hand gesture doesn't pass validation
+    if command == "STOP":
+        return canvas, command, box, rotate
+
     for idx, limb in enumerate(JOINT_LIMB):
         if limb[0] not in LEGS and limb[1] not in LEGS: # draw if not part of leg
             joint_from, joint_to = joint_list[limb[0]], joint_list[limb[1]]
             canvas = cv2.line(canvas, tuple(joint_from.astype(int)), tuple(joint_to.astype(int)), color=COLOR[idx], thickness=4)
-
-    # # Don't bother drawing if no hand gesture is detected/hand gesture doesn't pass validation
-    if command == "STOP":
-        return canvas, command, box, rotate
 
     # draw bounding box
     cv2.rectangle(canvas, tuple(box[0]), tuple(box[1]), color=[255,0,0], thickness=4)
@@ -345,13 +345,13 @@ def get_bounding_box(joint_list):
     return box
 
 def get_head_command(joint):
-    center = [640,100]
-    threshold = 200
+    center = [640,360 - 100]
+    threshold = 100
     if joint[0] < center[0] - threshold: # too far left
         return "RIGHT"
     elif joint[0] > center[0] + threshold: # too far right
         return "LEFT"
-    elif joint[1] < center[1] - threshold: # too far down
+    elif joint[1] < center[1] - (threshold - 80): # too far down
         return "UP"
     elif joint[1] > center[1] + threshold: # too far up
         return "DOWN"
