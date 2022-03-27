@@ -480,7 +480,7 @@ while True:
         count_forward = 0
         count_backward = 0
         count_spin = 0
-        data = pickle.dumps("send_done_command\n", 0)
+        data = pickle.dumps("received follow\n", 0)
         size = len(data)
         conn.sendall(struct.pack(">L", size) + data) # Send data back to Atlas 200 DK
 

@@ -7,6 +7,7 @@ import os
 import cv2
 import numpy as np
 import argparse
+import subprocess
 import sys
 from queue import Queue
 from std_msgs.msg import UInt8
@@ -51,6 +52,7 @@ class rpi_signal_launch():
                 self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 rospy.loginfo("sock.connect")
                 self.sock.connect((self.UDP_IP, self.UDP_PORT))
+                self.sock.settimeout(30.0)
                 connection_established = 1
                 rospy.loginfo("CONNECTED")
             except:
@@ -103,6 +105,10 @@ class rpi_signal_launch():
             rospy.loginfo("waiting for flag")
             rpi_signal_flag = rospy.get_param("/rpi_signal_flag")
             if rpi_signal_flag:
+                if rospy.get_param("/reset_flag"):
+                    self.face_centered = 0
+                    self.received_sig = "STOP"
+                    rospy.set_param("/reset_flag", 0)
                 face_detection_flag = rospy.get_param("/face_detection_flag")
                 object_tracking_flag = rospy.get_param('/object_tracking_flag')
                 rospy.loginfo("flag received")
@@ -187,9 +193,9 @@ class rpi_signal_launch():
                     rospy.loginfo("Sending: Stop Follow")
                     self.data = pickle.dumps("stop_follow\n", 0)
                     
-                # elif self.hg_sig  == "BODY" :
-                #     rospy.loginfo("Sending: Body")
-                #     self.data = pickle.dumps("body\n", 0)
+                elif self.hg_sig  == "BODY" :
+                    rospy.loginfo("Sending: Body")
+                    self.data = pickle.dumps("body\n", 0)
 
                 if self.data == b"":
                     #    rospy.loginfo("Sending: None")
@@ -213,7 +219,10 @@ class rpi_signal_launch():
 
                 while len(self.data) < self.payload_size:
                     #  rospy.loginfo("Recv: {}".format(len(data)))
-                    self.data += self.sock.recv(4096)
+                    try:
+                        self.data += self.sock.recv(4096)
+                    except socket.timeout:
+                        subprocess.Popen(['killall', '-9', 'rosmaster'])
 
                 #   rospy.loginfo("Done Recv: {}".format(len(data)))
                 packed_msg_size = self.data[:self.payload_size]
@@ -222,7 +231,10 @@ class rpi_signal_launch():
                 #   rospy.loginfo("msg_size: {}".format(msg_size))
 
                 while len(self.data) < msg_size:
-                    self.data += self.sock.recv(4096)
+                    try:
+                        self.data += self.sock.recv(4096)
+                    except socket.timeout:
+                        subprocess.Popen(['killall', '-9', 'rosmaster'])
 
                 frame_data = self.data[:msg_size]
                 self.data = self.data[msg_size:]
@@ -273,6 +285,7 @@ class rpi_signal_launch():
                 if self.data == "received follow\n":
                     self.received_sig  = "follow"
                     rospy.loginfo(self.received_sig )
+                    rospy.set_param('/object_tracking_flag', 1)
                 
                 if self.data == "received stop_follow\n":
                     self.received_sig  = "stop_follow"
