@@ -85,7 +85,7 @@ class rpi_signal_launch():
     def follow_Sub(self):
         rospy.Subscriber("object_tracking", String, self.follow_signal)
     def follow_signal(self, sig_data):
-        if sig_data.data in ['UP', 'DOWN', 'LEFT', 'RIGHT', 'CENTERED']:
+        if sig_data.data in ['UP', 'DOWN']:
             self.face_sig = sig_data.data
         else:
             self.hg_sig = sig_data.data
@@ -108,7 +108,9 @@ class rpi_signal_launch():
                 if rospy.get_param("/reset_flag"):
                     self.face_centered = 0
                     self.received_sig = "STOP"
+                    rospy.set_param("/rpi_signal_flag", 0)
                     rospy.set_param("/reset_flag", 0)
+                    continue
                 face_detection_flag = rospy.get_param("/face_detection_flag")
                 object_tracking_flag = rospy.get_param('/object_tracking_flag')
                 rospy.loginfo("flag received")
@@ -192,6 +194,10 @@ class rpi_signal_launch():
                 elif self.hg_sig  == "STOP FOLLOW" and self.received_sig != "take_a_picture":
                     rospy.loginfo("Sending: Stop Follow")
                     self.data = pickle.dumps("stop_follow\n", 0)
+                
+                elif self.hg_sig  == "center for picture" and self.received_sig != "take_a_picture":
+                    rospy.loginfo("Sending: center for picture")
+                    self.data = pickle.dumps("center for picture\n", 0)
                     
                 elif self.hg_sig  == "BODY" :
                     rospy.loginfo("Sending: Body")
@@ -251,10 +257,13 @@ class rpi_signal_launch():
                 if self.data == "received activate\n":
                     self.received_sig  = "activate"
                     rospy.loginfo(self.received_sig )
+                    rospy.set_param("/active_flag", 1)
 
                 if self.data == "received deactivate\n":
                     self.received_sig  = "deactivate"
                     rospy.loginfo(self.received_sig )
+                    rospy.set_param("/active_flag", 0)
+                    rospy.set_param("/reset_flag", 1)
 
                 if self.data == "received take a picture\n":
                     self.received_sig  = "take_a_picture"
@@ -280,6 +289,10 @@ class rpi_signal_launch():
 
                 if self.data == "received right\n":
                     self.received_sig  = "right"
+                    rospy.loginfo(self.received_sig )
+
+                if self.data == "received center\n":
+                    self.received_sig  = "center"
                     rospy.loginfo(self.received_sig )
                 
                 if self.data == "received follow\n":

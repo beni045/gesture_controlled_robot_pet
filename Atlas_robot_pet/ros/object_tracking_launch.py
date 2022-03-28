@@ -48,6 +48,7 @@ class object_tracking_launch():
         }
         self.object_tracking_model_processor = object_tracking_ModelProcessor(self.acl_resource,object_tracking_model_parameters)
         rospy.loginfo("peeko")
+        self.stop_follow_flag = False
         self.Subscriber()
     def Subscriber(self):
         rospy.Subscriber("camera", Image, self.process_image, queue_size = 10, buff_size = 2 ** 24)
@@ -87,14 +88,18 @@ class object_tracking_launch():
                 try:
                     if not self.image_queue.empty():
                         img_original = self.image_queue.get()
-                        canvas, command, hg_command, next_tid = self.object_tracking_model_processor.predict(img_original, coords, curr_tid)
+                        canvas, command, next_tid = self.object_tracking_model_processor.predict(img_original, coords, curr_tid)
                         if next_tid == -1:
-                            count_notrack += 1
-                            if count_notrack == 50:
-                                count_notrack = 0
-                                curr_tid = -1
-                                rospy.set_param('/object_tracking_flag', 0)
-                                rospy.set_param('/rpi_signal_flag', 0)
+                            if self.stop_follow_flag:
+                                command = "STOP FOLLOW"
+                            else:
+                                count_notrack += 1
+                                if count_notrack == 50:
+                                    count_notrack = 0
+                                    curr_tid = -1
+                                    self.stop_follow_flag = True
+                                # rospy.set_param('/object_tracking_flag', 0)
+                                # rospy.set_param('/rpi_signal_flag', 0)
                         else:
                             curr_tid = next_tid
                             count_notrack = 0
@@ -104,7 +109,6 @@ class object_tracking_launch():
 
                         rospy.loginfo(command)
                         self.pub.publish(command)
-                        self.pub.publish(hg_command)
 
                         _,jpeg_image = cv2.imencode('.jpg',canvas)
                         jpeg_image = AclImage(jpeg_image, img_original.shape[0], img_original.shape[1], jpeg_image.size)
@@ -115,6 +119,7 @@ class object_tracking_launch():
             else:
                 curr_tid = -1
                 count_notrack = 0
+                self.stop_follow_flag = False
     
     def process_image(self, data):
         if not self.image_queue.full():

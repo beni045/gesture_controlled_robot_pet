@@ -393,13 +393,13 @@ class object_tracking_ModelProcessor:
                                         fps=1.0)
         self.frame_id += 1
 
-        canvas, command, hg_command = self.PostProcessing(canvas, online_tlwhs)
+        canvas, command = self.PostProcessing(canvas, online_tlwhs)
 
         if len(online_tlwhs) > 0:
             next_tid = curr_tid
         else:
             next_tid = -1
-        return canvas, command, hg_command, next_tid
+        return canvas, command, next_tid
 
     def PreProcessing(self, img0):
         # img:  h w c; 608 1088 3
@@ -418,8 +418,7 @@ class object_tracking_ModelProcessor:
 
     # Determine the command for camera to center the bounding box of the detected person
     def PostProcessing(self, image, bboxes):
-        command = "NOTHING"
-        hg_command = "STOP"
+        command = "STOP"
 
         if len(bboxes) > 0:
             bbox = bboxes[0]
@@ -430,46 +429,23 @@ class object_tracking_ModelProcessor:
             y_center = ymin + h / 2
 
             if x_center < ((1280 / 2) - 150):
-                self.right_count += 1
-                self.left_count = 0
-                if self.right_count == self.motor_count:
-                    hg_command = "RIGHT" # Move car right
-                    self.right_count = 0
-                else:
-                    command = "RIGHT" # Move servo right
+                command = "RIGHT" # Move car right
 
             elif x_center > ((1280 / 2) + 150):
-                self.left_count += 1
-                self.right_count = 0
-                if self.left_count == self.motor_count:
-                    hg_command = "LEFT" # Move servo left
-                    self.left_count = 0
-                else:
-                    command = "LEFT" # Move servo left
+                command = "LEFT" # Move servo left
 
             elif y_center < ((720 / 2) - 75):
                 command = "UP" # Move servo up
 
-            elif y_center > ((720 / 2) + 75):
+            elif y_center > ((720 / 2) + 100):
                 command = "DOWN" # Move servo down
 
-            if w < 200 or h < 500:
-                hg_command = "FORWARDS"
+            elif w < 200 or h < 480:
+                command = "FORWARDS"
 
-        # prob = np.random.rand(1)[0]
-        # if prob < 0.2:
-        #     self.right_count += 1
-        #     if self.right_count == self.motor_count:
-        #         hg_command = "RIGHT" # Move car right
-        #         self.right_count = 0
-        #     else:
-        #         command = "r" # Move servo right
-        # elif prob < 0.4:
-        #     self.left_count += 1
-        #     if self.left_count == self.motor_count:
-        #         hg_command = "LEFT" # Move servo left
-        #         self.left_count = 0
-        #     else:
-        #         command = "l" # Move servo left
+            elif w > 400 or h > 600:
+                command = "BACKWARDS"
 
-        return image, command, hg_command
+            print("--- w and h-----:  " + str(w) + "   "+ str(h))
+
+        return image, command
