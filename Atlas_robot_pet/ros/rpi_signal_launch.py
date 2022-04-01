@@ -77,11 +77,13 @@ class rpi_signal_launch():
         rospy.Subscriber("pet_gestures", String, self.hg_signal)    
     def hg_signal(self, sig_data):
         if sig_data.data == "STOP FOLLOW" or not rospy.get_param('/object_tracking_flag'):
-            self.hg_sig = sig_data.data
+            if not rospy.get_param("/reset_flag"):
+                self.hg_sig = sig_data.data
     def face_Sub(self): 
         rospy.Subscriber("face", String, self.face_signal)
     def face_signal(self, sig_data):
-        self.face_sig = sig_data.data
+        if not rospy.get_param("/reset_flag"):
+            self.face_sig = sig_data.data
     def follow_Sub(self):
         rospy.Subscriber("object_tracking", String, self.follow_signal)
     def follow_signal(self, sig_data):
@@ -108,9 +110,13 @@ class rpi_signal_launch():
                 if rospy.get_param("/reset_flag"):
                     self.face_centered = 0
                     self.received_sig = "STOP"
-                    rospy.set_param("/rpi_signal_flag", 0)
-                    rospy.set_param("/reset_flag", 0)
-                    continue
+
+                    self.face_sig = "NOTHING"
+                    self.hg_sig = "RESET"
+
+                    rospy.loginfo("........RESET FLAG RECEIVED...........")
+                    
+                    
                 face_detection_flag = rospy.get_param("/face_detection_flag")
                 object_tracking_flag = rospy.get_param('/object_tracking_flag')
                 rospy.loginfo("flag received")
@@ -202,6 +208,10 @@ class rpi_signal_launch():
                 elif self.hg_sig  == "BODY" :
                     rospy.loginfo("Sending: Body")
                     self.data = pickle.dumps("body\n", 0)
+                
+                elif self.hg_sig  == "RESET" :
+                    rospy.loginfo("Sending: Reset")
+                    self.data = pickle.dumps("reset\n", 0)
 
                 if self.data == b"":
                     #    rospy.loginfo("Sending: None")
@@ -228,7 +238,7 @@ class rpi_signal_launch():
                     try:
                         self.data += self.sock.recv(4096)
                     except socket.timeout:
-                        subprocess.Popen(['killall', '-9', 'rosmaster'])
+                        subprocess.Popen(['pkill', '-9', 'roscore'])
 
                 #   rospy.loginfo("Done Recv: {}".format(len(data)))
                 packed_msg_size = self.data[:self.payload_size]
@@ -240,7 +250,7 @@ class rpi_signal_launch():
                     try:
                         self.data += self.sock.recv(4096)
                     except socket.timeout:
-                        subprocess.Popen(['killall', '-9', 'rosmaster'])
+                        subprocess.Popen(['pkill', '-9', 'roscore'])
 
                 frame_data = self.data[:msg_size]
                 self.data = self.data[msg_size:]
@@ -294,6 +304,7 @@ class rpi_signal_launch():
                 if self.data == "received center\n":
                     self.received_sig  = "center"
                     rospy.loginfo(self.received_sig )
+                    rospy.set_param('/take_a_pic_flag', 1)
                 
                 if self.data == "received follow\n":
                     self.received_sig  = "follow"
@@ -304,6 +315,12 @@ class rpi_signal_launch():
                     self.received_sig  = "stop_follow"
                     rospy.set_param("/object_tracking_flag", 0)
                     rospy.loginfo(self.received_sig )
+
+                if self.data == "received reset\n":
+                    self.received_sig  = "reset"
+                    rospy.loginfo(self.received_sig )
+                    rospy.set_param("/reset_flag", 0)
+                    rospy.set_param("/rpi_signal_flag", 0)
 
                 if self.data == "done command\n":
                     rospy.set_param("/face_detection_flag", 0)

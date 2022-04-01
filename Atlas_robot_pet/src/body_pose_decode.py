@@ -138,7 +138,7 @@ def get_rc_command(joint_list, width):
     bent = 90
     slant = 135
     cross = 45
-    threshold = 30
+    threshold = 35
 
     left_shoulder_angle = left_shoulder_status(x_arr, y_arr)
     left_elbow_angle = left_arm_bent(x_arr, y_arr)
@@ -205,15 +205,14 @@ def get_rc_command(joint_list, width):
     elif abs(left_elbow_angle - bent) <= threshold and abs(left_shoulder_angle - straight) <= threshold and left_wrist_up and abs(right_elbow_angle - straight) <= threshold and abs(right_shoulder_angle - slant) <= threshold and (not right_wrist_up):
         return "BACKWARDS"
 
-    #  _o__
-    # |
-    elif abs(left_elbow_angle - straight) <= threshold and abs(right_elbow_angle - bent) <= threshold and (not right_wrist_up) and abs(left_shoulder_angle - straight) <= threshold and abs(right_shoulder_angle - straight) <= threshold:
-        return "SPIN LEFT"
+    #  o__
+    elif abs(right_elbow_angle - straight) <= threshold and abs(right_shoulder_angle - straight) <= threshold:
+        return "SPIN"
     
-    # __o_
-    #     |
-    elif abs(left_elbow_angle - bent) <= threshold and (not left_wrist_up) and abs(right_elbow_angle - straight) <= threshold and abs(left_shoulder_angle - straight) <= threshold and abs(right_shoulder_angle - straight) <= threshold:
-        return "SPIN RIGHT"
+    # # __o_
+    # #     |
+    # elif abs(left_elbow_angle - bent) <= threshold and (not left_wrist_up) and abs(right_elbow_angle - straight) <= threshold and abs(left_shoulder_angle - straight) <= threshold and abs(right_shoulder_angle - straight) <= threshold:
+    #     return "SPIN RIGHT"
 
     else:
         return "BODY"

@@ -17,7 +17,7 @@ import datetime
 SERVO_X = 20
 SERVO_Z = 21
 START_X = 80
-START_Z = 40
+START_Z = 20
 
 # Set GPIO numbering mode
 GPIO.setmode(GPIO.BCM)
@@ -140,7 +140,7 @@ def RC_car_control():
       GPIO.output(in2,GPIO.LOW)
       GPIO.output(in3,GPIO.LOW)
       GPIO.output(in4,GPIO.HIGH)
-      time.sleep(0.3)
+      time.sleep(0.5)
       GPIO.output(in1,GPIO.LOW)
       GPIO.output(in2,GPIO.LOW)
       GPIO.output(in3,GPIO.LOW)
@@ -152,7 +152,7 @@ def RC_car_control():
       GPIO.output(in2,GPIO.HIGH)
       GPIO.output(in3,GPIO.HIGH)
       GPIO.output(in4,GPIO.LOW)
-      time.sleep(0.3)
+      time.sleep(0.5)
       GPIO.output(in1,GPIO.LOW)
       GPIO.output(in2,GPIO.LOW)
       GPIO.output(in3,GPIO.LOW)
@@ -162,9 +162,9 @@ def RC_car_control():
     elif current_hg_command == "spin":
       GPIO.output(in1,GPIO.HIGH)
       GPIO.output(in2,GPIO.LOW)
-      GPIO.output(in3,GPIO.HIGH)
+      GPIO.output(in3,GPIO.LOW)
       GPIO.output(in4,GPIO.LOW)
-      time.sleep(0.2)
+      time.sleep(0.5)
       GPIO.output(in1,GPIO.LOW)
       GPIO.output(in2,GPIO.LOW)
       GPIO.output(in3,GPIO.LOW)
@@ -456,7 +456,7 @@ while True:
         count_forward = 0
         count_backward = 0
         count_spin = 0
-        data = pickle.dumps("send_done_command\n", 0)
+        data = pickle.dumps("received activate\n", 0)
         size = len(data)
         conn.sendall(struct.pack(">L", size) + data) # Send data back to Atlas 200 DK 
     
@@ -468,7 +468,20 @@ while True:
         count_forward = 0
         count_backward = 0
         count_spin = 0
-        data = pickle.dumps("send_done_command\n", 0)
+        data = pickle.dumps("received deactivate\n", 0)
+        size = len(data)
+        conn.sendall(struct.pack(">L", size) + data) # Send data back to Atlas 200 DK 
+
+    # RESET
+    elif data=="reset\n":
+        print("reset robot\n")
+        if display != "deactivate":
+            display = "default"
+        count_takeapicture = 0
+        count_forward = 0
+        count_backward = 0
+        count_spin = 0
+        data = pickle.dumps("received reset\n", 0)
         size = len(data)
         conn.sendall(struct.pack(">L", size) + data) # Send data back to Atlas 200 DK 
 
@@ -500,7 +513,7 @@ while True:
     elif data == "body\n":
         print("body\n")
         display = "body"
-        data = pickle.dumps("send_done_command\n", 0)
+        data = pickle.dumps("received body\n", 0)
         size = len(data)
         conn.sendall(struct.pack(">L", size) + data) # Send data back to Atlas 200 DK
 
@@ -508,7 +521,7 @@ while True:
     elif data=="center for picture\n":
         print("center for picture\n")
         display = "picture"
-        data = pickle.dumps("send_done_command\n", 0)
+        data = pickle.dumps("received center\n", 0)
         size = len(data)
         conn.sendall(struct.pack(">L", size) + data) # Send data back to Atlas 200 DK
 
@@ -559,7 +572,6 @@ while True:
 
     # Display Neutral expression by default
     if current_hg_command != "take_a_picture" and current_hg_command != "happy_mood" and current_hg_command != "tap_image_fade" and current_hg_command != "tap_final_image_show":
-
 
         ret_val, frame_show = neu_cap.read()
         # Reset to beginning if neutral expression video has ended
@@ -625,7 +637,11 @@ while True:
         frame_show = fade_image # Saved image 
         
         if (time.time() - time_final_img_tap_start) >= 3:
-            current_hg_command = "happy_mood" # Command is complete, execute happy expression
+            current_hg_command = "none" # Command is complete, execute happy expression
+            display = "default"
+            # Reset camera position
+            go_to_angle(servo_x, START_X)
+            go_to_angle(servo_z, START_Z)
             
 
     # Display GUI
