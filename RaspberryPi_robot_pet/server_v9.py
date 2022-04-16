@@ -61,7 +61,7 @@ follow_img = cv2.imread("/home/pi/Documents/Capstone/Raspberry-Pi_robot_pet/foll
 camera_img = cv2.imread("/home/pi/Documents/Capstone/Raspberry-Pi_robot_pet/camera_img.jpg")
 body_img = cv2.imread("/home/pi/Documents/Capstone/Raspberry-Pi_robot_pet/body_img.jpg")
 
-# os.system("unclutter -idle 0 &") #Hide mouse pointer
+os.system("unclutter -idle 0 &") #Hide mouse pointer
 
 #Set up serial communication w/ Atlas 200DK
 
@@ -159,11 +159,23 @@ def RC_car_control():
       GPIO.output(in4,GPIO.LOW)
       current_hg_command = "send_done_command"
 
-    elif current_hg_command == "spin":
+    elif current_hg_command == "spin_left":
       GPIO.output(in1,GPIO.HIGH)
       GPIO.output(in2,GPIO.LOW)
       GPIO.output(in3,GPIO.LOW)
       GPIO.output(in4,GPIO.LOW)
+      time.sleep(0.5)
+      GPIO.output(in1,GPIO.LOW)
+      GPIO.output(in2,GPIO.LOW)
+      GPIO.output(in3,GPIO.LOW)
+      GPIO.output(in4,GPIO.LOW)
+      current_hg_command = "send_done_command"
+
+    elif current_hg_command == "spin_right":
+      GPIO.output(in1,GPIO.LOW)
+      GPIO.output(in2,GPIO.LOW)
+      GPIO.output(in3,GPIO.LOW)
+      GPIO.output(in4,GPIO.HIGH)
       time.sleep(0.5)
       GPIO.output(in1,GPIO.LOW)
       GPIO.output(in2,GPIO.LOW)
@@ -397,9 +409,9 @@ while True:
             size = len(data)
             conn.sendall(struct.pack(">L", size) + data) # Send data back to Atlas 200 DK 
 
-    # Spin Around
-    elif data=="spin\n":
-            print("Spin")
+    # Spin Left
+    elif data=="spin left\n":
+            print("Spin left")
             if current_hg_command == "none":
                 count_spin = count_spin + 1
                 print("Spin count: " + str(count_spin))
@@ -409,14 +421,35 @@ while True:
                 if count_spin == count_num:
                     print("Spin triggered \n\n")
                     count_spin = 0
-                    current_hg_command = "spin"
-                    data = pickle.dumps("received spin\n", 0)
+                    current_hg_command = "spin_left"
+                    data = pickle.dumps("received spin left\n", 0)
                 else:
                     data = pickle.dumps("got it \n", 0)
             else: 
                 data = pickle.dumps("got it \n", 0)
             size = len(data)
             conn.sendall(struct.pack(">L", size) + data) # Send data back to Atlas 200 DK 
+
+    # Spin Right
+    elif data=="spin right\n":
+            print("Spin right")
+            if current_hg_command == "none":
+                count_spin = count_spin + 1
+                print("Spin count: " + str(count_spin))
+                count_takeapicture = 0
+                count_forward = 0
+                count_backward = 0
+                if count_spin == count_num:
+                    print("Spin triggered \n\n")
+                    count_spin = 0
+                    current_hg_command = "spin_right"
+                    data = pickle.dumps("received spin right\n", 0)
+                else:
+                    data = pickle.dumps("got it \n", 0)
+            else: 
+                data = pickle.dumps("got it \n", 0)
+            size = len(data)
+            conn.sendall(struct.pack(">L", size) + data) # Send data back to Atlas 200 DK
 
     # Left
     elif data=="left\n":
@@ -580,13 +613,10 @@ while True:
             ret_val, frame_show = neu_cap.read()
         frame_show = cv2.resize(frame_show, (width, height))
 
-        
-        # if active:
-        #     cv2.putText(frame_show,"A",(100,110),font, scale,color,thickness,cv2.LINE_AA)
-        if current_hg_command == "forwards": #for debugging
-            cv2.putText(frame_show,"F",(200,210),font, scale,color,thickness,cv2.LINE_AA)
-        if current_hg_command == "backwards": #for debugging
-            cv2.putText(frame_show,"B",(200,210),font, scale,color,thickness,cv2.LINE_AA)
+        # if current_hg_command == "forwards": #for debugging
+        #     cv2.putText(frame_show,"F",(200,210),font, scale,color,thickness,cv2.LINE_AA)
+        # if current_hg_command == "backwards": #for debugging
+        #     cv2.putText(frame_show,"B",(200,210),font, scale,color,thickness,cv2.LINE_AA)
         # if current_hg_command == "spin": #for debugging
         #     cv2.putText(frame_show,"S",(200,210),font, scale,color,thickness,cv2.LINE_AA)
 
@@ -602,10 +632,6 @@ while True:
         elif display == "body":
             frame_show = cv2.resize(body_img, (width, height))
 
-    # elif current_hg_command == "take_a_picture":
-    #     if display == "picture":
-    #         frame_show = cv2.resize(camera_img, (width, height))
-    #     frame_show = cv2.resize(camera_img, (width, height))
 
    ### Display happy mood after completion of any command. Return to neutral expression when complete
     elif current_hg_command == "happy_mood":
