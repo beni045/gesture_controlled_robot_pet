@@ -17,10 +17,7 @@ from rospy.exceptions import ROSException, ROSSerializationException, ROSInitExc
 from std_msgs.msg import UInt8
 from rospy.numpy_msg import numpy_msg
 
-sys.path.append('../projects/demo/Atlas_robot_pet')
-# from model_processor import handpose_ModelProcessor
-from model_processor import face_detection_ModelProcessor
-from model_processor import hand_detection_ModelProcessor
+sys.path.append('../hand_gesture_controlled_robot_pet/Atlas_robot_pet')
 from model_processor import body_pose_ModelProcessor
 from atlas_utils.camera import Camera
 from atlas_utils import presenteragent
@@ -40,11 +37,10 @@ import zlib
 from cv_bridge import CvBridge, CvBridgeError
 from rospy.exceptions import ROSException, ROSSerializationException, ROSInitException, ROSInterruptException
 
-MODEL_PATH_BODY_POSE = "../projects/demo/models/body_pose.om"
-MODEL_PATH_HAND_DETECTION = "../hand_gesture_controlled_robot_pet/Atlas_robot_pet/model/Hand_detection.om"
+MODEL_PATH_BODY_POSE = "../hand_gesture_controlled_robot_pet/models/body_pose.om"
 BODYPOSE_CONF = "../hand_gesture_controlled_robot_pet/Atlas_robot_pet/param.conf"
 HG_COUNTER_MAX = 3
-NOTHING_COUNTER_MAX = 30
+NOTHING_COUNTER_MAX = 10
 
 
 class robot_pet_launch():
@@ -56,7 +52,6 @@ class robot_pet_launch():
         self.facepub = rospy.Publisher('face', String, queue_size=10)
         self.image_queue = Queue(maxsize=1)
         self.rgbpub = rospy.Publisher('RGBmatrix', Image, queue_size=10)
-        #self.present_pub = rospy.Publisher('presenter', someobject, queue_size=10)
 
         self.cap = Camera(id = 1, fps = 10)
         self.chan = presenteragent.presenter_channel.open_channel(BODYPOSE_CONF)
@@ -75,6 +70,7 @@ class robot_pet_launch():
         rospy.set_param("/active_flag", 0)
         rospy.set_param('/keep_follow_flag', 0)
         rospy.set_param('/rpi_signal_flag', 0)
+        rospy.set_param('/take_a_pic_flag', 0)
         rospy.set_param('/face_detection_flag', 0)
         rospy.set_param('/body_face_detection_flag', 0)
         rospy.set_param('/object_tracking_flag', 0)
@@ -127,17 +123,14 @@ class robot_pet_launch():
             'width': 368, # model input width      
             'height': 368, # model input height
         }
-        hand_detection_model_parameters = {
-            'model_dir': MODEL_PATH_HAND_DETECTION,
-        }
         blank_image = np.zeros((1,1,3), np.uint8)
         global RGBMatrix
         RGBMatrix = blank_image
         bodypose_model_processor = body_pose_ModelProcessor(self.acl_resource, bodypose_model_parameters)
-        hand_detection_model_processor = hand_detection_ModelProcessor(self.acl_resource, hand_detection_model_parameters)
         while not rospy.is_shutdown():
             self.activate_flag = rospy.get_param("/active_flag")
             hand_gestures_flag = rospy.get_param("/hand_gestures_flag")
+            self.take_a_pic_flag = rospy.get_param("/take_a_pic_flag")
             self.face_detection_flag = rospy.get_param("/body_face_detection_flag")
             rospy.loginfo(self.face_detection_flag)
             if hand_gestures_flag:
@@ -167,18 +160,13 @@ class robot_pet_launch():
                     rospy.loginfo("ROS Interrupt.")
                     raise err
             
-                # self.rgbpub.publish(RGBMatrix)
 
                 img_original = cv2.flip(img_original,1)
                 img_original = cv2.cvtColor(img_original, cv2.COLOR_BGR2RGB, 3)
                 self.convert_and_pubish(img_original)
                 
-                # canvas, xmin, xmax, ymin, ymax = hand_detection_model_processor.predict(img_original)
                 canvas, hg_command, coords, rotate = bodypose_model_processor.predict(img_original, img_original, self.activate_flag)
-                # canvas = cv2.cvtColor(canvas, cv2.COLOR_BGR2RGB, 3)
-                #self.convert_and_pubish(canvas)
                 
-                #rospy.loginfo(hg_command)
                 if hg_command == self.curr_hg_command:
                     self.hg_counter += 1
                     if self.hg_counter < HG_COUNTER_MAX:
@@ -199,7 +187,7 @@ class robot_pet_launch():
                         ((x_up, y_up), (x_down, y_down)) = coords
                         width = x_down - x_up
                         height = y_down - y_up
-                        if width * height < 0.05 * 1280 * 720:
+                        if width * height < 0.048 * 1280 * 720:
                             rospy.loginfo(width)
                             rospy.loginfo(height)
                             if width * height != 0:
@@ -207,9 +195,8 @@ class robot_pet_launch():
                                 rospy.set_param('/rpi_signal_flag', 1)
                         else:
                             self.nothing_count = 0
-                            self.take_a_pic_flag = False
+                            rospy.set_param('/take_a_pic_flag', 0)
                             hg_command = "STOP"
-                            #rospy.set_param("/face_detection_flag", 1)
                             rospy.set_param("/body_face_detection_flag", 1)
 
                     elif self.centering_flag:
@@ -237,10 +224,11 @@ class robot_pet_launch():
                     
                     elif hg_command == "TAKE A PICTURE":
                         if not rospy.get_param('/object_tracking_flag'):
-                            self.take_a_pic_flag = True
-                            hg_command = "STOP"
-                            # rospy.set_param("/face_detection_flag", 1)
-                    elif hg_command == "SPIN":
+                            hg_command = "center for picture"
+                            rospy.set_param('/rpi_signal_flag', 1)
+                    elif hg_command == "SPIN LEFT":
+                        rospy.set_param('/rpi_signal_flag', 1)
+                    elif hg_command == "SPIN RIGHT":
                         rospy.set_param('/rpi_signal_flag', 1)
                     elif hg_command == "FORWARDS":
                         rospy.set_param('/rpi_signal_flag', 1)
@@ -252,10 +240,11 @@ class robot_pet_launch():
                         if not rospy.get_param("/face_detection_flag"):
                             rospy.set_param('/coords', coords)
                             rospy.set_param('/rpi_signal_flag', 1)
-                            # rospy.set_param('/object_tracking_flag', 1)
                     elif hg_command == "BACKWARDS":
                         rospy.set_param('/rpi_signal_flag', 1)
                     elif hg_command == "ACTIVATE" or hg_command == "DEACTIVATE":
+                        rospy.set_param('/rpi_signal_flag', 1)
+                    elif hg_command == "BODY":
                         rospy.set_param('/rpi_signal_flag', 1)
 
                 else:
@@ -287,10 +276,12 @@ class robot_pet_launch():
                 hg_command = "STOP"
                 rotate = "NOTHING"
                 self.nothing_count = 0
-                self.take_a_pic_flag = False
                 self.centering_flag = False
                 rospy.set_param("/reset_flag", 1)
+                rospy.set_param("/rpi_signal_flag", 1)
+                rospy.set_param('/take_a_pic_flag', 0)
                 rospy.set_param("/body_face_detection_flag", 0)
+                rospy.loginfo("........NOTHING COUNT TRIGGERED...........")
         else:
             self.nothing_count = 0
             
@@ -299,8 +290,9 @@ class robot_pet_launch():
     
     def cleanup(self):
         self.cap.close()
-        #subprocess.Popen(['killall', '-9', 'roscore'])
-        subprocess.Popen(['killall', '-9', 'rosmaster'])
+        subprocess.Popen(['pkill', '-9', 'rosmaster'])
+        subprocess.Popen(['pkill', '-9', 'roscore'])
+        subprocess.Popen(['pkill', '-9', 'python3'])
     def YUVtoRGB(self, byteArray):
 
         global RGBMatrix #Send RGB image to RPi for Camera View

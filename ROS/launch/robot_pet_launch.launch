@@ -1,0 +1,12 @@
+<launch>
+  <param name="keep_follow_flag" type="int" value="0" />
+  <param name="rpi_signal_flag" type="int" value="0" />
+  <param name="face_detection_flag" type="int" value="0" />
+  <param name="body_face_detection_flag" type="int" value="0" />
+  <param name="object_tracking_flag" type="int" value="0" />
+  <param name="hand_gestures_flag" type="int" value="1" />
+  
+  <node name="robot_pet" pkg="robot_pet" type="robot_pet_launch.py" output="screen"/>
+  <node name="object_tracking_launch" pkg="robot_pet" type="object_tracking_launch.py" output="screen"/>
+  <node name="rpi_signal_launch" pkg="robot_pet" type="rpi_signal_launch.py" output="screen"/>
+</launch>

@@ -8,10 +8,7 @@ import cv2
 import numpy as np
 import argparse
 import sys
-sys.path.append('../projects/demo/Atlas_robot_pet')
-from model_processor import handpose_ModelProcessor
-from model_processor import face_detection_ModelProcessor
-from model_processor import hand_detection_ModelProcessor
+sys.path.append('../hand_gesture_controlled_robot_pet/Atlas_robot_pet')
 from model_processor import body_pose_ModelProcessor
 from model_processor import object_tracking_ModelProcessor
 from atlas_utils.camera import Camera
@@ -47,7 +44,6 @@ class object_tracking_launch():
             'model_dir': MODEL_PATH_OBJECT_TRACKING,
         }
         self.object_tracking_model_processor = object_tracking_ModelProcessor(self.acl_resource,object_tracking_model_parameters)
-        rospy.loginfo("peeko")
         self.stop_follow_flag = False
         self.Subscriber()
     def Subscriber(self):
@@ -98,13 +94,10 @@ class object_tracking_launch():
                                     count_notrack = 0
                                     curr_tid = -1
                                     self.stop_follow_flag = True
-                                # rospy.set_param('/object_tracking_flag', 0)
-                                # rospy.set_param('/rpi_signal_flag', 0)
                         else:
                             curr_tid = next_tid
                             count_notrack = 0
 
-                        #canvas = cv2.cvtColor(canvas, cv2.COLOR_BGR2RGB, 3)
                         self.convert_and_pubish(canvas)
 
                         rospy.loginfo(command)

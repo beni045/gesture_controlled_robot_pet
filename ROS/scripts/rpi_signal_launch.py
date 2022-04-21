@@ -16,6 +16,15 @@ from cv_bridge import CvBridge, CvBridgeError
 from rospy.exceptions import ROSException, ROSSerializationException, ROSInitException, ROSInterruptException
 
 sys.path.append('../hand_gesture_controlled_robot_pet/Atlas_robot_pet')
+# from model_processor import handpose_ModelProcessor
+# from model_processor import face_detection_ModelProcessor
+# from model_processor import hand_detection_ModelProcessor
+# from model_processor import body_pose_ModelProcessor
+# from atlas_utils.camera import Camera
+# from atlas_utils import presenteragent
+# from atlas_utils.acl_image import AclImage
+# import acl
+# from acl_resource import AclResource
 import socket
 #from Serial_servo_v1 import *
 import threading
@@ -25,7 +34,7 @@ import struct
 import pickle
 import zlib
 
-MODEL_PATH_BODY_POSE = "../hand_gesture_controlled_robot_pet/Atlas_robot_pet/model/body_pose.om"
+MODEL_PATH_BODY_POSE = "../hand_gesture_controlled_robot_pet/models/body_pose.om"
 BODYPOSE_CONF="../hand_gesture_controlled_robot_pet/Atlas_robot_pet/param.conf"
 
 class rpi_signal_launch():
@@ -50,6 +59,7 @@ class rpi_signal_launch():
                 connection_established = 0
                 rospy.loginfo("trying to connect...")
         
+        rospy.loginfo("!!!!!!!!!!!!peeko YAY !!!!!!!!!!!!!")
         blank_image = np.zeros((1,1,3), np.uint8)
         self.RGBMatrix = blank_image
         self.face_centered = 0
@@ -67,11 +77,13 @@ class rpi_signal_launch():
         rospy.Subscriber("pet_gestures", String, self.hg_signal)    
     def hg_signal(self, sig_data):
         if sig_data.data == "STOP FOLLOW" or not rospy.get_param('/object_tracking_flag'):
-            self.hg_sig = sig_data.data
+            if not rospy.get_param("/reset_flag"):
+                self.hg_sig = sig_data.data
     def face_Sub(self): 
         rospy.Subscriber("face", String, self.face_signal)
     def face_signal(self, sig_data):
-        self.face_sig = sig_data.data
+        if not rospy.get_param("/reset_flag"):
+            self.face_sig = sig_data.data
     def follow_Sub(self):
         rospy.Subscriber("object_tracking", String, self.follow_signal)
     def follow_signal(self, sig_data):
@@ -98,9 +110,13 @@ class rpi_signal_launch():
                 if rospy.get_param("/reset_flag"):
                     self.face_centered = 0
                     self.received_sig = "STOP"
-                    rospy.set_param("/rpi_signal_flag", 0)
-                    rospy.set_param("/reset_flag", 0)
-                    continue
+
+                    self.face_sig = "NOTHING"
+                    self.hg_sig = "RESET"
+
+                    rospy.loginfo("........RESET FLAG RECEIVED...........")
+                    
+                    
                 face_detection_flag = rospy.get_param("/face_detection_flag")
                 object_tracking_flag = rospy.get_param('/object_tracking_flag')
                 rospy.loginfo("flag received")
@@ -156,9 +172,13 @@ class rpi_signal_launch():
                     rospy.loginfo("Sending: Take a Picture")
                     self.data = pickle.dumps("take a picture\n", 0)
 
-                elif self.hg_sig  == "SPIN" and self.received_sig != "take_a_picture" and not object_tracking_flag:
-                    rospy.loginfo("Sending: Spin")
-                    self.data = pickle.dumps("spin\n", 0)
+                elif self.hg_sig  == "SPIN LEFT" and self.received_sig != "take_a_picture" and not object_tracking_flag:
+                    rospy.loginfo("Sending: Spin Left")
+                    self.data = pickle.dumps("spin left\n", 0)
+
+                elif self.hg_sig  == "SPIN RIGHT" and self.received_sig != "take_a_picture" and not object_tracking_flag:
+                    rospy.loginfo("Sending: Spin Right")
+                    self.data = pickle.dumps("spin right\n", 0)
 
                 elif self.hg_sig  == "FORWARDS" and self.received_sig != "take_a_picture":
                     rospy.loginfo("Sending: Forward")
@@ -191,9 +211,13 @@ class rpi_signal_launch():
                 elif self.hg_sig  == "BODY" :
                     rospy.loginfo("Sending: Body")
                     self.data = pickle.dumps("body\n", 0)
+                
+                elif self.hg_sig  == "RESET" :
+                    rospy.loginfo("Sending: Reset")
+                    self.data = pickle.dumps("reset\n", 0)
 
                 if self.data == b"":
-                    rospy.loginfo("Sending: None")
+                    #    rospy.loginfo("Sending: None")
                     self.data = pickle.dumps("none\n", 0)
 
                 ##################################################### 
@@ -217,7 +241,9 @@ class rpi_signal_launch():
                     try:
                         self.data += self.sock.recv(4096)
                     except socket.timeout:
-                        subprocess.Popen(['killall', '-9', 'rosmaster'])
+                        subprocess.Popen(['pkill', '-9', 'rosmaster'])
+                        subprocess.Popen(['pkill', '-9', 'roscore'])
+                        subprocess.Popen(['pkill', '-9', 'python3'])
 
                 #   rospy.loginfo("Done Recv: {}".format(len(data)))
                 packed_msg_size = self.data[:self.payload_size]
@@ -229,7 +255,9 @@ class rpi_signal_launch():
                     try:
                         self.data += self.sock.recv(4096)
                     except socket.timeout:
-                        subprocess.Popen(['killall', '-9', 'rosmaster'])
+                        subprocess.Popen(['pkill', '-9', 'rosmaster'])
+                        subprocess.Popen(['pkill', '-9', 'roscore'])
+                        subprocess.Popen(['pkill', '-9', 'python3'])
 
                 frame_data = self.data[:msg_size]
                 self.data = self.data[msg_size:]
@@ -248,53 +276,64 @@ class rpi_signal_launch():
                     rospy.loginfo(self.received_sig )
                     rospy.set_param("/active_flag", 1)
 
-                if self.data == "received deactivate\n":
+                elif self.data == "received deactivate\n":
                     self.received_sig  = "deactivate"
                     rospy.loginfo(self.received_sig )
                     rospy.set_param("/active_flag", 0)
                     rospy.set_param("/reset_flag", 1)
 
-                if self.data == "received take a picture\n":
+                elif self.data == "received take a picture\n":
                     self.received_sig  = "take_a_picture"
                     rospy.loginfo(self.received_sig )
                     if self.face_centered:
                         rospy.set_param("/body_face_detection_flag", 0)
 
-                if self.data == "received spin\n":
-                    self.received_sig  = "spin"
+                elif self.data == "received spin left\n":
+                    self.received_sig  = "spin left"
                     rospy.loginfo(self.received_sig )
 
-                if self.data == "received forward\n":
+                elif self.data == "received spin right\n":
+                    self.received_sig  = "spin right"
+                    rospy.loginfo(self.received_sig )
+
+                elif self.data == "received forward\n":
                     self.received_sig  = "forward"
                     rospy.loginfo(self.received_sig )
 
-                if self.data == "received backward\n":
+                elif self.data == "received backward\n":
                     self.received_sig  = "backward"
                     rospy.loginfo(self.received_sig )
 
-                if self.data == "received left\n":
+                elif self.data == "received left\n":
                     self.received_sig  = "left"
                     rospy.loginfo(self.received_sig )
 
-                if self.data == "received right\n":
+                elif self.data == "received right\n":
                     self.received_sig  = "right"
                     rospy.loginfo(self.received_sig )
 
-                if self.data == "received center\n":
+                elif self.data == "received center\n":
                     self.received_sig  = "center"
                     rospy.loginfo(self.received_sig )
+                    rospy.set_param('/take_a_pic_flag', 1)
                 
-                if self.data == "received follow\n":
+                elif self.data == "received follow\n":
                     self.received_sig  = "follow"
                     rospy.loginfo(self.received_sig )
                     rospy.set_param('/object_tracking_flag', 1)
                 
-                if self.data == "received stop_follow\n":
+                elif self.data == "received stop_follow\n":
                     self.received_sig  = "stop_follow"
                     rospy.set_param("/object_tracking_flag", 0)
                     rospy.loginfo(self.received_sig )
 
-                if self.data == "done command\n":
+                elif self.data == "received reset\n":
+                    self.received_sig  = "reset"
+                    rospy.loginfo(self.received_sig )
+                    rospy.set_param("/reset_flag", 0)
+                    rospy.set_param("/rpi_signal_flag", 0)
+
+                elif self.data == "done command\n":
                     rospy.set_param("/face_detection_flag", 0)
                     rospy.set_param("/rpi_signal_flag", 0)
                     self.face_centered = 0
