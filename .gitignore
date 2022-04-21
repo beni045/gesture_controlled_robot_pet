@@ -1,0 +1,9 @@
+Atlas_robot_pet/__pycache__/
+Atlas_robot_pet/atlas_utils/
+Atlas_robot_pet/atlas_utils/lib/__pycache__/
+Atlas_robot_pet/atlas_utils/presenteragent/__pycache__/
+Atlas_robot_pet/presenterserver/display.log
+Atlas_robot_pet/presenterserver/presenterserver/common/__pycache__/
+Atlas_robot_pet/presenterserver/presenterserver/display/__pycache__/
+Atlas_robot_pet/presenterserver/presenterserver/display/src/__pycache__/
+Atlas_robot_pet/src/__pycache__/
