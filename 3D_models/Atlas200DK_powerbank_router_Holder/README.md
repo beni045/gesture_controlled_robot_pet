@@ -4,4 +4,4 @@
 
 ![image](https://user-images.githubusercontent.com/31644724/116766991-462d2980-a9e2-11eb-8902-dc53cdcbf456.png)
 
-2. DK_holder_main: The holder of Atlas 200DK 
+2. DK_holder_main: The top holder of Atlas 200DK 
