@@ -19,14 +19,12 @@ from model_processor import body_pose_ModelProcessor
 from atlas_utils.camera import Camera
 from atlas_utils import presenteragent
 from atlas_utils.acl_image import AclImage
-import acl
 from acl_resource import AclResource
 
 from cv_bridge import CvBridge, CvBridgeError
 from rospy.exceptions import (
     ROSException,
     ROSSerializationException,
-    ROSInitException,
     ROSInterruptException,
 )
 

@@ -41,7 +41,6 @@ class rpi_signal_launch:
                 connection_established = 0
                 rospy.loginfo("trying to connect...")
 
-        rospy.loginfo("!!!!!!!!!!!!peeko YAY !!!!!!!!!!!!!")
         blank_image = np.zeros((1, 1, 3), np.uint8)
         self.RGBMatrix = blank_image
         self.face_centered = 0
@@ -128,7 +127,7 @@ class rpi_signal_launch:
                     result, send_frame = cv2.imencode(".jpg", self.RGBMatrix, encode_param)
                     self.data = pickle.dumps(send_frame, 0)
 
-                elif self.face_sig != "NOTHING":  # and self.hg_sig  == "STOP":
+                elif self.face_sig != "NOTHING":  
 
                     if self.face_sig == "UP":
                         rospy.loginfo("Sending: Servo Up")
