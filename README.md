@@ -69,7 +69,11 @@ Setup the Atlas 200 DK board, following this [wiki](https://gitee.com/ascend/sam
     * Raspberry-Pi_robot_pet/happy.mp4
     * Raspberry-Pi_robot_pet/neu.mp4
     * Raspberry-Pi_robot_pet/white.jpeg
-    * Raspberry-Pi_robot_pet/robot_server.py
+    * Raspberry-Pi_robot_pet/body_img.jpg
+    * Raspberry-Pi_robot_pet/camera_img.jpg
+    * Raspberry-Pi_robot_pet/deactivate.jpg
+    * Raspberry-Pi_robot_pet/follow_img.jpg
+    * Raspberry-Pi_robot_pet/server_v9.py
 
 # Gestures
 Below are the gestures included in the repository.
