@@ -6,19 +6,12 @@ from sensor_msgs.msg import Image
 import os
 import cv2
 import numpy as np
-import argparse
 import subprocess
 import sys
 from queue import Queue
 from std_msgs.msg import UInt8
 from rospy.numpy_msg import numpy_msg
 from cv_bridge import CvBridge, CvBridgeError
-from rospy.exceptions import (
-    ROSException,
-    ROSSerializationException,
-    ROSInitException,
-    ROSInterruptException,
-)
 
 sys.path.append("../hand_gesture_controlled_robot_pet/Atlas_robot_pet")
 # from model_processor import handpose_ModelProcessor
@@ -33,12 +26,9 @@ sys.path.append("../hand_gesture_controlled_robot_pet/Atlas_robot_pet")
 import socket
 
 # from Serial_servo_v1 import *
-import threading
-import time
-import io
+
 import struct
 import pickle
-import zlib
 
 MODEL_PATH_BODY_POSE = "../hand_gesture_controlled_robot_pet/models/body_pose.om"
 BODYPOSE_CONF = "../hand_gesture_controlled_robot_pet/Atlas_robot_pet/param.conf"
@@ -85,7 +75,9 @@ class rpi_signal_launch:
         rospy.Subscriber("pet_gestures", String, self.hg_signal)
 
     def hg_signal(self, sig_data):
+        # Ignore user command (except STOP FOLLOW) when it's in FOLLOW mode
         if sig_data.data == "STOP FOLLOW" or not rospy.get_param("/object_tracking_flag"):
+            # Ignore user command if the program is still resetting
             if not rospy.get_param("/reset_flag"):
                 self.hg_sig = sig_data.data
 
@@ -93,6 +85,7 @@ class rpi_signal_launch:
         rospy.Subscriber("face", String, self.face_signal)
 
     def face_signal(self, sig_data):
+        # Ignore user command if the program is still resetting
         if not rospy.get_param("/reset_flag"):
             self.face_sig = sig_data.data
 
@@ -100,6 +93,8 @@ class rpi_signal_launch:
         rospy.Subscriber("object_tracking", String, self.follow_signal)
 
     def follow_signal(self, sig_data):
+        # The commands are either camera rotation [UP, DOWN] OR
+        # car movement commands [FORWARD, BACKWARD, LEFT, RIGHT]
         if sig_data.data in ["UP", "DOWN"]:
             self.face_sig = sig_data.data
         else:
@@ -121,15 +116,17 @@ class rpi_signal_launch:
         while not rospy.is_shutdown():
             rospy.loginfo("waiting for flag")
             rpi_signal_flag = rospy.get_param("/rpi_signal_flag")
+
+            # Only process the commands when rpi_signal_flag is on
             if rpi_signal_flag:
+
+                # If the reset flag is on, send only "RESET" command
                 if rospy.get_param("/reset_flag"):
                     self.face_centered = 0
                     self.received_sig = "STOP"
 
                     self.face_sig = "NOTHING"
                     self.hg_sig = "RESET"
-
-                    rospy.loginfo("........RESET FLAG RECEIVED...........")
 
                 face_detection_flag = rospy.get_param("/face_detection_flag")
                 object_tracking_flag = rospy.get_param("/object_tracking_flag")
@@ -251,7 +248,6 @@ class rpi_signal_launch:
                     self.data = pickle.dumps("reset\n", 0)
 
                 if self.data == b"":
-                    #    rospy.loginfo("Sending: None")
                     self.data = pickle.dumps("none\n", 0)
 
                 #####################################################
@@ -274,15 +270,15 @@ class rpi_signal_launch:
                     try:
                         self.data += self.sock.recv(4096)
                     except socket.timeout:
+                        # Shutdown the program if socket timeout
+                        # (Usually there's unrecoverable error)
                         subprocess.Popen(["pkill", "-9", "rosmaster"])
                         subprocess.Popen(["pkill", "-9", "roscore"])
                         subprocess.Popen(["pkill", "-9", "python3"])
 
-                #   rospy.loginfo("Done Recv: {}".format(len(data)))
                 packed_msg_size = self.data[: self.payload_size]
                 self.data = self.data[self.payload_size :]
                 msg_size = struct.unpack(">L", packed_msg_size)[0]
-                #   rospy.loginfo("msg_size: {}".format(msg_size))
 
                 while len(self.data) < msg_size:
                     try:
