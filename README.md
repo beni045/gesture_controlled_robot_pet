@@ -76,15 +76,15 @@ Below are the gestures included in the repository.
 
 Command | Gesture | Description | Output
 ------- | ------- | ----------- | ------
-`Activate` | <img src="/Images/activate.png" width="250" height="250"> | Robot starts functioning and responding to commands | <img src="/Images/activate.gif" width="250" height="250" />
-`Deactivate` | <img src="/Images/deactivate.png" width="250" height="250"> | Robot goes to “sleep” state and can only be woken up by giving it activate command | <img src="/Images/deactivate.gif" width="250" height="250" />
-`Move Forwards` | <img src="/Images/fwd.png" width="250" height="250"> | Moves the robot forwards | <img src="/Images/fwd.gif" width="250" height="250" />
-`Move Backwards` | <img src="/Images/bwd.png" width="250" height="250"> | Moves the robot backwards | <img src="/Images/bwd.gif" width="250" height="250" />
-`Spin Right` | <img src="/Images/spinr.png" width="250" height="250"> | Spins the robot right | <img src="/Images/spinr.gif" width="250" height="250" />
-`Spin Left` | <img src="/Images/spinl.png" width="250" height="250"> | Spins the robot left | <img src="/Images/spinl.gif" width="250" height="250" />
-`Take a Picture` | <img src="/Images/tap.png" width="250" height="250"> | Initiates the routine to take a photo | <img src="/Images/tap.gif" width="250" height="250" />
-`Follow` | <img src="/Images/follow.png" width="250" height="250"> | Initiates the routine to follow the person who gave the follow gesture | <img src="/Images/follow.gif" width="250" height="250" />
-`Stop Follow` | <img src="/Images/stopfollow.png" width="250" height="250"> | Stops the follow routine if the robot is in follow mode | <img src="/Images/stopfollow.gif" width="250" height="250" />
+`Activate` | <img src="/Images/activate.PNG" width="250" height="250"> | Robot starts functioning and responding to commands | <img src="/Images/activate.gif" width="250" height="250" />
+`Deactivate` | <img src="/Images/deactivate.PNG" width="250" height="250"> | Robot goes to “sleep” state and can only be woken up by giving it activate command | <img src="/Images/deactivate.gif" width="250" height="250" />
+`Move Forwards` | <img src="/Images/fwd.PNG" width="250" height="250"> | Moves the robot forwards | <img src="/Images/fwd.gif" width="250" height="250" />
+`Move Backwards` | <img src="/Images/bwd.PNG" width="250" height="250"> | Moves the robot backwards | <img src="/Images/bwd.gif" width="250" height="250" />
+`Spin Right` | <img src="/Images/spinr.PNG" width="250" height="250"> | Spins the robot right | <img src="/Images/spinr.gif" width="250" height="250" />
+`Spin Left` | <img src="/Images/spinl.PNG" width="250" height="250"> | Spins the robot left | <img src="/Images/spinl.gif" width="250" height="250" />
+`Take a Picture` | <img src="/Images/tap.PNG" width="250" height="250"> | Initiates the routine to take a photo | <img src="/Images/tap.gif" width="250" height="250" />
+`Follow` | <img src="/Images/follow.PNG" width="250" height="250"> | Initiates the routine to follow the person who gave the follow gesture | <img src="/Images/follow.gif" width="250" height="250" />
+`Stop Follow` | <img src="/Images/stopfollow.PNG" width="250" height="250"> | Stops the follow routine if the robot is in follow mode | <img src="/Images/stopfollow.gif" width="250" height="250" />
 
 
 # Run the Robot
