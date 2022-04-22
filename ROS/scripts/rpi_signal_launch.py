@@ -3,30 +3,15 @@ import random
 import rospy
 from std_msgs.msg import String
 from sensor_msgs.msg import Image
-import os
 import cv2
 import numpy as np
 import subprocess
 import sys
 from queue import Queue
-from std_msgs.msg import UInt8
-from rospy.numpy_msg import numpy_msg
 from cv_bridge import CvBridge, CvBridgeError
 
 sys.path.append("../hand_gesture_controlled_robot_pet/Atlas_robot_pet")
-# from model_processor import handpose_ModelProcessor
-# from model_processor import face_detection_ModelProcessor
-# from model_processor import hand_detection_ModelProcessor
-# from model_processor import body_pose_ModelProcessor
-# from atlas_utils.camera import Camera
-# from atlas_utils import presenteragent
-# from atlas_utils.acl_image import AclImage
-# import acl
-# from acl_resource import AclResource
 import socket
-
-# from Serial_servo_v1 import *
-
 import struct
 import pickle
 

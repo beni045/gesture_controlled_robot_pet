@@ -2,21 +2,17 @@
 import rospy
 from std_msgs.msg import String
 from sensor_msgs.msg import Image
-import cv2
 import numpy as np
 import sys
 
 sys.path.append("../hand_gesture_controlled_robot_pet/Atlas_robot_pet")
 from model_processor import object_tracking_ModelProcessor
-from atlas_utils.acl_image import AclImage
-import acl
 from queue import Queue
 from acl_resource import AclResource
 from cv_bridge import CvBridge, CvBridgeError
 from rospy.exceptions import (
     ROSException,
     ROSSerializationException,
-    ROSInitException,
     ROSInterruptException,
 )
 

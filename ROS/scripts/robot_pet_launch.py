@@ -1,7 +1,4 @@
 #!/usr/bin/env python3
-import random
-
-from cv2 import rotate
 import rospy
 from std_msgs.msg import String
 from sensor_msgs.msg import Image
@@ -14,11 +11,8 @@ from cv_bridge import CvBridge, CvBridgeError
 from rospy.exceptions import (
     ROSException,
     ROSSerializationException,
-    ROSInitException,
     ROSInterruptException,
 )
-from std_msgs.msg import UInt8
-from rospy.numpy_msg import numpy_msg
 
 sys.path.append("../hand_gesture_controlled_robot_pet/Atlas_robot_pet")
 from model_processor import body_pose_ModelProcessor
