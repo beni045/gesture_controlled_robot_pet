@@ -159,9 +159,34 @@ If you want to stop this service, execute the following command:
 ### Raspberry Pi
 1. Start Raspberry Pi into Raspbian OS
 2. Navigate to the directory where the main Raspberry Pi program is located:  
-   cd /home/pi/Desktop/Raspberry-Pi_robot_pet/
+   cd /home/pi/Documents/Capstone/Raspberry-Pi_robot_pet/
 4. Run the main program for the robot control:  
-   python3 robot_server.py
+   python3 server_v9.py
+   
+ #### Robot Operating System (ROS)
+
+The Robot Operating System (ROS) is a set of software libraries and tools that help you build robot applications. In order to set up ROS on the Atlas 200 DK board refer to the following guide below: 
+
+[ROS Setup](https://hiascend.notion.site/UBC-Capstone-ROS-on-Atlas200DK-0720a3605a354f36a9cdbb0ce885ddf2)
+
+Once the conda environment and ROS has been set up on the board we have to create a workspace and a ROS project such that we can run our code. The following code describes how to do so:
+* [ROS Create Package](http://wiki.ros.org/ROS/Tutorials/CreatingPackage)
+* [ROS Build Package](http://wiki.ros.org/ROS/Tutorials/BuildingPackages)
+
+Once you have created and built your ROS package you can now copy paste the scripts and launch folder from gesture_controlled_robot_pet/ROS to catkin_ws/src/<package_name>/
+Here we used robot_pet as our package_name.
+Once all the scripts and launch files are copied into the catkin_ws we need to make the files executable and as such do 
+<b> chmod +x <file name> </b> for all the files that have been copied. And lastly run 
+<b> cd ~/catkin_ws </b> 
+<b> catkin_make </b> to build the nodes.
+
+The ROS project can now be run. In order to run the project refer to the following set of commands: 
+<b> cd ~/catkin_ws </b> 
+<b> source ./devel/setup.bash </b>
+<b> roslaunch <package_name> robot_pet_launch.launch
+
+Before running the ROS project ensure that the presenter server script is running and the Raspberry PI script is running.
+
 
 # Dependencies and Third Party Links
 * Hand Gesture Recognition Model: https://github.com/Atlas200dk/sample-handposeRCcar
