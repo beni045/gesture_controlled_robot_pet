@@ -35,29 +35,33 @@ Through its camera “eyes”, this robot pet uses a combination of machine lear
 
 ### Setup and Connection Notes
 * Build robot base without using the Arduino or the ultrasonic sensors, you can find the instructions [here](https://drive.google.com/file/d/1nSlkYJ7oCfMkG1p-KDfVHdLQt3B4Nmo5/view)
-* Connect robot base parts to Raspberry Pi (see pinout in RaspberryPi_robot_pet/robot_server.py)
-* Raspberry Pi connected to Atlas 200DK via Ethernet cord
-* Connect Raspberry Pi Camera to to CAMERA0 on the Atlas 200 DK, you can follow this [guide](https://support.huaweicloud.com/intl/en-us/qs-atlas200dkappc32/atlased_04_0006.html)
+* Connect robot base parts to Raspberry Pi (see pinout in RaspberryPi_robot_pet/server_v9.py)
+* Connect Raspberry Pi Camera to CAMERA1 on the Atlas 200 DK, you can follow this [guide](https://support.huaweicloud.com/intl/en-us/qs-atlas200dkappc32/atlased_04_0006.html)
+* [Router connection](https://github.com/kylerhunag/gesture_controlled_robot_pet/wiki/Router-Connection-Setup-Guide) (After you've completed 1st step of Atlas 200DK Setup and 2nd step of Raspberry Pi Setup)
+  * Raspberry Pi connected to Atlas 200DK via wireless connection
+  * Atlas 200DK connected to the router via Ethernet cord
+  * Laptop connected to the router via wireless connection
 
 # Setup
 ### Development Environment (PC)
 Development PC requires Ubuntu 18.04 system (can be virtual machine), and have CANN installed. Please setup follow the this official [guide](https://support.huaweicloud.com/intl/en-us/environment-deployment-Atlas200DK202/atlased_04_0017.html) or this [wiki](https://gitee.com/ascend/samples/wikis/Setting%20Up%20the%20Development%20and%20Operating%20Environments?sort_id=3736936)
 
 ### Atlas 200DK Setup
-Setup the Atlas 200 DK board, following this [wiki](https://gitee.com/ascend/samples/wikis/Setting%20Up%20the%20Development%20and%20Operating%20Environments?sort_id=3736936) or the official [guide](https://support.huaweicloud.com/intl/en-us/environment-deployment-Atlas200DK202/atlased_04_0001.html)
-1. Power the Atlas DK board and connect wifi module for internet connectivity  
+1. Setup the Atlas 200 DK board, following this [wiki](https://gitee.com/ascend/samples/wikis/Setting%20Up%20the%20Development%20and%20Operating%20Environments?sort_id=3736936) or the official [guide](https://support.huaweicloud.com/intl/en-us/environment-deployment-Atlas200DK202/atlased_04_0001.html)
 
-2. Attach raspberry Pi camera to the board (https://support.huaweicloud.com/intl/en-us/qs-atlas200dkappc32/atlased_04_0006.html).  
+2. Power the Atlas DK board and set up the router connections. You can follow this [guide](https://github.com/kylerhunag/gesture_controlled_robot_pet/wiki/Router-Connection-Setup-Guide)
 
-3. Set up RC Car by following instructions [here](https://drive.google.com/file/d/1nSlkYJ7oCfMkG1p-KDfVHdLQt3B4Nmo5/view).
+3. Attach raspberry Pi camera to the board (https://support.huaweicloud.com/intl/en-us/qs-atlas200dkappc32/atlased_04_0006.html).  
 
-4. Connect Atlas board to Raspberry Pi with an Ethernet cable.  
+4. Set up RC Car by following instructions [here](https://drive.google.com/file/d/1nSlkYJ7oCfMkG1p-KDfVHdLQt3B4Nmo5/view).
+  
 ### Raspberry Pi Setup
 1. Install the latest version of Raspbian onto an SD card  
    Follow the steps in the link:  
    https://www.raspberrypi.org/documentation/installation/installing-images/ 
 2. Insert SD card into Pi and power on the Pi by plugging it into a 5V power source.
-3. Update the system by opening a terminal and entering:  
+3. Make sure you complete the [Router connection](https://github.com/kylerhunag/gesture_controlled_robot_pet/wiki/Router-Connection-Setup-Guide)
+4. Update the system by opening a terminal and entering:  
    sudo apt-get update                                                        
    sudo apt-get upgrade
 5. Install OpenCV for Python 3:  
