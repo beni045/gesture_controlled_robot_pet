@@ -5,7 +5,7 @@ from sensor_msgs.msg import Image
 import numpy as np
 import sys
 
-sys.path.append("../hand_gesture_controlled_robot_pet/Atlas_robot_pet")
+sys.path.append("../gesture_controlled_robot_pet/Atlas_robot_pet")
 from model_processor import object_tracking_ModelProcessor
 from queue import Queue
 from acl_resource import AclResource
@@ -16,8 +16,7 @@ from rospy.exceptions import (
     ROSInterruptException,
 )
 
-MODEL_PATH_OBJECT_TRACKING = "../hand_gesture_controlled_robot_pet/models/mot_v2.om"
-BODYPOSE_CONF = "../hand_gesture_controlled_robot_pet/Atlas_robot_pet/param.conf"
+MODEL_PATH_OBJECT_TRACKING = "../gesture_controlled_robot_pet/models/mot_v2.om"
 
 
 class object_tracking_launch:

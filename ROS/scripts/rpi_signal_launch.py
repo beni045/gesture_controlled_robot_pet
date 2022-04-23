@@ -10,13 +10,12 @@ import sys
 from queue import Queue
 from cv_bridge import CvBridge, CvBridgeError
 
-sys.path.append("../hand_gesture_controlled_robot_pet/Atlas_robot_pet")
+sys.path.append("../gesture_controlled_robot_pet/Atlas_robot_pet")
 import socket
 import struct
 import pickle
 
-MODEL_PATH_BODY_POSE = "../hand_gesture_controlled_robot_pet/models/body_pose.om"
-BODYPOSE_CONF = "../hand_gesture_controlled_robot_pet/Atlas_robot_pet/param.conf"
+MODEL_PATH_BODY_POSE = "../gesture_controlled_robot_pet/models/body_pose.om"
 
 
 class rpi_signal_launch:
@@ -46,32 +45,32 @@ class rpi_signal_launch:
         self.face_centered = 0
         self.image_queue = Queue(maxsize=1)
         self.data = b""
-        self.hg_sig = "none"
+        self.bg_sig = "none"
         self.received_sig = "none"
-        self.face_sig = "nothing"
+        self.rotate_sig = "nothing"
         self.payload_size = struct.calcsize(">L")
         self.Subscriber()
-        self.face_Sub()
+        self.rotate_Sub()
         self.rgbSubscriber()
         self.follow_Sub()
 
     def Subscriber(self):
-        rospy.Subscriber("pet_gestures", String, self.hg_signal)
+        rospy.Subscriber("pet_gestures", String, self.bg_signal)
 
-    def hg_signal(self, sig_data):
+    def bg_signal(self, sig_data):
         # Ignore user command (except STOP FOLLOW) when it's in FOLLOW mode
         if sig_data.data == "STOP FOLLOW" or not rospy.get_param("/object_tracking_flag"):
             # Ignore user command if the program is still resetting
             if not rospy.get_param("/reset_flag"):
-                self.hg_sig = sig_data.data
+                self.bg_sig = sig_data.data
 
-    def face_Sub(self):
-        rospy.Subscriber("face", String, self.face_signal)
+    def rotate_Sub(self):
+        rospy.Subscriber("rotate", String, self.rotate_signal)
 
-    def face_signal(self, sig_data):
+    def rotate_signal(self, sig_data):
         # Ignore user command if the program is still resetting
         if not rospy.get_param("/reset_flag"):
-            self.face_sig = sig_data.data
+            self.rotate_sig = sig_data.data
 
     def follow_Sub(self):
         rospy.Subscriber("object_tracking", String, self.follow_signal)
@@ -80,10 +79,10 @@ class rpi_signal_launch:
         # The commands are either camera rotation [UP, DOWN] OR
         # car movement commands [FORWARD, BACKWARD, LEFT, RIGHT]
         if sig_data.data in ["UP", "DOWN"]:
-            self.face_sig = sig_data.data
+            self.rotate_sig = sig_data.data
         else:
-            self.hg_sig = sig_data.data
-            self.face_sig = "NOTHING"
+            self.bg_sig = sig_data.data
+            self.rotate_sig = "NOTHING"
 
     def rgbSubscriber(self):
         rospy.Subscriber("RGBmatrix", Image, self.rgb_signal)
@@ -109,10 +108,9 @@ class rpi_signal_launch:
                     self.face_centered = 0
                     self.received_sig = "STOP"
 
-                    self.face_sig = "NOTHING"
-                    self.hg_sig = "RESET"
+                    self.rotate_sig = "NOTHING"
+                    self.bg_sig = "RESET"
 
-                face_detection_flag = rospy.get_param("/face_detection_flag")
                 object_tracking_flag = rospy.get_param("/object_tracking_flag")
                 rospy.loginfo("flag received")
                 self.data = b""
@@ -127,36 +125,36 @@ class rpi_signal_launch:
                     result, send_frame = cv2.imencode(".jpg", self.RGBMatrix, encode_param)
                     self.data = pickle.dumps(send_frame, 0)
 
-                elif self.face_sig != "NOTHING":  
+                elif self.rotate_sig != "NOTHING":  
 
-                    if self.face_sig == "UP":
+                    if self.rotate_sig == "UP":
                         rospy.loginfo("Sending: Servo Up")
                         self.data = pickle.dumps("servo up\n", 0)
 
-                    elif self.face_sig == "DOWN":
+                    elif self.rotate_sig == "DOWN":
                         rospy.loginfo("Sending: Servo Down")
                         self.data = pickle.dumps("servo down\n", 0)
 
-                    elif self.face_sig == "LEFT":
+                    elif self.rotate_sig == "LEFT":
                         rospy.loginfo("Sending: Servo Left")
                         self.data = pickle.dumps("servo left\n", 0)
 
-                    elif self.face_sig == "RIGHT":
+                    elif self.rotate_sig == "RIGHT":
                         rospy.loginfo("Sending: Servo Right")
                         self.data = pickle.dumps("servo right\n", 0)
 
-                    elif self.face_sig == "CENTERED":
+                    elif self.rotate_sig == "CENTERED":
                         rospy.loginfo("Face centered")
                         self.face_centered = 1
 
-                    self.face_sig = "NOTHING"
+                    self.rotate_sig = "NOTHING"
 
                 #####################################################
                 ### Sending hand gesture commands to Raspberry Pi ###
                 #####################################################
 
                 elif (
-                    self.hg_sig == "ACTIVATE"
+                    self.bg_sig == "ACTIVATE"
                     and self.received_sig != "take_a_picture"
                     and not object_tracking_flag
                 ):
@@ -164,7 +162,7 @@ class rpi_signal_launch:
                     self.data = pickle.dumps("activate\n", 0)
 
                 elif (
-                    self.hg_sig == "DEACTIVATE"
+                    self.bg_sig == "DEACTIVATE"
                     and self.received_sig != "take_a_picture"
                     and not object_tracking_flag
                 ):
@@ -172,7 +170,7 @@ class rpi_signal_launch:
                     self.data = pickle.dumps("deactivate\n", 0)
 
                 elif (
-                    self.hg_sig == "TAKE A PICTURE"
+                    self.bg_sig == "TAKE A PICTURE"
                     and self.received_sig != "take_a_picture"
                     and not object_tracking_flag
                 ):
@@ -180,7 +178,7 @@ class rpi_signal_launch:
                     self.data = pickle.dumps("take a picture\n", 0)
 
                 elif (
-                    self.hg_sig == "SPIN LEFT"
+                    self.bg_sig == "SPIN LEFT"
                     and self.received_sig != "take_a_picture"
                     and not object_tracking_flag
                 ):
@@ -188,46 +186,46 @@ class rpi_signal_launch:
                     self.data = pickle.dumps("spin left\n", 0)
 
                 elif (
-                    self.hg_sig == "SPIN RIGHT"
+                    self.bg_sig == "SPIN RIGHT"
                     and self.received_sig != "take_a_picture"
                     and not object_tracking_flag
                 ):
                     rospy.loginfo("Sending: Spin Right")
                     self.data = pickle.dumps("spin right\n", 0)
 
-                elif self.hg_sig == "FORWARDS" and self.received_sig != "take_a_picture":
+                elif self.bg_sig == "FORWARDS" and self.received_sig != "take_a_picture":
                     rospy.loginfo("Sending: Forward")
                     self.data = pickle.dumps("forward\n", 0)
 
-                elif self.hg_sig == "BACKWARDS" and self.received_sig != "take_a_picture":
+                elif self.bg_sig == "BACKWARDS" and self.received_sig != "take_a_picture":
                     rospy.loginfo("Sending: Backward")
                     self.data = pickle.dumps("backward\n", 0)
 
-                elif self.hg_sig == "LEFT" and self.received_sig != "take_a_picture":
+                elif self.bg_sig == "LEFT" and self.received_sig != "take_a_picture":
                     rospy.loginfo("Sending: Left")
                     self.data = pickle.dumps("left\n", 0)
 
-                elif self.hg_sig == "RIGHT" and self.received_sig != "take_a_picture":
+                elif self.bg_sig == "RIGHT" and self.received_sig != "take_a_picture":
                     rospy.loginfo("Sending: Right")
                     self.data = pickle.dumps("right\n", 0)
 
-                elif self.hg_sig == "FOLLOW" and self.received_sig != "take_a_picture":
+                elif self.bg_sig == "FOLLOW" and self.received_sig != "take_a_picture":
                     rospy.loginfo("Sending: Follow")
                     self.data = pickle.dumps("follow\n", 0)
 
-                elif self.hg_sig == "STOP FOLLOW" and self.received_sig != "take_a_picture":
+                elif self.bg_sig == "STOP FOLLOW" and self.received_sig != "take_a_picture":
                     rospy.loginfo("Sending: Stop Follow")
                     self.data = pickle.dumps("stop_follow\n", 0)
 
-                elif self.hg_sig == "center for picture" and self.received_sig != "take_a_picture":
+                elif self.bg_sig == "center for picture" and self.received_sig != "take_a_picture":
                     rospy.loginfo("Sending: center for picture")
                     self.data = pickle.dumps("center for picture\n", 0)
 
-                elif self.hg_sig == "BODY":
+                elif self.bg_sig == "BODY":
                     rospy.loginfo("Sending: Body")
                     self.data = pickle.dumps("body\n", 0)
 
-                elif self.hg_sig == "RESET":
+                elif self.bg_sig == "RESET":
                     rospy.loginfo("Sending: Reset")
                     self.data = pickle.dumps("reset\n", 0)
 
@@ -236,8 +234,8 @@ class rpi_signal_launch:
 
                 #####################################################
 
-                rospy.loginfo(self.hg_sig)
-                rospy.loginfo(self.face_sig)
+                rospy.loginfo(self.bg_sig)
+                rospy.loginfo(self.rotate_sig)
                 # Send to Raspberry Pi
                 size = len(self.data)
                 self.sock.sendall(struct.pack(">L", size) + self.data)
@@ -250,7 +248,6 @@ class rpi_signal_launch:
                 #################################################
 
                 while len(self.data) < self.payload_size:
-                    #  rospy.loginfo("Recv: {}".format(len(data)))
                     try:
                         self.data += self.sock.recv(4096)
                     except socket.timeout:
@@ -299,7 +296,7 @@ class rpi_signal_launch:
                     self.received_sig = "take_a_picture"
                     rospy.loginfo(self.received_sig)
                     if self.face_centered:
-                        rospy.set_param("/body_face_detection_flag", 0)
+                        rospy.set_param("/head_centering_flag", 0)
 
                 elif self.data == "received spin left\n":
                     self.received_sig = "spin left"
@@ -347,7 +344,6 @@ class rpi_signal_launch:
                     rospy.set_param("/rpi_signal_flag", 0)
 
                 elif self.data == "done command\n":
-                    rospy.set_param("/face_detection_flag", 0)
                     rospy.set_param("/rpi_signal_flag", 0)
                     self.face_centered = 0
                     self.received_sig = "STOP"
@@ -360,14 +356,11 @@ class rpi_signal_launch:
                 # Reset data for receiving response from Raspberry Pi
                 self.data = b""
                 while len(self.data) < self.payload_size:
-                    #  rospy.loginfo("Recv: {}".format(len(data)))
                     self.data += self.sock.recv(4096)
 
-                #   rospy.loginfo("Done Recv: {}".format(len(data)))
                 packed_msg_size = self.data[: self.payload_size]
                 self.data = self.data[self.payload_size :]
                 msg_size = struct.unpack(">L", packed_msg_size)[0]
-                #   rospy.loginfo("msg_size: {}".format(msg_size))
 
                 while len(self.data) < msg_size:
                     self.data += self.sock.recv(4096)
