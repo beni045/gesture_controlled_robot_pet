@@ -119,7 +119,7 @@ Command | Gesture | Description | Output
 2. ssh into the Pi 
 3. git clone this repo
 4. Navigate to the directory where the main Raspberry Pi program is located, for example:  
-   cd /home/pi/Documents/Capstone/Raspberry-Pi_robot_pet/
+   `cd /home/pi/Documents/Capstone/Raspberry-Pi_robot_pet/`
 4. Ensure that Pi and the Atlas 200DK are in the same network. Run the main program for the robot control:  
    python3 server_v9.py
 
@@ -131,13 +131,14 @@ Command | Gesture | Description | Output
 
     `git clone https://github.com/kylerhunag/gesture_controlled_robot_pet.git`
    
-3. Install the required dependencies to run this project:
+3. Navigate to the project root directory. Install the required dependencies to run this project:
 
+    `cd ~/gesture_controlled_robot_pet/`
     `pip3 install -r requirements.txt`
 
 4. Navigate to the presenter server directory and start the presenter server: 
 
-    `cd ~/gesture_controlled_robot_pet/Atlas_robot_pet/presenterserver`
+    `cd Atlas_robot_pet/presenterserver`
     
     `bash run_presenter_server.sh body_pose.conf`
     
@@ -148,7 +149,9 @@ Once you have created and built your ROS package you can now copy paste the scri
 
 Here we used robot_pet as our package_name.
 Once all the scripts and launch files are copied into the catkin_ws we need to make the files executable and as such do 
-`chmod +x <file name>` for all the files that have been copied. Before running the ROS project ensure that the presenter server script is running and the Raspberry PI script is running. And lastly run (in the environment you just created):
+`chmod +x <file name>` for all the files that have been copied. Before running the ROS project ensure that the presenter server script is running and the Raspberry PI script is running. 
+
+Activate the environment you just created. Install the dependencies listed in the `requirements.txt`. And lastly run:
   
 `cd ~/catkin_ws` 
   
