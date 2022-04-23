@@ -62,6 +62,7 @@ The Robot Operating System (ROS) is a set of software libraries and tools that h
 [ROS Setup](https://hiascend.notion.site/UBC-Capstone-ROS-on-Atlas200DK-0720a3605a354f36a9cdbb0ce885ddf2)
 
 Once the conda environment and ROS has been set up on the board we have to create a workspace and a ROS project such that we can run our code. The following code describes how to do so:
+* [ROS Create Workspace](http://wiki.ros.org/catkin/Tutorials/create_a_workspace)
 * [ROS Create Package](http://wiki.ros.org/ROS/Tutorials/CreatingPackage)
 * [ROS Build Package](http://wiki.ros.org/ROS/Tutorials/BuildingPackages)
 
