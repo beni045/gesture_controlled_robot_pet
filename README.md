@@ -124,13 +124,17 @@ Command | Gesture | Description | Output
     (No internet access? Just try connecting Atlas 200 Dk to a router with Ethernet Cable. For details, check [official document](https://support.huaweicloud.com/intl/en-us/environment-deployment-Atlas200DK1012/atlased_04_0012.html) or [our router connecter guide](https://github.com/kylerhunag/gesture_controlled_robot_pet/wiki/Router-Connection-Setup-Guide)) 
 
     `git clone https://github.com/kylerhunag/gesture_controlled_robot_pet.git`
+   
+3. Install the required dependencies to run this project:
 
-3. Navigate to the presenter server directory and start the presenter server: 
+    `pip3 install -r requirements.txt`
+
+4. Navigate to the presenter server directory and start the presenter server: 
 
     `cd ~/gesture_controlled_robot_pet/Atlas_robot_pet/presenterserver`
     
     `bash run_presenter_server.sh body_pose.conf`
-
+    
 
 ### Robot Operating System (ROS) on 200DK
 
