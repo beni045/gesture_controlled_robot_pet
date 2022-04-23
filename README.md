@@ -158,10 +158,9 @@ The ROS project can now be run. In order to run the project refer to the followi
 
 
 # Dependencies and Third Party Links
-* Hand Gesture Recognition Model: https://github.com/Atlas200dk/sample-handposeRCcar
-* Hand Detection Model: https://github.com/victordibia/handtracking 
-* Face Detection Model: https://github.com/Ascend-Huawei/OfflineModelSamples/tree/main/face_detection
-* Raspbian image: https://www.raspberrypi.org/documentation/installation/installing-images/
+* Body Pose Model: Sample Body Pose https://github.com/Atlas200dk/sample_bodypose
+* Object Detection Model: FairMOT model https://github.com/HardysJin/atlas-track
+* Raspbian image: https://www.raspberrypi.org/documentation/installation/installing-images/ 
 * LCD driver: https://github.com/goodtft/LCD-show 
 * OpenCV
 
@@ -183,6 +182,23 @@ Python libraries used for Atlas 200 DK:
 For setup Python environment, you can refer to this [guide](https://gitee.com/ascend/samples/tree/master/python/environment).
 
 
+Python libraries used for Atlas 200 DK:
+* Random
+* Os
+* Cv2
+* Numpy
+* Argparse
+* Sys
+* Socket
+* Threading
+* Time
+* Io
+* Struct
+* Pickle
+* Zlib
+
+For setup Python environment, you can refer to this [guide](https://gitee.com/ascend/samples/tree/master/python/environment).
+
 Python libraries used for Raspberry Pi:
 * Socket
 * Sys
@@ -197,7 +213,6 @@ Python libraries used for Raspberry Pi:
 * Math
 * Threading
 * Datetime
-
 
 # Notes
 Power supply not solved
