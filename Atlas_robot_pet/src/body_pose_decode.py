@@ -138,7 +138,7 @@ def get_rc_command(joint_list, width):
     bent = 90
     slant = 135
     cross = 45
-    threshold = 30
+    threshold = 35
 
     left_shoulder_angle = left_shoulder_status(x_arr, y_arr)
     left_elbow_angle = left_arm_bent(x_arr, y_arr)
@@ -148,18 +148,11 @@ def get_rc_command(joint_list, width):
     right_elbow_angle = right_arm_bent(x_arr, y_arr)
     right_wrist_up = right_wrist_status(y_arr)
 
-    # if validate(x_arr, y_arr, width) == False or (not left_elbow_up) or (not right_elbow_up):
-    #     return "STOP"
    
     # |_o_|
     if abs(left_elbow_angle - bent) <= threshold and left_wrist_up and abs(right_elbow_angle - bent) <= threshold and right_wrist_up and abs(left_shoulder_angle - straight) <= threshold and abs(right_shoulder_angle - straight) <= threshold:
         return "ACTIVATE"
   
-    #  _o_
-    # |   |
-    # elif abs(left_elbow_angle - bent) <= threshold and (not left_wrist_up) and abs(right_elbow_angle - bent) <= threshold and (not right_wrist_up) and abs(left_shoulder_angle - straight) <= threshold and abs(right_shoulder_angle - straight) <= threshold:
-    #     return "DEACTIVATE"
-
     #  _o_
     # |/ \|
     elif abs(left_elbow_angle - cross) <= threshold and left_wrist_up and abs(right_elbow_angle - cross) <= threshold and right_wrist_up and abs(left_shoulder_angle - bent) <= threshold and abs(right_shoulder_angle - bent) <= threshold:
@@ -169,32 +162,14 @@ def get_rc_command(joint_list, width):
     elif abs(left_elbow_angle - straight) <= threshold and abs(right_elbow_angle - straight) <= threshold and abs(left_shoulder_angle - straight) <= threshold and abs(right_shoulder_angle - straight) <= threshold:
         return "TAKE A PICTURE"
    
-    # |_o_
-    #     |
-    # elif abs(left_elbow_angle - bent) <= threshold and (not left_wrist_up) and abs(right_elbow_angle - bent) <= threshold and right_wrist_up and abs(left_shoulder_angle - straight) <= threshold and abs(right_shoulder_angle - straight) <= threshold:
-    #     return "FOLLOW"
-
     # \o_|
     elif abs(left_elbow_angle - straight) <= threshold and left_wrist_up and abs(right_elbow_angle - bent) <= threshold and right_wrist_up and abs(left_shoulder_angle - slant) <= threshold and abs(right_shoulder_angle - straight) <= threshold:
         return "FOLLOW"
-
-    #  _o_|
-    # |
-    # elif abs(left_elbow_angle - bent) <= threshold and left_wrist_up and abs(right_elbow_angle - bent) <= threshold and (not right_wrist_up) and abs(left_shoulder_angle - straight) <= threshold and abs(right_shoulder_angle - straight) <= threshold:
-    #     return "STOP FOLLOW"
 
     #  o_|
     # /
     elif abs(left_elbow_angle - straight) <= threshold and (not left_wrist_up) and abs(right_elbow_angle - bent) <= threshold and right_wrist_up and abs(left_shoulder_angle - slant) <= threshold and abs(right_shoulder_angle - straight) <= threshold:
         return "STOP FOLLOW"
-    
-    # # |_o__
-    # elif abs(left_elbow_angle - straight) <= threshold and abs(right_elbow_angle - bent) <= threshold and right_wrist_up and abs(left_shoulder_angle - straight) <= threshold and abs(right_shoulder_angle - straight) <= threshold:
-    #     return "FORWARDS"
-
-    # # __o_|
-    # elif abs(left_elbow_angle - bent) <= threshold and left_wrist_up and abs(right_elbow_angle - straight) <= threshold and abs(left_shoulder_angle - straight) <= threshold and abs(right_shoulder_angle - straight) <= threshold:
-    #     return "BACKWARDS"
 
     # |_o/
     elif abs(left_elbow_angle - bent) <= threshold and abs(left_shoulder_angle - straight) <= threshold and left_wrist_up and abs(right_elbow_angle - straight) <= threshold and abs(right_shoulder_angle - slant) <= threshold and right_wrist_up:
@@ -205,14 +180,12 @@ def get_rc_command(joint_list, width):
     elif abs(left_elbow_angle - bent) <= threshold and abs(left_shoulder_angle - straight) <= threshold and left_wrist_up and abs(right_elbow_angle - straight) <= threshold and abs(right_shoulder_angle - slant) <= threshold and (not right_wrist_up):
         return "BACKWARDS"
 
-    #  _o__
-    # |
-    elif abs(left_elbow_angle - straight) <= threshold and abs(right_elbow_angle - bent) <= threshold and (not right_wrist_up) and abs(left_shoulder_angle - straight) <= threshold and abs(right_shoulder_angle - straight) <= threshold:
+    #  o__
+    elif abs(right_elbow_angle - straight) <= threshold and abs(right_shoulder_angle - straight) <= threshold:
         return "SPIN LEFT"
     
-    # __o_
-    #     |
-    elif abs(left_elbow_angle - bent) <= threshold and (not left_wrist_up) and abs(right_elbow_angle - straight) <= threshold and abs(left_shoulder_angle - straight) <= threshold and abs(right_shoulder_angle - straight) <= threshold:
+    #  __o
+    elif abs(left_elbow_angle - straight) <= threshold and abs(left_shoulder_angle - straight) <= threshold:
         return "SPIN RIGHT"
 
     else:

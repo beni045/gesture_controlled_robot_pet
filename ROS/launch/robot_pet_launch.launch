@@ -1,0 +1,12 @@
+<launch>
+  <param name="rpi_signal_flag" type="int" value="0" />
+  <param name="head_centering_flag" type="int" value="0" />
+  <param name="object_tracking_flag" type="int" value="0" />
+  <param name="active_flag" type="int" value="0" />
+  <param name="take_a_pic_flag" type="int" value="0" />
+  <param name="reset_flag" type="int" value="0" />
+  
+  <node name="robot_pet" pkg="robot_pet" type="robot_pet_launch.py" output="screen"/>
+  <node name="object_tracking_launch" pkg="robot_pet" type="object_tracking_launch.py" output="screen"/>
+  <node name="rpi_signal_launch" pkg="robot_pet" type="rpi_signal_launch.py" output="screen"/>
+</launch>

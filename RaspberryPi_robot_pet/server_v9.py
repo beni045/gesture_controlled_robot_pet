@@ -17,7 +17,7 @@ import datetime
 SERVO_X = 20
 SERVO_Z = 21
 START_X = 80
-START_Z = 40
+START_Z = 20
 
 # Set GPIO numbering mode
 GPIO.setmode(GPIO.BCM)
@@ -61,7 +61,7 @@ follow_img = cv2.imread("/home/pi/Documents/Capstone/Raspberry-Pi_robot_pet/foll
 camera_img = cv2.imread("/home/pi/Documents/Capstone/Raspberry-Pi_robot_pet/camera_img.jpg")
 body_img = cv2.imread("/home/pi/Documents/Capstone/Raspberry-Pi_robot_pet/body_img.jpg")
 
-# os.system("unclutter -idle 0 &") #Hide mouse pointer
+os.system("unclutter -idle 0 &") #Hide mouse pointer
 
 #Set up serial communication w/ Atlas 200DK
 
@@ -140,7 +140,7 @@ def RC_car_control():
       GPIO.output(in2,GPIO.LOW)
       GPIO.output(in3,GPIO.LOW)
       GPIO.output(in4,GPIO.HIGH)
-      time.sleep(0.3)
+      time.sleep(0.5)
       GPIO.output(in1,GPIO.LOW)
       GPIO.output(in2,GPIO.LOW)
       GPIO.output(in3,GPIO.LOW)
@@ -152,19 +152,32 @@ def RC_car_control():
       GPIO.output(in2,GPIO.HIGH)
       GPIO.output(in3,GPIO.HIGH)
       GPIO.output(in4,GPIO.LOW)
-      time.sleep(0.3)
+      time.sleep(0.5)
       GPIO.output(in1,GPIO.LOW)
       GPIO.output(in2,GPIO.LOW)
       GPIO.output(in3,GPIO.LOW)
       GPIO.output(in4,GPIO.LOW)
       current_hg_command = "send_done_command"
 
-    elif current_hg_command == "spin":
+    elif current_hg_command == "spin_left":
       GPIO.output(in1,GPIO.HIGH)
       GPIO.output(in2,GPIO.LOW)
-      GPIO.output(in3,GPIO.HIGH)
+      GPIO.output(in3,GPIO.LOW)
       GPIO.output(in4,GPIO.LOW)
-      time.sleep(0.2)
+      time.sleep(1)
+      GPIO.output(in1,GPIO.LOW)
+      GPIO.output(in2,GPIO.LOW)
+      GPIO.output(in3,GPIO.LOW)
+      GPIO.output(in4,GPIO.LOW)
+
+      current_hg_command = "send_done_command"
+
+    elif current_hg_command == "spin_right":
+      GPIO.output(in1,GPIO.LOW)
+      GPIO.output(in2,GPIO.LOW)
+      GPIO.output(in3,GPIO.LOW)
+      GPIO.output(in4,GPIO.HIGH)
+      time.sleep(1)
       GPIO.output(in1,GPIO.LOW)
       GPIO.output(in2,GPIO.LOW)
       GPIO.output(in3,GPIO.LOW)
@@ -223,7 +236,7 @@ count_takeapicture = 0
 count_num = 1 #number of commands in a row sent from Atlas before command is executed
 
 neu_cap = cv2.VideoCapture("./neu.mp4")
-happy_cap = cv2.VideoCapture("./happy.mp4")
+# happy_cap = cv2.VideoCapture("./happy.mp4")
 
 cv2.namedWindow('ImageWindow', cv2.WINDOW_NORMAL)
 cv2.setWindowProperty('ImageWindow', cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
@@ -397,9 +410,9 @@ while True:
             size = len(data)
             conn.sendall(struct.pack(">L", size) + data) # Send data back to Atlas 200 DK 
 
-    # Spin Around
-    elif data=="spin\n":
-            print("Spin")
+    # Spin Left
+    elif data=="spin left\n":
+            print("Spin left")
             if current_hg_command == "none":
                 count_spin = count_spin + 1
                 print("Spin count: " + str(count_spin))
@@ -409,14 +422,35 @@ while True:
                 if count_spin == count_num:
                     print("Spin triggered \n\n")
                     count_spin = 0
-                    current_hg_command = "spin"
-                    data = pickle.dumps("received spin\n", 0)
+                    current_hg_command = "spin_left"
+                    data = pickle.dumps("received spin left\n", 0)
                 else:
                     data = pickle.dumps("got it \n", 0)
             else: 
                 data = pickle.dumps("got it \n", 0)
             size = len(data)
             conn.sendall(struct.pack(">L", size) + data) # Send data back to Atlas 200 DK 
+
+    # Spin Right
+    elif data=="spin right\n":
+            print("Spin right")
+            if current_hg_command == "none":
+                count_spin = count_spin + 1
+                print("Spin count: " + str(count_spin))
+                count_takeapicture = 0
+                count_forward = 0
+                count_backward = 0
+                if count_spin == count_num:
+                    print("Spin triggered \n\n")
+                    count_spin = 0
+                    current_hg_command = "spin_right"
+                    data = pickle.dumps("received spin right\n", 0)
+                else:
+                    data = pickle.dumps("got it \n", 0)
+            else: 
+                data = pickle.dumps("got it \n", 0)
+            size = len(data)
+            conn.sendall(struct.pack(">L", size) + data) # Send data back to Atlas 200 DK
 
     # Left
     elif data=="left\n":
@@ -456,7 +490,7 @@ while True:
         count_forward = 0
         count_backward = 0
         count_spin = 0
-        data = pickle.dumps("send_done_command\n", 0)
+        data = pickle.dumps("received activate\n", 0)
         size = len(data)
         conn.sendall(struct.pack(">L", size) + data) # Send data back to Atlas 200 DK 
     
@@ -468,7 +502,20 @@ while True:
         count_forward = 0
         count_backward = 0
         count_spin = 0
-        data = pickle.dumps("send_done_command\n", 0)
+        data = pickle.dumps("received deactivate\n", 0)
+        size = len(data)
+        conn.sendall(struct.pack(">L", size) + data) # Send data back to Atlas 200 DK 
+
+    # RESET
+    elif data=="reset\n":
+        print("reset robot\n")
+        if display != "deactivate":
+            display = "default"
+        count_takeapicture = 0
+        count_forward = 0
+        count_backward = 0
+        count_spin = 0
+        data = pickle.dumps("received reset\n", 0)
         size = len(data)
         conn.sendall(struct.pack(">L", size) + data) # Send data back to Atlas 200 DK 
 
@@ -480,7 +527,7 @@ while True:
         count_forward = 0
         count_backward = 0
         count_spin = 0
-        data = pickle.dumps("send_done_command\n", 0)
+        data = pickle.dumps("received follow\n", 0)
         size = len(data)
         conn.sendall(struct.pack(">L", size) + data) # Send data back to Atlas 200 DK
 
@@ -500,7 +547,7 @@ while True:
     elif data == "body\n":
         print("body\n")
         display = "body"
-        data = pickle.dumps("send_done_command\n", 0)
+        data = pickle.dumps("received body\n", 0)
         size = len(data)
         conn.sendall(struct.pack(">L", size) + data) # Send data back to Atlas 200 DK
 
@@ -508,7 +555,7 @@ while True:
     elif data=="center for picture\n":
         print("center for picture\n")
         display = "picture"
-        data = pickle.dumps("send_done_command\n", 0)
+        data = pickle.dumps("received center\n", 0)
         size = len(data)
         conn.sendall(struct.pack(">L", size) + data) # Send data back to Atlas 200 DK
 
@@ -558,8 +605,7 @@ while True:
 ####################### vv State Machine for Current Hand Gesture Command vv ######################
 
     # Display Neutral expression by default
-    if current_hg_command != "take_a_picture" and current_hg_command != "happy_mood" and current_hg_command != "tap_image_fade" and current_hg_command != "tap_final_image_show":
-
+    if current_hg_command != "take_a_picture" and current_hg_command != "tap_image_fade" and current_hg_command != "tap_final_image_show":
 
         ret_val, frame_show = neu_cap.read()
         # Reset to beginning if neutral expression video has ended
@@ -568,13 +614,10 @@ while True:
             ret_val, frame_show = neu_cap.read()
         frame_show = cv2.resize(frame_show, (width, height))
 
-        
-        # if active:
-        #     cv2.putText(frame_show,"A",(100,110),font, scale,color,thickness,cv2.LINE_AA)
-        if current_hg_command == "forwards": #for debugging
-            cv2.putText(frame_show,"F",(200,210),font, scale,color,thickness,cv2.LINE_AA)
-        if current_hg_command == "backwards": #for debugging
-            cv2.putText(frame_show,"B",(200,210),font, scale,color,thickness,cv2.LINE_AA)
+        # if current_hg_command == "forwards": #for debugging
+        #     cv2.putText(frame_show,"F",(200,210),font, scale,color,thickness,cv2.LINE_AA)
+        # if current_hg_command == "backwards": #for debugging
+        #     cv2.putText(frame_show,"B",(200,210),font, scale,color,thickness,cv2.LINE_AA)
         # if current_hg_command == "spin": #for debugging
         #     cv2.putText(frame_show,"S",(200,210),font, scale,color,thickness,cv2.LINE_AA)
 
@@ -590,22 +633,18 @@ while True:
         elif display == "body":
             frame_show = cv2.resize(body_img, (width, height))
 
-    # elif current_hg_command == "take_a_picture":
-    #     if display == "picture":
-    #         frame_show = cv2.resize(camera_img, (width, height))
-    #     frame_show = cv2.resize(camera_img, (width, height))
 
-   ### Display happy mood after completion of any command. Return to neutral expression when complete
-    elif current_hg_command == "happy_mood":
+#    ### Display happy mood after completion of any command. Return to neutral expression when complete
+#     elif current_hg_command == "happy_mood":
 
-        ret_val, frame_show = happy_cap.read()
-        # Reset to beginning and start neutral expression if happy expression video has ended
-        if not ret_val:
-            happy_cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
-            neu_cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
-            current_hg_command = "none" # Go back to no hand gesture command being executed
-            ret_val,frame_show = neu_cap.read()
-        frame_show = cv2.resize(frame_show, (width, height))
+#         ret_val, frame_show = happy_cap.read()
+#         # Reset to beginning and start neutral expression if happy expression video has ended
+#         if not ret_val:
+#             happy_cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+#             neu_cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+#             current_hg_command = "none" # Go back to no hand gesture command being executed
+#             ret_val,frame_show = neu_cap.read()
+#         frame_show = cv2.resize(frame_show, (width, height))
 
    # Displays a white image to simulate the flash of a camera during "Take a Picture" routine
     elif current_hg_command == "tap_image_fade":
@@ -625,7 +664,11 @@ while True:
         frame_show = fade_image # Saved image 
         
         if (time.time() - time_final_img_tap_start) >= 3:
-            current_hg_command = "happy_mood" # Command is complete, execute happy expression
+            current_hg_command = "none" # Command is complete, execute happy expression
+            display = "default"
+            # Reset camera position
+            go_to_angle(servo_x, START_X)
+            go_to_angle(servo_z, START_Z)
             
 
     # Display GUI
@@ -635,6 +678,6 @@ while True:
         break
 
 neu_cap.release()
-happy_cap.release()
+# happy_cap.release()
 cv2.destroyAllWindows()
 GPIO.cleanup()
