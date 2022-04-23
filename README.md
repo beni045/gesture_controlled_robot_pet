@@ -37,7 +37,7 @@ Through its camera “eyes”, this robot pet uses a combination of machine lear
 * Build robot base without using the Arduino or the ultrasonic sensors, you can find the instructions [here](https://drive.google.com/file/d/1nSlkYJ7oCfMkG1p-KDfVHdLQt3B4Nmo5/view)
 * Connect robot base parts to Raspberry Pi (see pinout in RaspberryPi_robot_pet/server_v9.py)
 * Connect Raspberry Pi Camera to CAMERA1 on the Atlas 200 DK, you can follow this [guide](https://support.huaweicloud.com/intl/en-us/qs-atlas200dkappc32/atlased_04_0006.html)
-* [Router connection](https://github.com/kylerhunag/gesture_controlled_robot_pet/wiki/Router-Connection-Setup-Guide) (After you've completed 1st step of Atlas 200DK Setup and 2nd step of Raspberry Pi Setup)
+* [Router connection](https://github.com/kylerhunag/gesture_controlled_robot_pet/wiki/Router-Connection-Setup-Guide) (After you've completed 1st step of [Atlas 200DK Setup](https://github.com/kylerhunag/gesture_controlled_robot_pet/edit/main/README.md#atlas-200dk-setup) and 2nd step of [Raspberry Pi Setup](https://github.com/kylerhunag/gesture_controlled_robot_pet/edit/main/README.md#raspberry-pi-setup))
   * Raspberry Pi connected to Atlas 200DK via wireless connection
   * Atlas 200DK connected to the router via Ethernet cord
   * Laptop connected to the router via wireless connection
