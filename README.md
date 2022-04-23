@@ -134,6 +134,7 @@ Command | Gesture | Description | Output
 3. Navigate to the project root directory. Install the required dependencies to run this project:
 
     `cd ~/gesture_controlled_robot_pet/`
+    
     `pip3 install -r requirements.txt`
 
 4. Navigate to the presenter server directory and start the presenter server: 
