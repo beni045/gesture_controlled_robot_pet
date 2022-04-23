@@ -177,12 +177,17 @@ Once you have created and built your ROS package you can now copy paste the scri
 Here we used robot_pet as our package_name.
 Once all the scripts and launch files are copied into the catkin_ws we need to make the files executable and as such do 
 <b> chmod +x <file name> </b> for all the files that have been copied. And lastly run 
+  
 <b> cd ~/catkin_ws </b> 
+  
 <b> catkin_make </b> to build the nodes.
 
 The ROS project can now be run. In order to run the project refer to the following set of commands: 
+  
 <b> cd ~/catkin_ws </b> 
+  
 <b> source ./devel/setup.bash </b>
+  
 <b> roslaunch <package_name> robot_pet_launch.launch
 
 Before running the ROS project ensure that the presenter server script is running and the Raspberry PI script is running.
