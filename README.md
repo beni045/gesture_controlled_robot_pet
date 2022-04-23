@@ -110,11 +110,11 @@ Command | Gesture | Description | Output
 
 ### Raspberry Pi
 1. Start Raspberry Pi into Raspbian OS
-2. ssh into the Pi (via the router)
+2. ssh into the Pi 
 3. git clone this repo
 4. Navigate to the directory where the main Raspberry Pi program is located, for example:  
    cd /home/pi/Documents/Capstone/Raspberry-Pi_robot_pet/
-4. Run the main program for the robot control:  
+4. Ensure that Pi and the Atlas 200DK are in the same network. Run the main program for the robot control:  
    python3 server_v9.py
 
 ### Atlas 200DK 
@@ -124,21 +124,25 @@ Command | Gesture | Description | Output
     (No internet access? Just try connecting Atlas 200 Dk to a router with Ethernet Cable. For details, check [official document](https://support.huaweicloud.com/intl/en-us/environment-deployment-Atlas200DK1012/atlased_04_0012.html) or [our router connecter guide](https://github.com/kylerhunag/gesture_controlled_robot_pet/wiki/Router-Connection-Setup-Guide)) 
 
     `git clone https://github.com/kylerhunag/gesture_controlled_robot_pet.git`
+   
+3. Install the required dependencies to run this project:
 
-3. Navigate to the presenter server directory and start the presenter server: 
+    `pip3 install -r requirements.txt`
+
+4. Navigate to the presenter server directory and start the presenter server: 
 
     `cd ~/gesture_controlled_robot_pet/Atlas_robot_pet/presenterserver`
     
     `bash run_presenter_server.sh body_pose.conf`
-
+    
 
 ### Robot Operating System (ROS) on 200DK
 
-Once you have created and built your ROS package you can now copy paste the scripts and launch folder from `gesture_controlled_robot_pet/ROS` to `catkin_ws/src/<package_name>/`
+Once you have created and built your ROS package you can now copy paste the scripts and launch folder from `~/gesture_controlled_robot_pet/ROS` to `~/catkin_ws/src/<package_name>/`
 
 Here we used robot_pet as our package_name.
 Once all the scripts and launch files are copied into the catkin_ws we need to make the files executable and as such do 
-`chmod +x <file name>` for all the files that have been copied. Before running the ROS project ensure that the presenter server script is running and the Raspberry PI script is running. And lastly run 
+`chmod +x <file name>` for all the files that have been copied. Before running the ROS project ensure that the presenter server script is running and the Raspberry PI script is running. And lastly run (in the environment you just created):
   
 `cd ~/catkin_ws` 
   
