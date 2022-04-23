@@ -55,6 +55,16 @@ Development PC requires Ubuntu 18.04 system (can be virtual machine), and have C
 
 4. Set up RC Car by following instructions [here](https://drive.google.com/file/d/1nSlkYJ7oCfMkG1p-KDfVHdLQt3B4Nmo5/view).
   
+### Robot Operating System (ROS) Setup
+
+The Robot Operating System (ROS) is a set of software libraries and tools that help you build robot applications. In order to set up ROS on the Atlas 200 DK board refer to the following guide below: 
+
+[ROS Setup](https://hiascend.notion.site/UBC-Capstone-ROS-on-Atlas200DK-0720a3605a354f36a9cdbb0ce885ddf2)
+
+Once the conda environment and ROS has been set up on the board we have to create a workspace and a ROS project such that we can run our code. The following code describes how to do so:
+* [ROS Create Package](http://wiki.ros.org/ROS/Tutorials/CreatingPackage)
+* [ROS Build Package](http://wiki.ros.org/ROS/Tutorials/BuildingPackages)
+
 ### Raspberry Pi Setup
 1. Install the latest version of Raspbian onto an SD card  
    Follow the steps in the link:  
@@ -97,100 +107,49 @@ Command | Gesture | Description | Output
 
 # Run the Robot
 
-### Atlas 200DK 
-1. Download/Clone this repo to your development PC as well as Atlas 200 DK.
-1. Open a terminal on your development PC, and navigate to the project directory, for example: 
-   cd hand_gesture_controlled_robot_pet/script/  
-3. In the same terminal, run the presenter server (more information in the next section below):  
-   bash ./run_presenter_server.sh
-5. Open a second terminal, and SSH into the Atlas 200 DK:  
-   ssh HwHiAiUser@192.168.1.2  
-  (The IP address for USB connection of the Atlas 200 DK will normally be 192.168.1.2)  
-  The default password to SSH is Mind@123.
-4. Navigate to the folder which holds the main program of the application, for example: 
-   cd /home/HwHiAiUser/HIAI_PROJECTS/Atlas_robot_pet/code_live/
-6. Run the main program on the Atlas 200 DK:  
-   python3 main.py
-   
-#### Presenter Server
-
-Note, in the project, [Presenter Server](https://gitee.com/Atlas200DK/sdk-presenter) is used to demo the video captured from the camera.
-
-Modify the configuration file, if you need to view the detection results using presenter server for the live input.
-
-Modify <i>presenter_server_ip</i> and <i>presenter_view_ip</i> in <i>body_pose.conf</i> to the current ubuntu server and atlas200dk development board network port ip, presenter _agent_ip is the ip of the network port connected to the ubuntu server on the development board.
-
-If you use USB connection, the USB network port ip of the development board is 192.168.1.2, and the network port ip of the virtual network card connected to the ubuntu server and the development board is 192.168.1.223, then the configuration file content is as follows:
-
-<i>presenter_server_ip=192.168.1.223
-
-presenter_view_ip=192.168.1.223
-
-presenter_agent_ip=192.168.1.2</i>
-
-Generally, when connecting via USB, atlas200dk_board_ip is the USB network port ip of the development board, and the default is 192.168.1.2.
-
-If you need to view the detection results using presenter server for the live input or video source, log in to the Presenter Server website using the URL that was prompted when the Presenter Server service was started. Otherwise, skip this step.
-
-Wait for the Presenter Agent to transmit data to the server, and click "Refresh" to refresh. When there is data, the status of the corresponding Channel turns green.
-
-Click the corresponding View Name link on the right to view the results.
-
-#### Stopping Presenter Server
-
-The Presenter Server service will always be running after it is started. If you want to stop the Presenter Server service corresponding to the pose detection application, you can perform the following operations.
-
-Execute the following command on the command line on the server where the process of the Presenter Server service is running:
-
-<b>ps -ef | grep presenter</b>
-
-<i>ascend@ubuntu:~/AscendProjects/hand_gesture_controlled_robot_pet
-/Atlas_robot_pet/script$ ps -ef | grep presenter
-<br/>ascend 9560 1342 0 02:19 pts/4  00:00:04   python3/home/ascend/AscendProjects/hand_gesture_controlled_robot_pet
-/Atlas_robot_pet.bak/script/..//presenterserver/presenter_server.py --app Atlas_robot_pet
-</i>
-
-As shown above, 9650 is the process ID of the Presenter Server service corresponding to the Atlas_robot_pet application.
-
-If you want to stop this service, execute the following command:
-
-<b>kill -9 9650</b>
-
 ### Raspberry Pi
 1. Start Raspberry Pi into Raspbian OS
-2. Navigate to the directory where the main Raspberry Pi program is located:  
+2. ssh into the Pi (via the router)
+3. git clone this repo
+4. Navigate to the directory where the main Raspberry Pi program is located, for example:  
    cd /home/pi/Documents/Capstone/Raspberry-Pi_robot_pet/
 4. Run the main program for the robot control:  
    python3 server_v9.py
-   
- #### Robot Operating System (ROS)
 
-The Robot Operating System (ROS) is a set of software libraries and tools that help you build robot applications. In order to set up ROS on the Atlas 200 DK board refer to the following guide below: 
+### Atlas 200DK 
+1. Login to Atlas 200 DK from PC (Refer to this [guide](https://www.notion.so/hiascend/Atlas-200-DK-Setup-Guide-070b907c3c124381bdd6721618b81ef8) on how to setup and access). `Note`, it is required to use `VScode` with `Remote-SSH` extension to login remotely, otherwise you might not get the video stream to display on your PC.
 
-[ROS Setup](https://hiascend.notion.site/UBC-Capstone-ROS-on-Atlas200DK-0720a3605a354f36a9cdbb0ce885ddf2)
+2. On Atlas 200 DK, git clone this repo 
+    (No internet access? Just try connecting Atlas 200 Dk to a router with Ethernet Cable. For details, check [official document](https://support.huaweicloud.com/intl/en-us/environment-deployment-Atlas200DK1012/atlased_04_0012.html) or [our router connecter guide](https://github.com/kylerhunag/gesture_controlled_robot_pet/wiki/Router-Connection-Setup-Guide)) 
 
-Once the conda environment and ROS has been set up on the board we have to create a workspace and a ROS project such that we can run our code. The following code describes how to do so:
-* [ROS Create Package](http://wiki.ros.org/ROS/Tutorials/CreatingPackage)
-* [ROS Build Package](http://wiki.ros.org/ROS/Tutorials/BuildingPackages)
+    `git clone https://github.com/kylerhunag/gesture_controlled_robot_pet.git`
 
-Once you have created and built your ROS package you can now copy paste the scripts and launch folder from gesture_controlled_robot_pet/ROS to catkin_ws/src/<package_name>/
+3. Navigate to the presenter server directory and start the presenter server: 
+
+    `cd ~/gesture_controlled_robot_pet/Atlas_robot_pet/presenterserver`
+    
+    `bash run_presenter_server.sh body_pose.conf`
+
+
+### Robot Operating System (ROS) on 200DK
+
+Once you have created and built your ROS package you can now copy paste the scripts and launch folder from `gesture_controlled_robot_pet/ROS` to `catkin_ws/src/<package_name>/`
+
 Here we used robot_pet as our package_name.
 Once all the scripts and launch files are copied into the catkin_ws we need to make the files executable and as such do 
-<b> chmod +x <file name> </b> for all the files that have been copied. And lastly run 
+`chmod +x <file name>` for all the files that have been copied. Before running the ROS project ensure that the presenter server script is running and the Raspberry PI script is running. And lastly run 
   
-<b> cd ~/catkin_ws </b> 
+`cd ~/catkin_ws` 
   
-<b> catkin_make </b> to build the nodes.
+`catkin_make` to build the nodes.
 
 The ROS project can now be run. In order to run the project refer to the following set of commands: 
   
-<b> cd ~/catkin_ws </b> 
+`cd ~/catkin_ws` 
   
-<b> source ./devel/setup.bash </b>
+`source ./devel/setup.bash`
   
-<b> roslaunch <package_name> robot_pet_launch.launch
-
-Before running the ROS project ensure that the presenter server script is running and the Raspberry PI script is running.
+`roslaunch <package_name> robot_pet_launch.launch`
 
 
 # Dependencies and Third Party Links
