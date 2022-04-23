@@ -121,7 +121,7 @@ Command | Gesture | Description | Output
 4. Navigate to the directory where the main Raspberry Pi program is located, for example:  
    `cd /home/pi/Documents/Capstone/Raspberry-Pi_robot_pet/`
 4. Ensure that Pi and the Atlas 200DK are in the same network. Run the main program for the robot control:  
-   python3 server_v9.py
+   `python3 server_v9.py`
 
 ### Atlas 200DK 
 1. Login to Atlas 200 DK from PC (Refer to this [guide](https://www.notion.so/hiascend/Atlas-200-DK-Setup-Guide-070b907c3c124381bdd6721618b81ef8) on how to setup and access). `Note`, it is required to use `VScode` with `Remote-SSH` extension to login remotely, otherwise you might not get the video stream to display on your PC.
@@ -170,6 +170,7 @@ The ROS project can now be run. In order to run the project refer to the followi
 * Body Pose Model: Sample Body Pose https://github.com/Atlas200dk/sample_bodypose
 * Object Detection Model: FairMOT model https://github.com/HardysJin/atlas-track
 * Raspbian image: https://www.raspberrypi.org/documentation/installation/installing-images/ 
+* Presenter server & ROS: https://github.com/Ascend-Huawei/HiFly_Drone
 * LCD driver: https://github.com/goodtft/LCD-show 
 * OpenCV
 
@@ -224,4 +225,4 @@ Python libraries used for Raspberry Pi:
 * Datetime
 
 # Notes
-Power supply not solved
+
