@@ -164,11 +164,12 @@ def RC_car_control():
       GPIO.output(in2,GPIO.LOW)
       GPIO.output(in3,GPIO.LOW)
       GPIO.output(in4,GPIO.LOW)
-      time.sleep(0.5)
+      time.sleep(1)
       GPIO.output(in1,GPIO.LOW)
       GPIO.output(in2,GPIO.LOW)
       GPIO.output(in3,GPIO.LOW)
       GPIO.output(in4,GPIO.LOW)
+
       current_hg_command = "send_done_command"
 
     elif current_hg_command == "spin_right":
@@ -176,7 +177,7 @@ def RC_car_control():
       GPIO.output(in2,GPIO.LOW)
       GPIO.output(in3,GPIO.LOW)
       GPIO.output(in4,GPIO.HIGH)
-      time.sleep(0.5)
+      time.sleep(1)
       GPIO.output(in1,GPIO.LOW)
       GPIO.output(in2,GPIO.LOW)
       GPIO.output(in3,GPIO.LOW)
@@ -235,7 +236,7 @@ count_takeapicture = 0
 count_num = 1 #number of commands in a row sent from Atlas before command is executed
 
 neu_cap = cv2.VideoCapture("./neu.mp4")
-happy_cap = cv2.VideoCapture("./happy.mp4")
+# happy_cap = cv2.VideoCapture("./happy.mp4")
 
 cv2.namedWindow('ImageWindow', cv2.WINDOW_NORMAL)
 cv2.setWindowProperty('ImageWindow', cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
@@ -604,7 +605,7 @@ while True:
 ####################### vv State Machine for Current Hand Gesture Command vv ######################
 
     # Display Neutral expression by default
-    if current_hg_command != "take_a_picture" and current_hg_command != "happy_mood" and current_hg_command != "tap_image_fade" and current_hg_command != "tap_final_image_show":
+    if current_hg_command != "take_a_picture" and current_hg_command != "tap_image_fade" and current_hg_command != "tap_final_image_show":
 
         ret_val, frame_show = neu_cap.read()
         # Reset to beginning if neutral expression video has ended
@@ -633,17 +634,17 @@ while True:
             frame_show = cv2.resize(body_img, (width, height))
 
 
-   ### Display happy mood after completion of any command. Return to neutral expression when complete
-    elif current_hg_command == "happy_mood":
+#    ### Display happy mood after completion of any command. Return to neutral expression when complete
+#     elif current_hg_command == "happy_mood":
 
-        ret_val, frame_show = happy_cap.read()
-        # Reset to beginning and start neutral expression if happy expression video has ended
-        if not ret_val:
-            happy_cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
-            neu_cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
-            current_hg_command = "none" # Go back to no hand gesture command being executed
-            ret_val,frame_show = neu_cap.read()
-        frame_show = cv2.resize(frame_show, (width, height))
+#         ret_val, frame_show = happy_cap.read()
+#         # Reset to beginning and start neutral expression if happy expression video has ended
+#         if not ret_val:
+#             happy_cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+#             neu_cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+#             current_hg_command = "none" # Go back to no hand gesture command being executed
+#             ret_val,frame_show = neu_cap.read()
+#         frame_show = cv2.resize(frame_show, (width, height))
 
    # Displays a white image to simulate the flash of a camera during "Take a Picture" routine
     elif current_hg_command == "tap_image_fade":
@@ -677,6 +678,6 @@ while True:
         break
 
 neu_cap.release()
-happy_cap.release()
+# happy_cap.release()
 cv2.destroyAllWindows()
 GPIO.cleanup()
