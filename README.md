@@ -1,9 +1,12 @@
-# Hand Gesture Controlled Robot Pet
-Consider having a pet that is smart, responds to your commands without training, and even takes pictures for you! You don’t even have to pick up after or buy kibble for this pet! This is a dream come true for those craving an animal companion but cannot afford the time, money, or maintenance required for real animals. Robot pets are one example of how technology can assist in scenarios where companionship and fun are needed, but the handling and upkeep of real pets isn’t possible; especially in healthcare or senior homes. 
+# Gesture Controlled Robot Pet
 
-Apart from doing normal pet things such as moving around and performing a few tricks, it can also perform robot tasks, like capturing photos with the camera in its nose. It can also communicate its mood through animated eyes on a colored LCD screen mounted to its head.
+Consider having a pet that is smart, responds to your commands without training, and even takes pictures for you! You don’t even have to pick up after or buy kibble for this pet! This is a dream come true for those craving an animal companion but cannot afford the time, money, or maintenance required for real animals. Robot pets are one example of how technology can assist in scenarios where companionship and fun are needed, but the handling and upkeep of real pets isn’t possible; especially in healthcare or senior homes.
 
-Through its camera “eyes”, this robot pet uses a combination of machine learning and computer vision to see and respond to commands given through its owner’s hand gestures. The robot pet can track, recognize, and perform a task such as following the user while video capturing. The user is thus able to control the pet from a distance, enabling full autonomy.
+Apart from doing normal pet things such as moving around and performing a few tricks, it can also perform robot tasks, like capturing photos with the camera in its nose. It can also remember you and follow you around for as long as you like. You can also deactivate this pet for some privacy and activate it back again when you feel like you need its company.
+
+Through its camera “eyes”, this robot pet uses a combination of machine learning and computer vision techniques to see and respond to commands given through its owner’s body gestures. The robot pet can track, recognize, and perform a task such as following the user. The user is thus able to control the pet from a distance, enabling full autonomy.
+
+
 
 <p align="center">
   <img width="300" src="/Images/robot.png">
@@ -20,14 +23,17 @@ Through its camera “eyes”, this robot pet uses a combination of machine lear
 * [Raspberry Pi Camera (Camera V2)](https://www.raspberrypi.org/products/camera-module-v2/)
 * [Raspberry Pi LCD Screen (Kuman 3.5" Inch TFT LCD Display 480x320 RGB Pixels)](https://www.amazon.ca/Kuman-Display-480x320-Raspberry-Interface/dp/B01CQIPEO0/ref=sr_1_6?dchild=1&keywords=3.5+inch+raspberry+pi+screen&qid=1605052453&sr=8-6)
 * [ELEGOO UNO Robot Car Base](https://www.amazon.ca/ELEGOO-Ultrasonic-Bluetooth-Intelligent-Educational/dp/B07485YQP8)
-* Optional:
-  * 3D printer
-  * [2 Servo Motors (SG90)](https://www.amazon.ca/gp/product/B07Z16DWGW/ref=ppx_yo_dt_b_asin_title_o05_s00?ie=UTF8&psc=1)
+* [2 Servo Motors (SG90)](https://www.amazon.ca/gp/product/B07Z16DWGW/ref=ppx_yo_dt_b_asin_title_o05_s00?ie=UTF8&psc=1)
+* [Krisdonia Power Bank](https://www.amazon.ca/Krisdonia-25000mAh-Portable-External-Macbooks/dp/B076GYGR6M/ref=sr_1_7?dchild=1&keywords=laptop%2Bpower%2Bbank&qid=1615936374&sr=8-7&th=1)
+* [GL.iNet Router](https://www.gl-inet.com/products/gl-ar750/)
+
 * Miscellaneous:
-  * [Raspberry Pi Camera Extension Cable](https://www.amazon.ca/gp/product/B07GWRZDH7/ref=ppx_yo_dt_b_asin_title_o01_s00?ie=UTF8&psc=1)
-  * Ethernet Cable
-  * Jumper Cables
+  * 3D printer
+  * [Raspberry Pi Camera Ribbon Cable](https://www.amazon.ca/Raspberry-Camera-Ribbon-Cable-Module/dp/B0981DPWD9/ref=sr_1_1?crid=15721LNB17OI9&keywords=Raspberry+Pi+Zero+v1.3+Camera+Cable+Raspberry+Pi+Zero+v1.3+Camera+Cable+Raspberry+Pi+Zero+v1.3+Camera+Cable+Raspberry+Pi+Zero+v1.3+Camera+Cable+Raspberry+Pi+Zero+v1.3+Camera+Cable&qid=1650660288&s=industrial&sprefix=raspberry+pi+zero+v1+3+camera+cable+raspberry+pi+zero+v1+3+camera+cable+raspberry+pi+zero+v1+3+camera+cable+raspberry+pi+zero+v1+3+camera+cable+raspberry+pi+zero+v1+3+camera+cable%2Cindustrial%2C260&sr=1-1)
+  * 2 Ethernet Cables
+  * Breadboard Jumper Cables
   * Screws
+
 
 <p align="center">
   <img width="300" src="/Images/final.jpg">
