@@ -126,10 +126,10 @@ Command | Gesture | Description | Output
    `python3 server_v9.py`
 
 ### Atlas 200DK 
-1. Login to Atlas 200 DK from PC (Refer to this [guide](https://www.notion.so/hiascend/Atlas-200-DK-Setup-Guide-070b907c3c124381bdd6721618b81ef8) on how to setup and access). Note, it is required to use `VScode` with `Remote-SSH` extension to login remotely, otherwise you might not get the video stream to display on your PC.
+1. Login to Atlas 200 DK from PC (Refer to this [guide](https://hiascend.notion.site/Atlas-200-DK-Setup-Guide-070b907c3c124381bdd6721618b81ef8) on how to setup and access). Note, it is required to use `VScode` with `Remote-SSH` extension to login remotely, otherwise you might not get the video stream to display on your PC.
 
 2. On Atlas 200 DK, git clone this repo 
-    (No internet access? Just try connecting Atlas 200 Dk to a router with Ethernet Cable. For details, check [official document](https://support.huaweicloud.com/intl/en-us/environment-deployment-Atlas200DK1012/atlased_04_0012.html) or [our router connecter guide](https://github.com/kylerhunag/gesture_controlled_robot_pet/wiki/Router-Connection-Setup-Guide)) 
+    (No internet access? Just try connecting Atlas 200 Dk to a router with Ethernet Cable. For details, check [official document](https://support.huaweicloud.com/intl/en-us/environment-deployment-Atlas200DK1012/atlased_04_0012.html) or [our router connection guide](https://github.com/kylerhunag/gesture_controlled_robot_pet/wiki/Router-Connection-Setup-Guide)) 
 
     `git clone https://github.com/kylerhunag/gesture_controlled_robot_pet.git`
    
