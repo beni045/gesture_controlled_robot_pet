@@ -43,6 +43,8 @@ Through its camera “eyes”, this robot pet uses a combination of machine lear
 * Build robot base without using the Arduino or the ultrasonic sensors, you can find the instructions [here](https://drive.google.com/file/d/1nSlkYJ7oCfMkG1p-KDfVHdLQt3B4Nmo5/view)
 * Connect robot base parts to Raspberry Pi (see pinout in RaspberryPi_robot_pet/server_v9.py)
 * Connect Raspberry Pi Camera to CAMERA1 on the Atlas 200 DK, you can follow this [guide](https://support.huaweicloud.com/intl/en-us/qs-atlas200dkappc32/atlased_04_0006.html)
+* Set the output voltage of the power bank to 12 V. (Hold the power button and then double click a few times.)
+  * The Atlas Board can be connected to the "DC-Out" port; the router and the Pi can be connected to the USB ports.
 * [Router connection](https://github.com/kylerhunag/gesture_controlled_robot_pet/wiki/Router-Connection-Setup-Guide) (After you've completed 1st step of [Atlas 200DK Setup](https://github.com/kylerhunag/gesture_controlled_robot_pet/edit/main/README.md#atlas-200dk-setup) and 2nd step of [Raspberry Pi Setup](https://github.com/kylerhunag/gesture_controlled_robot_pet/edit/main/README.md#raspberry-pi-setup))
   * Raspberry Pi connected to Atlas 200DK via wireless connection
   * Atlas 200DK connected to the router via Ethernet cord
@@ -124,7 +126,7 @@ Command | Gesture | Description | Output
    `python3 server_v9.py`
 
 ### Atlas 200DK 
-1. Login to Atlas 200 DK from PC (Refer to this [guide](https://www.notion.so/hiascend/Atlas-200-DK-Setup-Guide-070b907c3c124381bdd6721618b81ef8) on how to setup and access). `Note`, it is required to use `VScode` with `Remote-SSH` extension to login remotely, otherwise you might not get the video stream to display on your PC.
+1. Login to Atlas 200 DK from PC (Refer to this [guide](https://www.notion.so/hiascend/Atlas-200-DK-Setup-Guide-070b907c3c124381bdd6721618b81ef8) on how to setup and access). Note, it is required to use `VScode` with `Remote-SSH` extension to login remotely, otherwise you might not get the video stream to display on your PC.
 
 2. On Atlas 200 DK, git clone this repo 
     (No internet access? Just try connecting Atlas 200 Dk to a router with Ethernet Cable. For details, check [official document](https://support.huaweicloud.com/intl/en-us/environment-deployment-Atlas200DK1012/atlased_04_0012.html) or [our router connecter guide](https://github.com/kylerhunag/gesture_controlled_robot_pet/wiki/Router-Connection-Setup-Guide)) 
@@ -146,7 +148,7 @@ Command | Gesture | Description | Output
 
 ### Robot Operating System (ROS) on 200DK
 
-Once you have created and built your ROS package you can now copy paste the scripts and launch folder from `~/gesture_controlled_robot_pet/ROS` to `~/catkin_ws/src/<package_name>/`
+Once you have created and built your ROS package you can now copy paste the `scripts` and `launch` folder from `~/gesture_controlled_robot_pet/ROS` to `~/catkin_ws/src/<package_name>/`
 
 Here we used robot_pet as our package_name.
 Once all the scripts and launch files are copied into the catkin_ws we need to make the files executable and as such do 
@@ -175,23 +177,6 @@ The ROS project can now be run. In order to run the project refer to the followi
 * LCD driver: https://github.com/goodtft/LCD-show 
 * OpenCV
 
-Python libraries used for Atlas 200 DK:
-* Random
-* Os
-* Cv2
-* Numpy
-* Argparse
-* Sys
-* Socket
-* Threading
-* Time
-* Io
-* Struct
-* Pickle
-* Zlib
-
-For setup Python environment, you can refer to this [guide](https://gitee.com/ascend/samples/tree/master/python/environment).
-
 
 Python libraries used for Atlas 200 DK:
 * Random
@@ -207,6 +192,13 @@ Python libraries used for Atlas 200 DK:
 * Struct
 * Pickle
 * Zlib
+* opencv-python
+* cython
+* cython-bbox
+* scipy
+* lap
+* Pillow
+* rospy
 
 For setup Python environment, you can refer to this [guide](https://gitee.com/ascend/samples/tree/master/python/environment).
 
