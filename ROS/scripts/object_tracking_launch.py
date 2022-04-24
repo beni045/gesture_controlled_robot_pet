@@ -2,7 +2,6 @@
 import rospy
 from std_msgs.msg import String
 from sensor_msgs.msg import Image
-import numpy as np
 import sys
 
 sys.path.append("../gesture_controlled_robot_pet/Atlas_robot_pet")
