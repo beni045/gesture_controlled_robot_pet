@@ -1,9 +1,12 @@
-# Hand Gesture Controlled Robot Pet
-Consider having a pet that is smart, responds to your commands without training, and even takes pictures for you! You don’t even have to pick up after or buy kibble for this pet! This is a dream come true for those craving an animal companion but cannot afford the time, money, or maintenance required for real animals. Robot pets are one example of how technology can assist in scenarios where companionship and fun are needed, but the handling and upkeep of real pets isn’t possible; especially in healthcare or senior homes. 
+# Gesture Controlled Robot Pet
 
-Apart from doing normal pet things such as moving around and performing a few tricks, it can also perform robot tasks, like capturing photos with the camera in its nose. It can also communicate its mood through animated eyes on a colored LCD screen mounted to its head.
+Consider having a pet that is smart, responds to your commands without training, and even takes pictures for you! You don’t even have to pick up after or buy kibble for this pet! This is a dream come true for those craving an animal companion but cannot afford the time, money, or maintenance required for real animals. Robot pets are one example of how technology can assist in scenarios where companionship and fun are needed, but the handling and upkeep of real pets isn’t possible; especially in healthcare or senior homes.
 
-Through its camera “eyes”, this robot pet uses a combination of machine learning and computer vision to see and respond to commands given through its owner’s hand gestures. The robot pet can track, recognize, and perform a task such as following the user while video capturing. The user is thus able to control the pet from a distance, enabling full autonomy.
+Apart from doing normal pet things such as moving around and performing a few tricks, it can also perform robot tasks, like capturing photos with the camera in its nose. It can also remember you and follow you around for as long as you like. You can also deactivate this pet for some privacy and activate it back again when you feel like you need its company.
+
+Through its camera “eyes”, this robot pet uses a combination of machine learning and computer vision techniques to see and respond to commands given through its owner’s body gestures. The robot pet can track, recognize, and perform a task such as following the user. The user is thus able to control the pet from a distance, enabling full autonomy.
+
+
 
 <p align="center">
   <img width="300" src="/Images/robot.png">
@@ -20,14 +23,17 @@ Through its camera “eyes”, this robot pet uses a combination of machine lear
 * [Raspberry Pi Camera (Camera V2)](https://www.raspberrypi.org/products/camera-module-v2/)
 * [Raspberry Pi LCD Screen (Kuman 3.5" Inch TFT LCD Display 480x320 RGB Pixels)](https://www.amazon.ca/Kuman-Display-480x320-Raspberry-Interface/dp/B01CQIPEO0/ref=sr_1_6?dchild=1&keywords=3.5+inch+raspberry+pi+screen&qid=1605052453&sr=8-6)
 * [ELEGOO UNO Robot Car Base](https://www.amazon.ca/ELEGOO-Ultrasonic-Bluetooth-Intelligent-Educational/dp/B07485YQP8)
-* Optional:
-  * 3D printer
-  * [2 Servo Motors (SG90)](https://www.amazon.ca/gp/product/B07Z16DWGW/ref=ppx_yo_dt_b_asin_title_o05_s00?ie=UTF8&psc=1)
+* [2 Servo Motors (SG90)](https://www.amazon.ca/gp/product/B07Z16DWGW/ref=ppx_yo_dt_b_asin_title_o05_s00?ie=UTF8&psc=1)
+* [Krisdonia Power Bank](https://www.amazon.ca/Krisdonia-25000mAh-Portable-External-Macbooks/dp/B076GYGR6M/ref=sr_1_7?dchild=1&keywords=laptop%2Bpower%2Bbank&qid=1615936374&sr=8-7&th=1)
+* [GL.iNet Router](https://www.gl-inet.com/products/gl-ar750/)
+
 * Miscellaneous:
-  * [Raspberry Pi Camera Extension Cable](https://www.amazon.ca/gp/product/B07GWRZDH7/ref=ppx_yo_dt_b_asin_title_o01_s00?ie=UTF8&psc=1)
-  * Ethernet Cable
-  * Jumper Cables
+  * 3D printer
+  * [Raspberry Pi Camera Ribbon Cable](https://www.amazon.ca/Raspberry-Camera-Ribbon-Cable-Module/dp/B0981DPWD9/ref=sr_1_1?crid=15721LNB17OI9&keywords=Raspberry+Pi+Zero+v1.3+Camera+Cable+Raspberry+Pi+Zero+v1.3+Camera+Cable+Raspberry+Pi+Zero+v1.3+Camera+Cable+Raspberry+Pi+Zero+v1.3+Camera+Cable+Raspberry+Pi+Zero+v1.3+Camera+Cable&qid=1650660288&s=industrial&sprefix=raspberry+pi+zero+v1+3+camera+cable+raspberry+pi+zero+v1+3+camera+cable+raspberry+pi+zero+v1+3+camera+cable+raspberry+pi+zero+v1+3+camera+cable+raspberry+pi+zero+v1+3+camera+cable%2Cindustrial%2C260&sr=1-1)
+  * 2 Ethernet Cables
+  * Breadboard Jumper Cables
   * Screws
+
 
 <p align="center">
   <img width="300" src="/Images/final.jpg">
@@ -113,9 +119,9 @@ Command | Gesture | Description | Output
 2. ssh into the Pi 
 3. git clone this repo
 4. Navigate to the directory where the main Raspberry Pi program is located, for example:  
-   cd /home/pi/Documents/Capstone/Raspberry-Pi_robot_pet/
+   `cd /home/pi/Documents/Capstone/Raspberry-Pi_robot_pet/`
 4. Ensure that Pi and the Atlas 200DK are in the same network. Run the main program for the robot control:  
-   python3 server_v9.py
+   `python3 server_v9.py`
 
 ### Atlas 200DK 
 1. Login to Atlas 200 DK from PC (Refer to this [guide](https://www.notion.so/hiascend/Atlas-200-DK-Setup-Guide-070b907c3c124381bdd6721618b81ef8) on how to setup and access). `Note`, it is required to use `VScode` with `Remote-SSH` extension to login remotely, otherwise you might not get the video stream to display on your PC.
@@ -125,13 +131,15 @@ Command | Gesture | Description | Output
 
     `git clone https://github.com/kylerhunag/gesture_controlled_robot_pet.git`
    
-3. Install the required dependencies to run this project:
+3. Navigate to the project root directory. Install the required dependencies to run this project:
 
+    `cd ~/gesture_controlled_robot_pet/`
+    
     `pip3 install -r requirements.txt`
 
 4. Navigate to the presenter server directory and start the presenter server: 
 
-    `cd ~/gesture_controlled_robot_pet/Atlas_robot_pet/presenterserver`
+    `cd Atlas_robot_pet/presenterserver`
     
     `bash run_presenter_server.sh body_pose.conf`
     
@@ -142,7 +150,9 @@ Once you have created and built your ROS package you can now copy paste the scri
 
 Here we used robot_pet as our package_name.
 Once all the scripts and launch files are copied into the catkin_ws we need to make the files executable and as such do 
-`chmod +x <file name>` for all the files that have been copied. Before running the ROS project ensure that the presenter server script is running and the Raspberry PI script is running. And lastly run (in the environment you just created):
+`chmod +x <file name>` for all the files that have been copied. Before running the ROS project ensure that the presenter server script is running and the Raspberry PI script is running. 
+
+Activate the environment you just created. Install the dependencies listed in the `requirements.txt`. And lastly run:
   
 `cd ~/catkin_ws` 
   
@@ -158,10 +168,10 @@ The ROS project can now be run. In order to run the project refer to the followi
 
 
 # Dependencies and Third Party Links
-* Hand Gesture Recognition Model: https://github.com/Atlas200dk/sample-handposeRCcar
-* Hand Detection Model: https://github.com/victordibia/handtracking 
-* Face Detection Model: https://github.com/Ascend-Huawei/OfflineModelSamples/tree/main/face_detection
-* Raspbian image: https://www.raspberrypi.org/documentation/installation/installing-images/
+* Body Pose Model: Sample Body Pose https://github.com/Atlas200dk/sample_bodypose
+* Object Detection Model: FairMOT model https://github.com/HardysJin/atlas-track
+* Raspbian image: https://www.raspberrypi.org/documentation/installation/installing-images/ 
+* Presenter server & ROS: https://github.com/Ascend-Huawei/HiFly_Drone
 * LCD driver: https://github.com/goodtft/LCD-show 
 * OpenCV
 
@@ -183,6 +193,23 @@ Python libraries used for Atlas 200 DK:
 For setup Python environment, you can refer to this [guide](https://gitee.com/ascend/samples/tree/master/python/environment).
 
 
+Python libraries used for Atlas 200 DK:
+* Random
+* Os
+* Cv2
+* Numpy
+* Argparse
+* Sys
+* Socket
+* Threading
+* Time
+* Io
+* Struct
+* Pickle
+* Zlib
+
+For setup Python environment, you can refer to this [guide](https://gitee.com/ascend/samples/tree/master/python/environment).
+
 Python libraries used for Raspberry Pi:
 * Socket
 * Sys
@@ -198,6 +225,5 @@ Python libraries used for Raspberry Pi:
 * Threading
 * Datetime
 
-
 # Notes
-Power supply not solved
+
