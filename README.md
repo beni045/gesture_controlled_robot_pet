@@ -106,7 +106,7 @@ Once the conda environment and ROS has been set up on the board we have to creat
    Once all the scripts and launch files are copied into the catkin_ws we need to make the files executable and as such do `chmod +x <file name>` for all the files that have been copied. Before running the ROS project ensure that the presenter server script is running and the Raspberry PI script is running. 
 
 
-Activate the environment you just created. Install the dependencies listed in the `requirements.txt`. And lastly run:
+3. Activate the environment you just created. Install the dependencies listed in the `requirements.txt`. And lastly run:
   
 `cd ~/catkin_ws` 
   
@@ -124,7 +124,8 @@ Activate the environment you just created. Install the dependencies listed in th
    sudo apt-get update                                                        
    sudo apt-get upgrade                                                        
    sudo apt-get install python3-pip
-5. Retrieve the files to be downloaded onto the Raspberry Pi, which are located in the folder “RaspberryPi_robot_pet”, either from cloning this repository or from the GitHub repository directly. Move the following files onto the Raspberry Pi Desktop in a folder called“RaspberryPi_robot_pet”:
+   sudo apt install unclutter
+5. Retrieve the files to be downloaded onto the Raspberry Pi, which are located in the folder “RaspberryPi_robot_pet”, either from cloning this repository or from the GitHub repository directly. Make sure the following files are in a folder called “RaspberryPi_robot_pet”:
     * Raspberry-Pi_robot_pet/happy.mp4
     * Raspberry-Pi_robot_pet/neu.mp4
     * Raspberry-Pi_robot_pet/white.jpeg
