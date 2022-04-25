@@ -21,15 +21,15 @@ Below are the gestures included in the repository.
 
 Command | Gesture | Description | Output
 ------- | ------- | ----------- | ------
-`Activate` | <img src="/Images/activate.PNG" width="250" height="250"> | Robot starts functioning and responding to commands | <img src="/Images/activate.gif" width="250" height="250" />
+`Activate` | <img src="/Images/activate.PNG" width="250" height="200"> | Robot starts functioning and responding to commands | <img src="/Images/activate.gif" width="250" height="250" />
 `Deactivate` | <img src="/Images/deactivate.PNG" width="250" height="200"> | Robot goes to “sleep” state and can only be woken up by giving it activate command | <img src="/Images/deactivate.gif" width="250" height="200" />
-`Move Forwards` | <img src="/Images/fwd.PNG" width="250" height="250"> | Moves the robot forwards | <img src="/Images/fwd.gif" width="250" height="250" />
-`Move Backwards` | <img src="/Images/bwd.PNG" width="250" height="250"> | Moves the robot backwards | <img src="/Images/bwd.gif" width="250" height="250" />
-`Spin Right` | <img src="/Images/spinr.PNG" width="250" height="250"> | Spins the robot right | <img src="/Images/spinr.gif" width="250" height="250" />
-`Spin Left` | <img src="/Images/spinl.PNG" width="250" height="250"> | Spins the robot left | <img src="/Images/spinl.gif" width="250" height="250" />
-`Take a Picture` | <img src="/Images/tap.PNG" width="250" height="250"> | Initiates the routine to take a photo | <img src="/Images/tap.gif" width="250" height="250" />
-`Follow` | <img src="/Images/follow.PNG" width="250" height="250"> | Initiates the routine to follow the person who gave the follow gesture | <img src="/Images/follow.gif" width="250" height="250" />
-`Stop Follow` | <img src="/Images/stopfollow.PNG" width="250" height="250"> | Stops the follow routine if the robot is in follow mode | <img src="/Images/stopfollow.gif" width="250" height="250" />
+`Move Forwards` | <img src="/Images/fwd.PNG" width="250" height="200"> | Moves the robot forwards | <img src="/Images/fwd.gif" width="250" height="200" />
+`Move Backwards` | <img src="/Images/bwd.PNG" width="250" height="200"> | Moves the robot backwards | <img src="/Images/bwd.gif" width="250" height="200" />
+`Spin Right` | <img src="/Images/spinr.PNG" width="250" height="200"> | Spins the robot right | <img src="/Images/spinr.gif" width="250" height="200" />
+`Spin Left` | <img src="/Images/spinl.PNG" width="250" height="200"> | Spins the robot left | <img src="/Images/spinl.gif" width="250" height="200" />
+`Take a Picture` | <img src="/Images/tap.PNG" width="250" height="200"> | Initiates the routine to take a photo | <img src="/Images/tap.gif" width="250" height="200" />
+`Follow` | <img src="/Images/follow.PNG" width="250" height="200"> | Initiates the routine to follow the person who gave the follow gesture | <img src="/Images/follow.gif" width="250" height="200" />
+`Stop Follow` | <img src="/Images/stopfollow.PNG" width="250" height="200"> | Stops the follow routine if the robot is in follow mode | <img src="/Images/stopfollow.gif" width="250" height="200" />
 
 # Hardware
 * [Huawei's Atlas 200DK](https://e.huawei.com/en/products/cloud-computing-dc/atlas/atlas-200)
@@ -123,7 +123,7 @@ Once the conda environment and ROS has been set up on the board we have to creat
 4. Update the system by opening a terminal and entering:  
    `sudo apt-get update`                                                        
    `sudo apt-get upgrade`                                                        
-   `sudo apt-get install python3-pip` 
+   `sudo apt-get install python3-pip`
    `sudo apt install unclutter`
 5. Retrieve the files to be downloaded onto the Raspberry Pi, which are located in the folder “RaspberryPi_robot_pet”, either from cloning this repository or from the GitHub repository directly. Make sure the following files are in a folder called “RaspberryPi_robot_pet”:
     * Raspberry-Pi_robot_pet/happy.mp4
