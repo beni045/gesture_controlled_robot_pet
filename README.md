@@ -82,7 +82,7 @@ Once the conda environment and ROS has been set up on the board we have to creat
 3. Make sure you complete the [Router connection](https://github.com/kylerhunag/gesture_controlled_robot_pet/wiki/Router-Connection-Setup-Guide)
 4. Update the system by opening a terminal and entering:  
    sudo apt-get update                                                        
-   sudo apt-get upgrade
+   sudo apt-get upgrade                                                        
    sudo apt-get install python3-pip
 5. git clone this repo
 6. Navigate to the directory where the main Raspberry Pi program is located, for example:  
