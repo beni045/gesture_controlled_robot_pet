@@ -84,15 +84,7 @@ Once the conda environment and ROS has been set up on the board we have to creat
    sudo apt-get update                                                        
    sudo apt-get upgrade                                                        
    sudo apt-get install python3-pip
-5. git clone this repo
-6. Navigate to the directory where the main Raspberry Pi program is located, for example:  
-   `cd /home/pi/Documents/Capstone/Raspberry-Pi_robot_pet/`
-5. Install OpenCV and numpy for Python 3:  
-    pip3 install -r requirements.txt
-7. Install the LCD driver  
-   Follow instruction under the link:  
-   https://github.com/goodtft/LCD-show 
-6. Retrieve the files to be downloaded onto the Raspberry Pi, which are located in the folder “RaspberryPi_robot_pet”, either from the source code folder provided or from the GitHub repository. Move the following files onto the Raspberry Pi Desktop in the folder “RaspberryPi_robot_pet”:
+5. Retrieve the files to be downloaded onto the Raspberry Pi, which are located in the folder “RaspberryPi_robot_pet”, either from cloning this repository or from the GitHub repository directly. Move the following files onto the Raspberry Pi Desktop in a folder called“RaspberryPi_robot_pet”:
     * Raspberry-Pi_robot_pet/happy.mp4
     * Raspberry-Pi_robot_pet/neu.mp4
     * Raspberry-Pi_robot_pet/white.jpeg
@@ -102,6 +94,13 @@ Once the conda environment and ROS has been set up on the board we have to creat
     * Raspberry-Pi_robot_pet/follow_img.jpg
     * Raspberry-Pi_robot_pet/server_v9.py
     * Raspberry-Pi_robot_pet/requirements.txt
+6. Navigate to the directory where the main Raspberry Pi program is located, for example:  
+   `cd /home/pi/Documents/Capstone/Raspberry-Pi_robot_pet/`
+7. Install OpenCV and numpy for Python 3:  
+   `pip3 install -r requirements.txt`
+8. Install the LCD driver  
+   Follow instruction under the link:  
+   https://github.com/goodtft/LCD-show 
 
 # Gestures
 Below are the gestures included in the repository.
@@ -126,8 +125,6 @@ Command | Gesture | Description | Output
 2. ssh into the Pi 
 3. Navigate to the directory where the main Raspberry Pi program is located, for example:  
    `cd /home/pi/Documents/Capstone/Raspberry-Pi_robot_pet/`
-4. Install the required dependencies to run the program:
-   `pip3 install -r requirements.txt`
 4. Ensure that Pi and the Atlas 200DK are in the same network. Run the main program for the robot control:  
    `python3 server_v9.py`
 
