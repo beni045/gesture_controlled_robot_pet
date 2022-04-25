@@ -101,6 +101,7 @@ Once the conda environment and ROS has been set up on the board we have to creat
     * Raspberry-Pi_robot_pet/deactivate.jpg
     * Raspberry-Pi_robot_pet/follow_img.jpg
     * Raspberry-Pi_robot_pet/server_v9.py
+    * Raspberry-Pi_robot_pet/requirements.txt
 
 # Gestures
 Below are the gestures included in the repository.
@@ -125,6 +126,8 @@ Command | Gesture | Description | Output
 2. ssh into the Pi 
 3. Navigate to the directory where the main Raspberry Pi program is located, for example:  
    `cd /home/pi/Documents/Capstone/Raspberry-Pi_robot_pet/`
+4. Install the required dependencies to run the program:
+   `pip3 install -r requirements.txt`
 4. Ensure that Pi and the Atlas 200DK are in the same network. Run the main program for the robot control:  
    `python3 server_v9.py`
 
@@ -172,53 +175,10 @@ The ROS project can now be run. In order to run the project refer to the followi
 `roslaunch <package_name> robot_pet_launch.launch`
 
 
-# Dependencies and Third Party Links
+# Third Party Links
 * Body Pose Model: Sample Body Pose https://github.com/Atlas200dk/sample_bodypose
 * Object Detection Model: FairMOT model https://github.com/HardysJin/atlas-track
 * Raspbian image: https://www.raspberrypi.org/documentation/installation/installing-images/ 
 * Presenter server & ROS: https://github.com/Ascend-Huawei/HiFly_Drone
-* LCD driver: https://github.com/goodtft/LCD-show 
-* OpenCV
-
-
-Python libraries used for Atlas 200 DK:
-* Random
-* Os
-* Cv2
-* Numpy
-* Argparse
-* Sys
-* Socket
-* Threading
-* Time
-* Io
-* Struct
-* Pickle
-* Zlib
-* opencv-python
-* cython
-* cython-bbox
-* scipy
-* lap
-* Pillow
-* rospy
-
-For setup Python environment, you can refer to this [guide](https://gitee.com/ascend/samples/tree/master/python/environment).
-
-Python libraries used for Raspberry Pi:
-* Socket
-* Sys
-* Pickle
-* Numpy
-* Struct
-* Zlib
-* RPi.GPIO
-* Time
-* Os
-* Cv2
-* Math
-* Threading
-* Datetime
-
-# Notes
+* LCD driver: https://github.com/goodtft/LCD-show
 
