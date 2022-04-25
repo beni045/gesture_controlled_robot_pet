@@ -1,10 +1,8 @@
 import socket
-import sys
 import cv2
 import pickle
 import numpy as np
 import struct
-import zlib
 import RPi.GPIO as GPIO
 import time
 import socket

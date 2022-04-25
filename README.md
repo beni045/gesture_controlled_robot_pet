@@ -83,8 +83,12 @@ Once the conda environment and ROS has been set up on the board we have to creat
 4. Update the system by opening a terminal and entering:  
    sudo apt-get update                                                        
    sudo apt-get upgrade
-5. Install OpenCV for Python 3:  
-   sudo apt-get install python3-opencv
+   sudo apt-get install python3-pip
+5. git clone this repo
+6. Navigate to the directory where the main Raspberry Pi program is located, for example:  
+   `cd /home/pi/Documents/Capstone/Raspberry-Pi_robot_pet/`
+5. Install OpenCV and numpy for Python 3:  
+    pip3 install -r requirements.txt
 7. Install the LCD driver  
    Follow instruction under the link:  
    https://github.com/goodtft/LCD-show 
@@ -119,8 +123,7 @@ Command | Gesture | Description | Output
 ### Raspberry Pi
 1. Start Raspberry Pi into Raspbian OS
 2. ssh into the Pi 
-3. git clone this repo
-4. Navigate to the directory where the main Raspberry Pi program is located, for example:  
+3. Navigate to the directory where the main Raspberry Pi program is located, for example:  
    `cd /home/pi/Documents/Capstone/Raspberry-Pi_robot_pet/`
 4. Ensure that Pi and the Atlas 200DK are in the same network. Run the main program for the robot control:  
    `python3 server_v9.py`
@@ -135,13 +138,13 @@ Command | Gesture | Description | Output
    
 3. Navigate to the project root directory. Install the required dependencies to run this project:
 
-    `cd ~/gesture_controlled_robot_pet/`
+    `cd ~/gesture_controlled_robot_pet/Atlas_robot_pet`
     
     `pip3 install -r requirements.txt`
 
 4. Navigate to the presenter server directory and start the presenter server: 
 
-    `cd Atlas_robot_pet/presenterserver`
+    `cd presenterserver`
     
     `bash run_presenter_server.sh body_pose.conf`
     
