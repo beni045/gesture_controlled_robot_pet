@@ -6,8 +6,6 @@ Apart from doing normal pet things such as moving around and performing a few tr
 
 Through its camera “eyes”, this robot pet uses a combination of machine learning and computer vision techniques to see and respond to commands given through its owner’s body gestures. The robot pet can track, recognize, and perform a task such as following the user. The user is thus able to control the pet from a distance, enabling full autonomy.
 
-
-
 <p align="center">
   <img width="300" src="/Images/robot.png">
 </p>
@@ -16,6 +14,22 @@ Through its camera “eyes”, this robot pet uses a combination of machine lear
 <p align="center">
   <img src="/Images/repo.png">
 </p>
+
+
+# Gestures
+Below are the gestures included in the repository.
+
+Command | Gesture | Description | Output
+------- | ------- | ----------- | ------
+`Activate` | <img src="/Images/activate.PNG" width="250" height="250"> | Robot starts functioning and responding to commands | <img src="/Images/activate.gif" width="250" height="250" />
+`Deactivate` | <img src="/Images/deactivate.PNG" width="250" height="250"> | Robot goes to “sleep” state and can only be woken up by giving it activate command | <img src="/Images/deactivate.gif" width="250" height="250" />
+`Move Forwards` | <img src="/Images/fwd.PNG" width="250" height="250"> | Moves the robot forwards | <img src="/Images/fwd.gif" width="250" height="250" />
+`Move Backwards` | <img src="/Images/bwd.PNG" width="250" height="250"> | Moves the robot backwards | <img src="/Images/bwd.gif" width="250" height="250" />
+`Spin Right` | <img src="/Images/spinr.PNG" width="250" height="250"> | Spins the robot right | <img src="/Images/spinr.gif" width="250" height="250" />
+`Spin Left` | <img src="/Images/spinl.PNG" width="250" height="250"> | Spins the robot left | <img src="/Images/spinl.gif" width="250" height="250" />
+`Take a Picture` | <img src="/Images/tap.PNG" width="250" height="250"> | Initiates the routine to take a photo | <img src="/Images/tap.gif" width="250" height="250" />
+`Follow` | <img src="/Images/follow.PNG" width="250" height="250"> | Initiates the routine to follow the person who gave the follow gesture | <img src="/Images/follow.gif" width="250" height="250" />
+`Stop Follow` | <img src="/Images/stopfollow.PNG" width="250" height="250"> | Stops the follow routine if the robot is in follow mode | <img src="/Images/stopfollow.gif" width="250" height="250" />
 
 # Hardware
 * [Huawei's Atlas 200DK](https://e.huawei.com/en/products/cloud-computing-dc/atlas/atlas-200)
@@ -74,6 +88,20 @@ Once the conda environment and ROS has been set up on the board we have to creat
 * [ROS Create Package](http://wiki.ros.org/ROS/Tutorials/CreatingPackage)
 * [ROS Build Package](http://wiki.ros.org/ROS/Tutorials/BuildingPackages)
 
+
+Once you have created and built your ROS package you can now copy paste the `scripts` and `launch` folder from `~/gesture_controlled_robot_pet/ROS` to `~/catkin_ws/src/<package_name>/`
+
+Here we used robot_pet as our package_name.
+Once all the scripts and launch files are copied into the catkin_ws we need to make the files executable and as such do 
+`chmod +x <file name>` for all the files that have been copied. Before running the ROS project ensure that the presenter server script is running and the Raspberry PI script is running. 
+
+
+Activate the environment you just created. Install the dependencies listed in the `requirements.txt`. And lastly run:
+  
+`cd ~/catkin_ws` 
+  
+`catkin_make` to build the nodes.
+
 ### Raspberry Pi Setup
 1. Install the latest version of Raspbian onto an SD card  
    Follow the steps in the link:  
@@ -101,22 +129,6 @@ Once the conda environment and ROS has been set up on the board we have to creat
 8. Install the LCD driver  
    Follow instruction under the link:  
    https://github.com/goodtft/LCD-show 
-
-# Gestures
-Below are the gestures included in the repository.
-
-Command | Gesture | Description | Output
-------- | ------- | ----------- | ------
-`Activate` | <img src="/Images/activate.PNG" width="250" height="250"> | Robot starts functioning and responding to commands | <img src="/Images/activate.gif" width="250" height="250" />
-`Deactivate` | <img src="/Images/deactivate.PNG" width="250" height="250"> | Robot goes to “sleep” state and can only be woken up by giving it activate command | <img src="/Images/deactivate.gif" width="250" height="250" />
-`Move Forwards` | <img src="/Images/fwd.PNG" width="250" height="250"> | Moves the robot forwards | <img src="/Images/fwd.gif" width="250" height="250" />
-`Move Backwards` | <img src="/Images/bwd.PNG" width="250" height="250"> | Moves the robot backwards | <img src="/Images/bwd.gif" width="250" height="250" />
-`Spin Right` | <img src="/Images/spinr.PNG" width="250" height="250"> | Spins the robot right | <img src="/Images/spinr.gif" width="250" height="250" />
-`Spin Left` | <img src="/Images/spinl.PNG" width="250" height="250"> | Spins the robot left | <img src="/Images/spinl.gif" width="250" height="250" />
-`Take a Picture` | <img src="/Images/tap.PNG" width="250" height="250"> | Initiates the routine to take a photo | <img src="/Images/tap.gif" width="250" height="250" />
-`Follow` | <img src="/Images/follow.PNG" width="250" height="250"> | Initiates the routine to follow the person who gave the follow gesture | <img src="/Images/follow.gif" width="250" height="250" />
-`Stop Follow` | <img src="/Images/stopfollow.PNG" width="250" height="250"> | Stops the follow routine if the robot is in follow mode | <img src="/Images/stopfollow.gif" width="250" height="250" />
-
 
 # Run the Robot
 
@@ -150,18 +162,6 @@ Command | Gesture | Description | Output
     
 
 ### Robot Operating System (ROS) on 200DK
-
-Once you have created and built your ROS package you can now copy paste the `scripts` and `launch` folder from `~/gesture_controlled_robot_pet/ROS` to `~/catkin_ws/src/<package_name>/`
-
-Here we used robot_pet as our package_name.
-Once all the scripts and launch files are copied into the catkin_ws we need to make the files executable and as such do 
-`chmod +x <file name>` for all the files that have been copied. Before running the ROS project ensure that the presenter server script is running and the Raspberry PI script is running. 
-
-Activate the environment you just created. Install the dependencies listed in the `requirements.txt`. And lastly run:
-  
-`cd ~/catkin_ws` 
-  
-`catkin_make` to build the nodes.
 
 The ROS project can now be run. In order to run the project refer to the following set of commands: 
   
