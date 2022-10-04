@@ -147,14 +147,18 @@ Once the conda environment and ROS has been set up on the board we have to creat
 
 ### Raspberry Pi
 1. Start Raspberry Pi into Raspbian OS
-2. ssh into the Pi 
+2. ssh into the Pi (pass is Mind@123):  
+   `ssh pi@192.168.1.117`
+   
 3. Navigate to the directory where the main Raspberry Pi program is located, for example:  
    `cd /home/pi/Documents/Capstone/Raspberry-Pi_robot_pet/`
 4. Ensure that Pi and the Atlas 200DK are in the same network. Run the main program for the robot control:  
    `python3 server_v9.py`
 
 ### Atlas 200DK 
-1. Login to Atlas 200 DK from PC (Refer to this [guide](https://hiascend.notion.site/Atlas-200-DK-Setup-Guide-070b907c3c124381bdd6721618b81ef8) on how to setup and access). Note, it is required to use `VScode` with `Remote-SSH` extension to login remotely, otherwise you might not get the video stream to display on your PC.
+1. Login to Atlas 200 DK from PC (Refer to this [guide](https://hiascend.notion.site/Atlas-200-DK-Setup-Guide-070b907c3c124381bdd6721618b81ef8) on how to setup and access). Note, it is required to use `VScode` with `Remote-SSH` extension to login remotely, otherwise you might not get the video stream to display on your PC. 
+
+    `ssh HwHiAiUser@192.168.1.137` (pass is Mind@123)
 
 2. Navigate to the presenter server directory and start the presenter server: 
 
